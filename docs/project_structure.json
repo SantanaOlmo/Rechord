@@ -1,0 +1,28 @@
+{
+  "rechord": {
+    "backend": {
+      "api": {},
+      "config": {},
+      "models": {},
+      "controllers": {},
+      "utils": {}
+    },
+    "frontend": {
+      "assets": {
+        "img": {},
+        "icons": {},
+        "audio": {},
+        "fonts": {}
+      },
+      "components": {},
+      "pages": {},
+      "services": {},
+      "styles": {},
+      "utils": {}
+    },
+    "db": {},
+    "docs": {
+      "wireframes": {}
+    }
+  }
+}

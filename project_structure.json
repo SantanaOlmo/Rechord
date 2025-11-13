@@ -1,0 +1,57 @@
+{
+  ".gitignore": "file",
+  "backend": {
+    "api": {},
+    "config": {},
+    "controllers": {},
+    "models": {},
+    "utils": {}
+  },
+  "db": {},
+  "docker-compose.yml": "file",
+  "docs": {
+    "00_project_overview.md": "file",
+    "01_project_structure.md": "file",
+    "02_database_design.md": "file",
+    "03_api_reference.md": "file",
+    "04_backend_architecture.md": "file",
+    "05_frontend_architecture.md": "file",
+    "06_ui_ux_design.md": "file",
+    "07_development_setup.md": "file",
+    "08_testing_and_validation.md": "file",
+    "09_future_features.md": "file",
+    "10_UML_diagram.md": "file",
+    "11_DB_development.md": "file",
+    "assets": {
+      "diagrams": {},
+      "icons": {
+        "back.png": "file",
+        "DeviconPlainMysqlWordmark.png": "file",
+        "MaterialIconThemeDocker.png": "file"
+      },
+      "images": {
+        "creacionDB.png": "file"
+      },
+      "player_style.png": "file",
+      "rechord_logos.png": "file",
+      "style": {},
+      "wireframes": {}
+    }
+  },
+  "estructura.json": "file",
+  "frontend": {
+    "assets": {
+      "guitar.png": "file",
+      "guitarLogos.png": "file"
+    },
+    "components": {},
+    "pages": {},
+    "services": {},
+    "styles": {},
+    "utils": {}
+  },
+  "README.MD": "file",
+  "uploads": {
+    "music": {}
+  }
+}

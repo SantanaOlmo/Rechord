@@ -1,0 +1,54 @@
+# ------------------------------------
+# 1. ENTORNO VIRTUAL Y DEPENDENCIAS
+# ------------------------------------
+# Python Virtual Environment (venv)
+venv/
+.venv/
+
+# Carpeta de dependencias de Node.js (común en frontend JS)
+node_modules/
+
+# ------------------------------------
+# 2. ARCHIVOS DE PHP/BACKEND GENERADOS
+# ------------------------------------
+# Logs, caché y sesiones
+*.log
+/backend/cache
+/backend/sessions
+
+# Archivos de configuración local (credenciales, etc.)
+# Esto asegura que no subas información sensible de tu entorno local
+/backend/config/config.local.php
+/backend/config/*.env
+
+# ------------------------------------
+# 3. ARCHIVOS MULTIMEDIA GRANDES
+# ------------------------------------
+# La carpeta de archivos subidos por los usuarios NO debe ir al repositorio
+/uploads/
+
+# ------------------------------------
+# 4. ENTORNO DE DESARROLLO / IDE
+# ------------------------------------
+# IDEs comunes (VS Code, IntelliJ, etc.)
+.vscode/
+.idea/
+*.swp
+*~
+
+# ------------------------------------
+# 5. DOCKER
+# ------------------------------------
+# Archivos de imagen generados
+*.img
+*.tar
+
+# Archivos locales de Docker Compose (si se usan)
+docker-compose.override.yml
+
+# ------------------------------------
+# 6. COMPILACIÓN DE FRONTEND (Si aplicas React/Vue, etc.)
+# ------------------------------------
+# Si usas un proceso de compilación, ignorar la carpeta de salida
+/frontend/dist/
+/frontend/build/
