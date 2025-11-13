@@ -1,110 +1,94 @@
 [![back](assets/icons/back.png)](00_project_overview.md)
 
-# Project structure
+# 01. Estructura del Proyecto
 
-````
+La arquitectura del proyecto está dividida en un *Backend* (PHP/API REST) y un *Frontend* (JavaScript/SPA) para asegurar la separación de responsabilidades y facilitar la exportación futura a aplicaciones móviles.
+
+## 📂 Estructura General
+
+La raíz del proyecto (`rechord/`) contiene los archivos de configuración de infraestructura (`Docker`) y las carpetas principales de código.
+
+```plaintext
 rechord/
 │
-├─ backend/                           # Servidor PHP (API REST)
-│  ├─ api/                            # Endpoints PHP (usuarios, canciones, etc.)
-│  │   ├─ usuarios.php
-│  │   ├─ canciones.php
-│  │   ├─ acordes.php
-│  │   └─ ...
-│  ├─ config/                         # Configuración general
-│  │   ├─ db.php                      # Conexión PDO/MySQL
-│  │   ├─ session.php                 # Manejo de sesiones
-│  │   └─ constants.php
-│  ├─ models/                         # Clases del modelo de datos (MVC)
-│  │   ├─ Usuario.php
-│  │   ├─ Cancion.php
-│  │   ├─ Acorde.php
-│  │   └─ ...
-│  ├─ controllers/                    # Controladores que gestionan la lógica
-│  │   ├─ UsuarioController.php
-│  │   ├─ CancionController.php
-│  │   ├─ AcordeController.php
-│  │   └─ ...
-│  ├─ utils/                          # Funciones auxiliares (validaciones, etc.)
-│  │   └─ helpers.php
-│  ├─ index.php                       # Punto de entrada (puede servir como router)
-│  └─ .htaccess                       # Para redirecciones / URLs limpias
+├─ backend/                           \# Servidor PHP (API REST) - Lógica de Negocio
+│  ├─ api/                            \# Endpoints PHP que reciben peticiones y las dirigen al Controller.
+│  │   ├─ usuarios.php
+│  │   ├─ canciones.php
+│  │   ├─ acordes.php
+│  │   └─ ...
+│  ├─ config/                         \# Configuración general del entorno y la DB.
+│  │   ├─ db.php                      \# Conexión PDO/MySQL
+│  │   ├─ session.php                 \# Manejo de sesiones (si aplica)
+│  │   └─ constants.php
+│  ├─ models/                         \# Clases del modelo de datos (interacción directa con la DB).
+│  │   ├─ Usuario.php
+│  │   ├─ Cancion.php
+│  │   ├─ Acorde.php
+│  │   └─ ...
+│  ├─ controllers/                    \# Controladores que gestionan la lógica y manipulan modelos.
+│  │   ├─ UsuarioController.php
+│  │   ├─ CancionController.php
+│  │   ├─ AcordeController.php
+│  │   └─ ...
+│  ├─ utils/                          \# Funciones auxiliares (helpers, validaciones, etc.).
+│  │   └─ helpers.php
+│  ├─ index.php                       \# Punto de entrada principal / Router (si aplica).
+│  └─ .htaccess                       \# Para URLs limpias / redirecciones.
 │
-├─ frontend/                          # Aplicación cliente (SPA en JS nativo)
-│  ├─ assets/                         # Imágenes, iconos, audios, fuentes
-│  │   ├─ img/
-│  │   ├─ icons/
-│  │   ├─ audio/
-│  │   └─ fonts/
-│  ├─ components/                     # Componentes reutilizables (como si fuera React)
-│  │   ├─ Player.js                   # Reproductor de audio + lyrics
-│  │   ├─ SongCard.js                 # Tarjeta de canción
-│  │   ├─ ChordDiagram.js             # Visualización de acordes
-│  │   ├─ Modal.js                    # Ventanas modales
-│  │   └─ ...
-│  ├─ pages/                          # “Vistas” o pantallas (SPA)
-│  │   ├─ Home.js
-│  │   ├─ Profile.js
-│  │   ├─ SongEditor.js
-│  │   ├─ Login.js
-│  │   └─ Register.js
-│  ├─ services/                       # Comunicación con la API REST
-│  │   ├─ api.js                      # Métodos fetch() (GET, POST, PUT, DELETE)
-│  │   └─ auth.js                     # Autenticación, sesión
-│  ├─ styles/                         # CSS modular y responsive
-│  │   ├─ main.css
-│  │   ├─ components.css
-│  │   └─ pages.css
-│  ├─ utils/                          # Funciones auxiliares frontend
-│  │   ├─ validators.js
-│  │   ├─ domUtils.js
-│  │   └─ eventHandlers.js
-│  ├─ index.html                      # Punto de entrada de la SPA
-│  ├─ main.js                         # Enrutador y renderizado principal
-│  └─ manifest.json                   # Configuración para futura PWA / móvil
+├─ frontend/                          \# Aplicación cliente (HTML, CSS, JavaScript SPA)
+│  ├─ assets/                         \# Recursos estáticos (imágenes, iconos, audios, fuentes).
+│  │   ├─ img/
+│  │   ├─ icons/
+│  │   ├─ audio/
+│  │   └─ fonts/
+│  ├─ components/                     \# Módulos de UI reutilizables (Player, ChordDiagram, etc.).
+│  │   ├─ Player.js
+│  │   ├─ SongCard.js
+│  │   ├─ ChordDiagram.js
+│  │   ├─ Modal.js
+│  │   └─ ...
+│  ├─ pages/                          \# "Vistas" o pantallas principales de la aplicación.
+│  │   ├─ Home.js
+│  │   ├─ Profile.js
+│  │   ├─ SongEditor.js
+│  │   ├─ Login.js
+│  │   └─ Register.js
+│  ├─ services/                       \# Módulos de comunicación con la API REST.
+│  │   ├─ api.js                      \# Métodos de fetch (GET, POST, etc.)
+│  │   └─ auth.js                     \# Lógica de autenticación y sesión.
+│  ├─ styles/                         \# Archivos CSS / Estilos modulares.
+│  │   ├─ main.css
+│  │   ├─ components.css
+│  │   └─ pages.css
+│  ├─ utils/                          \# Funciones auxiliares específicas del frontend.
+│  │   ├─ validators.js
+│  │   ├─ domUtils.js
+│  │   └─ eventHandlers.js
+│  ├─ index.html                      \# Punto de entrada de la SPA.
+│  ├─ main.js                         \# Enrutador y renderizado principal.
+│  └─ manifest.json                   \# Configuración para PWA.
 │
-├─ db/                                # Scripts SQL
-│  ├─ init.sql                        # Creación inicial de tablas
-│  └─ seed.sql                        # Datos de prueba (opcional)
+├─ db/                                \# Scripts y archivos de base de datos
+│  ├─ init.sql                        \# Creación inicial de tablas (DDL).
+│  └─ seed.sql                        \# Datos de prueba (DML).
 │
-├─ docs/                              # Documentación del proyecto
-│  ├─ diagrama-uml.md
-│  ├─ guia-estilo.pdf
-│  ├─ wireframes/
-│  └─ README.md
+├─ docs/                              \# Documentación del proyecto
+│  ├─ 01\_project\_structure.md
+│  ├─ 11\_DB\_development.md
+│  ├─ assets/
+│  │   ├─ diagrams/
+│  │   └─ wireframes/                 \# Mockups y flujos de usuario.
+│  └─ ...
 │
-├─ .env                               # Variables de entorno (credenciales, etc.)
-├─ docker-compose.yml
-├─ Dockerfile
+├─ **uploads/**                       \# **Archivos Multimedia del Usuario (File System)**
+│  └─ music/                          \# Archivos MP3 subidos.
+│
+├─ **venv/**                          \# Entorno Virtual (ignorado por .gitignore)
+│
+├─ .env                               \# Variables de entorno (credenciales, etc.)
+├─ docker-compose.yml                 \# Configuración del entorno de Docker
+├─ Dockerfile                         \# Definición de la imagen PHP
+├─ .gitignore
 └─ README.md
-
-
-````
-
-# Frontend: HTML, CSS, JS (posible React en el futuro para versión móvil)
-
-- Carpeta frontend/components → para componentes de UI (barra de búsqueda, reproductor de audio, editor de lyrics/acordes).
-
-- Carpeta frontend/pages → páginas de app: login, registro, perfil, vista de canción, editor.
-
-- Carpeta frontend/services → llamadas a la API.
-
-- Carpeta frontend/assets → imágenes, íconos, fuentes, audios.
-
-# Backend: PHP + MySQL
-
-- Carpeta backend/api → endpoints REST.
-
-- Carpeta backend/controllers → lógica de negocio.
-
-- Carpeta backend/models → interacción con base de datos.
-
-- Carpeta backend/utils → helpers (procesar audio, generar acordes, etc.).
-
-- Carpeta backend/config → configuración de DB y entorno.
-
-# DB: MySQL
-
-- Tabla usuarios, canciones, acordes, carpetas, favoritos, seguimientos, etc.
-
-# Documentación: docs/wireframes → mockups y flujos.
+```
