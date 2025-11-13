@@ -1,10 +1,6 @@
 [![back](assets/icons/back.png)](00_project_overview.md)
 
-# 01. Estructura del Proyecto
-
-La arquitectura del proyecto está dividida en un *Backend* (PHP/API REST) y un *Frontend* (JavaScript/SPA) para asegurar la separación de responsabilidades y facilitar la exportación futura a aplicaciones móviles.
-
-## 📂 Estructura General
+# 📂 Estructura General
 
 La raíz del proyecto (`rechord/`) contiene los archivos de configuración de infraestructura (`Docker`) y las carpetas principales de código.
 
