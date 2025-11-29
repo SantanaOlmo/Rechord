@@ -1,0 +1,34 @@
+# Configuración para SPA (Single Page Application)
+# Redirige todas las rutas a index.html para que el router de JavaScript las maneje
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /rechord/frontend/
+    
+    # Si el archivo o directorio existe, servirlo directamente
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Si no existe y no es un archivo estático, redirigir a index.html
+    RewriteCond %{REQUEST_URI} !\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp3|mp4|json|html|php)$
+    
+    # Redirigir a index.html (excepto para rutas que empiecen con /backend)
+    RewriteCond %{REQUEST_URI} !^/rechord/backend/
+    
+    # Redirigir a index.html
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Configurar tipos MIME para archivos JavaScript como módulos
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/javascript .js
+</IfModule>
+
+# Habilitar CORS para desarrollo (opcional, ajustar según necesidades)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+

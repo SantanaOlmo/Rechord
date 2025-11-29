@@ -6,6 +6,7 @@
 
 ````mermaid
 erDiagram
+    %% CORE TABLES
     USUARIO {
         int id_usuario PK
         string nombre
@@ -30,16 +31,17 @@ erDiagram
         int id_cancion FK
         string texto
         int orden
+        decimal tiempo_inicio_segundos "Tiempo de inicio para sincronización"
     }
 
-    %% Tabla ACORDE modificada
+    %% ACORDES Y DIGITACIÓN (MODIFICADA: color_hex añadido)
     ACORDE {
         int id_acorde PK
         string nombre
         string descripcion
+        varchar color_hex "Color de visualización en el editor"
     }
     
-    %% Nuevas tablas para digitación dinámica
     ACORDE_DIGITACION {
         int id_digitacion PK
         int id_acorde FK
@@ -59,14 +61,43 @@ erDiagram
         int cuerda_inicio
         int cuerda_fin
     }
-
-    ESTROFA_ACORDE {
-        int id_estrofa_acorde PK
-        int id_estrofa FK
-        int id_acorde FK
-        int posicion_en_texto
+    
+    %% NEW: CONFIGURACION TEMPORAL (Métrica y Tempo)
+    CONFIGURACION_TEMPORAL {
+        int id_cancion PK FK "ID de la Canción"
+        int tempo_bpm "BPM"
+        int metrica_numerador "Pulso superior (ej. 4)"
+        int metrica_denominador "Pulso inferior (ej. 4)"
+        decimal beat_marker_inicio "Primer Beat Marker (segundos)"
     }
 
+    %% NEW: PATRONES DE RASGUEO
+    PATRON_RASGUEO {
+        int id_patron PK
+        int id_usuario FK
+        string nombre
+        json patron_data "Secuencia de golpes (down/up)"
+        int duracion_pulsos "Duración en pulsos"
+    }
+
+    %% NEW: SINCRONIZACIÓN DE ACORDES Y RASGUEOS (Sustituyen a ESTROFA_ACORDE)
+    ACORDE_SINCRONIZADO {
+        int id_sincronia_acorde PK
+        int id_cancion FK
+        int id_acorde FK
+        decimal tiempo_inicio "Inicio del bloque (segundos)"
+        decimal tiempo_fin "Fin del bloque (segundos)"
+    }
+
+    RASGUEO_SINCRONIZADO {
+        int id_sincronia_rasgueo PK
+        int id_cancion FK
+        int id_patron FK
+        decimal tiempo_inicio "Inicio del bloque (segundos)"
+        decimal tiempo_fin "Fin del bloque (segundos)"
+    }
+
+    %% COMMUNITY AND ORGANISATION TABLES
     CARPETA {
         int id_carpeta PK
         int id_usuario FK
@@ -91,22 +122,24 @@ erDiagram
         int id_usuario_seguido FK
     }
 
-    %% Relaciones
+    %% RELACIONES
     USUARIO ||--o{ CANCION : "crea"
     USUARIO ||--o{ CARPETA : "tiene"
     USUARIO ||--o{ LIKE_CANCION : "da like"
     USUARIO ||--o{ SEGUIR_USUARIO : "sigue"
+    USUARIO ||--o{ PATRON_RASGUEO : "crea"
 
     CANCION ||--o{ ESTROFA : "tiene"
     CANCION ||--o{ LIKE_CANCION : "recibe"
     CANCION ||--o{ CANCION_CARPETA : "pertenece a"
+    CANCION ||--|{ CONFIGURACION_TEMPORAL : "tiene (1:1)"
+    CANCION ||--o{ ACORDE_SINCRONIZADO : "tiene"
+    CANCION ||--o{ RASGUEO_SINCRONIZADO : "tiene"
 
-    ESTROFA ||--o{ ESTROFA_ACORDE : "tiene"
-    
-    %% Relaciones de Acordes Dinámicos
     ACORDE ||--o{ ACORDE_DIGITACION : "tiene"
     ACORDE ||--o{ ACORDE_CEJILLA : "tiene"
-    ACORDE ||--o{ ESTROFA_ACORDE : "es usado en"
+    ACORDE ||--o{ ACORDE_SINCRONIZADO : "es usado en"
+    PATRON_RASGUEO ||--o{ RASGUEO_SINCRONIZADO : "es usado en"
 
     CARPETA ||--o{ CANCION_CARPETA : "contiene"
 ````

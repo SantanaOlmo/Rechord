@@ -1,13 +1,29 @@
 {
   ".gitignore": "file",
   "backend": {
-    "api": {},
+    "api": {
+      "acordes.php": "file",
+      "acorde_sincronizado.php": "file",
+      "canciones.php": "file",
+      "cancion_carpeta.php": "file",
+      "carpetas.php": "file",
+      "config_temporal.php": "file",
+      "estrofas.php": "file",
+      "likes.php": "file",
+      "patrones.php": "file",
+      "rasgueo_sincronizado.php": "file",
+      "seguir.php": "file",
+      "usuarios.php": "file"
+    },
     "config": {},
     "controllers": {},
     "models": {},
     "utils": {}
   },
-  "db": {},
+  "db": {
+    "conexion.php": "file",
+    "config.php": "file"
+  },
   "docker-compose.yml": "file",
   "docs": {
     "00_project_overview.md": "file",
@@ -38,14 +54,31 @@
       "wireframes": {}
     }
   },
-  "estructura.json": "file",
   "frontend": {
     "assets": {
       "guitar.png": "file",
-      "guitarLogos.png": "file"
+      "guitarLogos.png": "file",
+      "icons": {
+        "back.svg": "file",
+        "create.svg": "file",
+        "MaterialSymbolsLogin.svg": "file",
+        "pause.svg": "file",
+        "play.svg": "file",
+        "profile.svg": "file",
+        "Rechord_logo.png": "file"
+      }
     },
     "components": {},
-    "pages": {},
+    "index.html": "file",
+    "main.js": "file",
+    "manifest.json": "file",
+    "pages": {
+      "Home.js": "file",
+      "Login.js": "file",
+      "Profile.js": "file",
+      "Register.js": "file",
+      "SongEditor.js": "file"
+    },
     "services": {},
     "styles": {},
     "utils": {}

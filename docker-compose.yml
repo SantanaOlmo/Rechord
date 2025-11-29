@@ -5,7 +5,7 @@ services:
     build: .
     container_name: rechord_web
     ports:
-      - "8080:80"  # Accedes a la app en http://localhost:8080
+      - "8080:80"  
     volumes:
       - ./backend:/var/www/html
       - ./frontend:/var/www/html/frontend

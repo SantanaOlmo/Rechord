@@ -1,0 +1,30 @@
+/* base.css: Reset y estilos globales */
+:root {
+    /* Variables de color de ReChord */
+    --color-primary: #5A20C7; /* Púrpura/Azul vibrante */
+    --color-secondary: #00BFB3; /* Cian/Turquesa para acentos */
+    --color-background: #181A1B; /* Fondo oscuro */
+    --color-text-light: #F0F2F5; /* Texto principal claro */
+    --color-text-dim: #A0A0A0; /* Texto secundario/desvanecido */
+    --color-error: #FF5252;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-light);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+h1 {
+    color: var(--color-secondary);
+    text-align: center;
+    margin-bottom: 20px;
+}
