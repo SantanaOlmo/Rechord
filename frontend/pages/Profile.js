@@ -1,14 +1,5 @@
-import { authService } from '../services/authService.js';
-import { usuarioService } from '../services/usuarioService.js';
-import { ProfileHeader } from '../components/profile/ProfileHeader.js';
-import { ProfileBio } from '../components/profile/ProfileBio.js';
-import { EditProfileModal } from '../components/modals/EditProfileModal.js';
-import { Footer } from '../components/layout/Footer.js';
-import { setupStandardEvents } from '../logic/profileLogic.js';
-import { likeService } from '../services/likeService.js';
-import { SongCard } from '../components/cards/SongCard.js?v=profile';
-import { renderSection } from '../components/logic/HomeRenderer.js';
-
+import { authService } from '../services/auth.js';
+import { CONTENT_BASE_URL } from '../config.js';
 
 /**
  * Renderiza la página de perfil del usuario.
@@ -30,117 +21,193 @@ export function Profile(user) {
 
     const currentUser = authService.getCurrentUser();
     const isOwner = currentUser && currentUser.id_usuario === user.id_usuario;
-    const isAdmin = authService.isAdmin();
+
+    const bannerUrl = user.banner
+        ? `${CONTENT_BASE_URL}/${user.banner}`
+        : 'assets/images/default-banner.jpg';
+
+    const avatarUrl = user.foto_perfil
+        ? `${CONTENT_BASE_URL}/${user.foto_perfil}`
+        : 'assets/icons/default_avatar.png';
+
+    const userBio = user.bio || 'Sin biografía.';
 
     return `
-        <div id="profile-container" class="w-full bg-gray-900 text-white relative">
-            <div id="profile-content">
-                ${ProfileHeader(user, isOwner)}
-                ${ProfileBio(user)}
+        <div class="max-w-4xl mx-auto mt-6 bg-gray-900 rounded-xl shadow-2xl text-white overflow-hidden relative">
+            
+            <!-- Banner -->
+            <div class="h-48 w-full bg-gray-800 relative group">
+                <img src="${bannerUrl}" alt="Banner" class="w-full h-full object-cover opacity-80">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
                 
-                ${isOwner && isAdmin ? `
-                    <div class="p-6 border-t border-gray-800">
-                        <h3 class="text-xl font-bold mb-4">Gestión de Home Page</h3>
-                        <div id="admin-home-config" class="space-y-4">
-                            <p class="text-gray-400">Cargando configuración...</p>
-                        </div>
-                        
-                        <form id="add-category-form" class="mt-6 bg-gray-800 p-4 rounded-lg hidden">
-                            <h4 class="font-bold mb-2">Añadir Nueva Categoría</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <input type="text" name="titulo" placeholder="Título (ej: Rock 90s)" class="form-input bg-gray-700 border-none" required>
-                                <input type="text" name="valor" placeholder="Hashtag (ej: rock)" class="form-input bg-gray-700 border-none" required>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 mt-2">
-                                <select name="tipo" class="form-input bg-gray-700 border-none">
-                                    <option value="hashtag">Hashtag</option>
-                                    <option value="static">Estático (top_likes, recent)</option>
-                                </select>
-                                <input type="number" name="orden" placeholder="Orden" class="form-input bg-gray-700 border-none" value="99">
-                            </div>
-                            <button type="submit" class="mt-2 btn-primary py-1 px-4 text-sm">Añadir</button>
-                        </form>
-                        <button id="btn-toggle-add-cat" class="mt-4 text-sm text-indigo-400 hover:text-indigo-300">+ Nueva Categoría</button>
-                    </div>
+                ${isOwner ? `
+                <button id="btn-edit-banner" class="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300" title="Cambiar Banner">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </button>
                 ` : ''}
+            </div>
 
-                ${EditProfileModal(user)}
-                
-                ${Footer()}
+            <!-- Profile Header (Avatar + Info) -->
+            <div class="px-8 pb-8 relative">
+                <div class="flex flex-col md:flex-row items-end -mt-12 mb-6">
+                    <!-- Avatar -->
+                    <div class="relative">
+                        <img src="${avatarUrl}" alt="${user.nombre}" class="w-32 h-32 rounded-full border-4 border-gray-900 shadow-lg object-cover bg-gray-700">
+                        ${isOwner ? `
+                        <button id="btn-edit-avatar" class="absolute bottom-0 right-0 bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-md transition transform hover:scale-110" title="Cambiar Avatar">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </button>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="mt-4 md:mt-0 md:ml-6 flex-1">
+                        <h2 class="text-4xl font-extrabold text-white">${user.nombre}</h2>
+                        <p class="text-indigo-400 font-medium">${user.email}</p>
+                    </div>
+
+                    ${isOwner ? `
+                    <div class="mt-4 md:mt-0 flex gap-3">
+                        <button id="btn-edit-profile"
+                                class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            Editar Perfil
+                        </button>
+                        
+                        <button id="btn-logout-profile"
+                                class="flex items-center bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Salir
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- Bio Section -->
+                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                    <h3 class="text-xl font-bold mb-3 text-indigo-400 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Acerca de mí
+                    </h3>
+                    <p class="text-gray-300 leading-relaxed whitespace-pre-line">${userBio}</p>
+                </div>
             </div>
-            <div id="profile-loader" class="hidden absolute inset-0 flex items-center justify-center bg-gray-900 z-50">
-                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+
+            <!-- Edit Modal -->
+            <div id="edit-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 backdrop-blur-sm">
+                <div class="bg-gray-800 rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-gray-700 transform transition-all scale-95 opacity-0" id="edit-modal-content">
+                    <h3 class="text-2xl font-bold text-white mb-6">Editar Perfil</h3>
+
+                    <form id="edit-profile-form" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Nombre de Usuario</label>
+                            <input type="text" name="nombre" value="${user.nombre}" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Correo Electrónico</label>
+                            <input type="email" name="email" value="${user.email}" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-400 text-sm font-bold mb-2">Biografía</label>
+                            <textarea name="bio" rows="3" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500">${user.bio || ''}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-400 text-sm font-bold mb-2">Avatar</label>
+                                <input type="file" name="image_file" accept="image/*" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-sm font-bold mb-2">Banner</label>
+                                <input type="file" name="banner_file" accept="image/*" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" id="btn-cancel-edit" class="px-4 py-2 text-gray-300 hover:text-white transition">Cancelar</button>
+                            <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg transition transform hover:scale-105">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
             </div>
+
         </div>
     `;
 }
 
 export function attachProfileEvents() {
-    const container = document.getElementById('profile-container');
-    if (!container) return;
+    const btnEdit = document.getElementById('btn-edit-profile');
+    const btnLogout = document.getElementById('btn-logout-profile');
+    const modal = document.getElementById('edit-profile-modal');
+    const modalContent = document.getElementById('edit-modal-content');
+    const btnCancel = document.getElementById('btn-cancel-edit');
+    const form = document.getElementById('edit-profile-form');
 
-    const currentUser = authService.getCurrentUser();
-    if (!currentUser) return;
+    const btnEditBanner = document.getElementById('btn-edit-banner');
+    const btnEditAvatar = document.getElementById('btn-edit-avatar');
 
-    (async () => {
+    const openModal = () => {
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    };
+
+    const closeModal = () => {
+        if (!modal) return;
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 300);
+    };
+
+    btnEdit?.addEventListener('click', openModal);
+    btnEditBanner?.addEventListener('click', openModal);
+    btnEditAvatar?.addEventListener('click', openModal);
+
+    btnCancel?.addEventListener('click', closeModal);
+
+    // Close on click outside
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    btnLogout?.addEventListener('click', () => {
+        authService.logout();
+        window.location.hash = '#/';
+    });
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSubmit = form.querySelector('button[type="submit"]');
+        const originalText = btnSubmit.textContent;
+
         try {
-            // Re-fetch fresh data
-            const [user, likedSongs] = await Promise.all([
-                usuarioService.getProfile(currentUser.id_usuario, currentUser.id_usuario),
-                likeService.getUserLikedSongs(currentUser.id_usuario)
-            ]);
-            renderProfileContent(user, likedSongs);
-        } catch (error) {
-            container.innerHTML = `<p class="text-red-500 text-center p-10">Error cargando perfil: ${error.message}</p>`;
-        }
-    })();
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Guardando...';
 
-    function renderProfileContent(user, likedSongs = []) {
-        const isOwner = true;
-        const isAdmin = authService.isAdmin();
-
-        const loader = document.getElementById('profile-loader');
-        const content = document.getElementById('profile-content');
-
-        if (loader) loader.classList.add('hidden');
-        if (content) {
-            content.classList.remove('hidden');
-
-            // Render Songs Carousel
-            let songsHtml = '';
-            if (likedSongs.length > 0) {
-                const likedSection = {
-                    title: 'Canciones que me gustan',
-                    type: 'liked',
-                    id: 'profile-user',
-                    songs: likedSongs
-                };
-                const likedIds = likedSongs.map(s => s.id_cancion);
-                songsHtml = renderSection(likedSection, likedIds);
-            } else {
-                songsHtml = `<div class="p-6 border-t border-gray-800">
-                    <h3 class="text-2xl font-bold text-white mb-6">Canciones que me gustan</h3>
-                    <div class="text-center py-10 bg-gray-900/50 rounded-lg border border-gray-800 border-dashed">
-                        <p class="text-gray-400">Aún no tienes canciones favoritas.</p>
-                        <button onclick="window.navigate('/')" class="mt-2 text-indigo-400 hover:text-indigo-300 text-sm font-medium">Explorar música</button>
-                   </div>
-                   </div>`;
+            const formData = new FormData(form);
+            const user = authService.getCurrentUser();
+            if (user) {
+                formData.append('id_usuario', user.id_usuario);
             }
 
-            content.innerHTML = `
-                ${ProfileHeader(user, isOwner, isAdmin)}
-                ${ProfileBio(user)}
-                
-                <div class="p-6 border-t border-gray-800">
-                    ${songsHtml}
-                </div>
+            await authService.updateProfile(formData);
 
-                ${EditProfileModal(user)}
-                ${Footer()}
-            `;
-
-            setupStandardEvents(user, isOwner);
+            closeModal();
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert(error.message || 'Error al actualizar perfil');
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = originalText;
         }
-    }
-
+    });
 }

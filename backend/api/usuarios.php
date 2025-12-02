@@ -1,29 +1,14 @@
 <?php
 require_once '../controllers/UsuarioController.php';
 
-// Desactiva la visualización de errores en la salida (Frontend)
-ini_set('display_errors', 0);
-// Asegura que todos los errores se registren en el log (Backend)
-ini_set('log_errors', 1);
-ini_set('display_startup_errors', 1);
-// Log to a file in the same directory for easy access
-ini_set('error_log', __DIR__ . '/php_errors.log');
-error_reporting(E_ALL);
-
 $controller = new UsuarioController();
 
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch($method) {
     case 'GET':
-    case 'GET':
-        if (isset($_GET['search'])) {
-            $controller->search($_GET['search']);
-        } elseif (isset($_GET['id'])) {
-            $controller->getUsuario($_GET['id']);
-        } else {
-            $controller->getUsuarios();
-        }
+        if(isset($_GET['id'])) $controller->getUsuario($_GET['id']);
+        else $controller->getUsuarios();
         break;
     case 'POST':
         // Check for action in GET or POST
@@ -47,12 +32,6 @@ switch($method) {
         } elseif ($action === 'update_profile') {
             // Handle FormData (POST + FILES)
             $controller->actualizarPerfil($_POST, $_FILES);
-        } elseif ($action === 'impersonate') {
-            $data = $data ?? json_decode(file_get_contents('php://input'), true);
-            $controller->impersonate($data);
-        } elseif ($action === 'update_config') {
-            $data = $data ?? json_decode(file_get_contents('php://input'), true);
-            $controller->actualizarConfiguracion($data);
         } else {
             // Fallback logic
             $data = $data ?? json_decode(file_get_contents('php://input'), true);

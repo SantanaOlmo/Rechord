@@ -107,35 +107,6 @@ class UsuarioController {
         sendResponse(["message" => "Perfil actualizado.", "user" => $usuarioActualizado]);
     }
 
-    public function actualizarConfiguracion($data) {
-        setApiHeaders();
-        if (!isset($data['id_usuario'], $data['configuracion'])) {
-            sendResponse(["message" => "Datos incompletos."], 400);
-        }
-
-        // Validate JSON
-        $configJson = $data['configuracion'];
-        if (is_array($configJson)) {
-            $configJson = json_encode($configJson);
-        }
-        
-        // Simple merge logic if needed, but for now overwrite or simple update
-        // Better: Fetch existing, merge, save.
-        $usuario = $this->usuarioModel->obtenerPorId($data['id_usuario']);
-        if (!$usuario) {
-            sendResponse(["message" => "Usuario no encontrado."], 404);
-        }
-
-        $currentConfig = json_decode($usuario['configuracion'] ?? '{}', true);
-        $newConfig = array_merge($currentConfig, is_string($data['configuracion']) ? json_decode($data['configuracion'], true) : $data['configuracion']);
-        
-        if ($this->usuarioModel->actualizarConfiguracion($data['id_usuario'], json_encode($newConfig))) {
-             sendResponse(["message" => "Configuración actualizada.", "configuracion" => $newConfig]);
-        } else {
-             sendResponse(["message" => "Error al actualizar configuración."], 500);
-        }
-    }
-
     private function procesarSubidaImagen($file, $subDir, $oldPathRelative = null) {
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -170,64 +141,10 @@ class UsuarioController {
     public function getUsuario($id) {
         setApiHeaders();
         $usuario = $this->usuarioModel->obtenerPorId($id);
-        
         if ($usuario) {
-            // Stats
-            $usuario['seguidores'] = (int)$this->usuarioModel->contarSeguidores($id);
-            $usuario['seguidos'] = (int)$this->usuarioModel->contarSeguidos($id);
-            
-            // Context (Is Following?)
-            $viewerId = isset($_GET['viewer_id']) ? $_GET['viewer_id'] : null;
-            if ($viewerId && $viewerId != $id) {
-                $usuario['es_seguido'] = $this->usuarioModel->esSeguidor($viewerId, $id);
-            } else {
-                $usuario['es_seguido'] = false;
-            }
-
             sendResponse(["user" => $usuario]);
         } else {
             sendResponse(["message" => "Usuario no encontrado"], 404);
         }
-    }
-
-    public function impersonate($data) {
-        setApiHeaders();
-
-        // 1. Verificar que el que solicita es ADMIN
-        // Como no tenemos middleware de token real en PHP (todo es "token simulado"), 
-        // asumiremos que el frontend envía el ID del admin actual y verificamos su rol en DB.
-        // EN PRODUCCION: Esto se valida decodificando el JWT del header Authorization.
-        
-        if (!isset($data['admin_id'], $data['target_user_id'])) {
-            sendResponse(["message" => "Faltan datos para impersonar."], 400); 
-        }
-
-        $admin = $this->usuarioModel->obtenerPorId($data['admin_id']);
-        if (!$admin || $admin['rol'] !== 'admin') {
-            sendResponse(["message" => "Acceso denegado. Se requieren permisos de administrador."], 403);
-        }
-
-        // 2. Obtener el usuario objetivo
-        $targetUser = $this->usuarioModel->obtenerPorId($data['target_user_id']);
-        if (!$targetUser) {
-            sendResponse(["message" => "Usuario objetivo no encontrado."], 404);
-        }
-
-        // 3. Generar token nuevo (simulado)
-        $token = bin2hex(random_bytes(32));
-
-        sendResponse([
-            "message" => "Impersonación exitosa.",
-            "user" => $targetUser,
-            "token" => $token
-        ], 200);
-    }
-
-    public function search($term) {
-        setApiHeaders();
-        require_once __DIR__ . '/../services/UsuarioManager.php';
-        $manager = new UsuarioManager();
-        $results = $manager->searchUsuarios($term);
-        sendResponse(["users" => $results], 200);
     }
 }

@@ -3,7 +3,7 @@
  */
 
 import { API_BASE_URL } from '../config.js';
-import { authService } from './authService.js';
+import { authService } from './auth.js';
 
 const BASE_URL = `${API_BASE_URL}/canciones.php`;
 
@@ -87,34 +87,6 @@ export async function createCancion(formData) {
 }
 
 /**
- * Actualiza los datos de una canción
- */
-export async function updateCancion(songData) {
-    try {
-        const token = authService.getToken();
-        const isFormData = songData instanceof FormData;
-
-        const headers = {
-            'Authorization': `Bearer ${token}`
-        };
-        if (!isFormData) headers['Content-Type'] = 'application/json';
-
-        const response = await fetch(`${BASE_URL}?action=update`, {
-            method: 'POST',
-            headers: headers,
-            body: isFormData ? songData : JSON.stringify(songData)
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Error al actualizar');
-        return data;
-    } catch (error) {
-        console.error('Update error:', error);
-        throw error;
-    }
-}
-
-/**
  * Da o quita like a una canción
  */
 export async function toggleLike(idCancion) {
@@ -143,20 +115,5 @@ export async function toggleLike(idCancion) {
     } catch (error) {
         console.error('Error al dar like:', error);
         throw error;
-    }
-}
-
-/**
- * Busca canciones por término
- */
-export async function search(term) {
-    try {
-        const response = await fetch(`${BASE_URL}?search=${encodeURIComponent(term)}`);
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Error en búsqueda');
-        return data.canciones || [];
-    } catch (error) {
-        console.error('Search error:', error);
-        return [];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../utils/helper.php';
-require_once __DIR__ . '/../../db/conexion.php';
+require_once __DIR__ . '/../db/conexion.php';
 
 class LikeController {
     private $pdo;
@@ -47,44 +47,5 @@ class LikeController {
         $stmt->execute([$id_cancion]);
         $result = $stmt->fetch();
         sendResponse(["total_likes" => $result['total']]);
-    }
-
-    public function checkLike($id_usuario, $id_cancion) {
-        setApiHeaders();
-        $stmt = $this->pdo->prepare("SELECT id_like FROM LIKE_CANCION WHERE id_usuario = ? AND id_cancion = ?");
-        $stmt->execute([$id_usuario, $id_cancion]);
-        if ($stmt->fetch()) {
-            sendResponse(["liked" => true]);
-        } else {
-            sendResponse(["liked" => false]);
-        }
-    }
-
-    public function getUserLikes($id_usuario) {
-        setApiHeaders();
-        // Check for 'full' param to return song details
-        $full = isset($_GET['full']) && $_GET['full'] === 'true';
-
-        if ($full) {
-            $sql = "SELECT c.*, u.nombre as nombre_usuario 
-                    FROM LIKE_CANCION l
-                    JOIN CANCION c ON l.id_cancion = c.id_cancion
-                    JOIN USUARIO u ON c.id_usuario = u.id_usuario
-                    WHERE l.id_usuario = ?
-                    ORDER BY l.id_like DESC"; 
-             // Note: Changed from fecha_like to id_like as fecha_like might not exist
-            
-            // Checking table structure later. For now assume basic join.
-            // If fecha_like doesn't exist, we can't sort by date liked.
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$id_usuario]);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            sendResponse($result);
-        } else {
-            $stmt = $this->pdo->prepare("SELECT id_cancion FROM LIKE_CANCION WHERE id_usuario = ?");
-            $stmt->execute([$id_usuario]);
-            $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            sendResponse($result);
-        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../utils/helper.php';
-require_once __DIR__ . '/../../db/conexion.php';
+require_once __DIR__ . '/../db/conexion.php';
 
 class PatronRasgueoController {
     private $pdo;

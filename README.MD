@@ -1,56 +1,48 @@
-# ![Rechord Banner](docs/assets/images/RECHORD_HEADER.png) 
+# [Rechord](http://localhost/rechord/frontend/index.html)
 
-# **La plataforma definitiva para músicos.**
+**[Acceder a la Web (Localhost)](http://localhost/rechord/frontend/)**
 
-Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
-![gif](docs/assets/gif/2025-12-10%2017-05-02.gif)
+Rechord es una aplicación web para músicos y amantes de la guitarra que permite subir canciones, añadirles letras y acordes, y visualizarlas de forma dinámica al estilo Musixmatch. Los usuarios pueden organizar canciones en carpetas, seguir a otros músicos, marcar favoritos y editar la sincronización de letras y acordes con el audio. La plataforma combina una interfaz intuitiva con funcionalidades avanzadas para generar y gestionar acordes, facilitando la práctica y creación musical de manera colaborativa.
 
-##  ¿Qué ofrece Rechord?
+## Funcionalidades principales
 
-*   **Sincronización Perfecta:** Nuestro editor te permite alinear letras y acordes milimétricamente con el audio. ¡Como un karaoke profesional, pero mejor!
-*   **Tu Biblioteca en la Nube:** Sube tus MP3, organiza tus carpetas y ten tus canciones siempre a mano.
-*   **Comunidad Vibrante:** Sigue a otros músicos, descubre nuevas canciones y comparte tus creaciones.
-*   **Reproductor Inmersivo:** Disfruta de una experiencia visual única mientras practicas con tu instrumento.
+1. **Gestión de usuarios**
+   - Registro y login seguro con PHP y sesiones.
+   - Seguimiento de otros usuarios.
+   - Carpetas personales para organizar canciones.
+   - Canciones favoritas (likes).
 
----
+2. **Canciones**
+   - Subida de archivos MP3.
+   - Subida o creación de letras.
+   - Creación y vinculación de acordes a estrofas.
+   - Sincronización letra-acorde con audio (lector interactivo tipo karaoke).
+   - Clasificación por artista y nivel (fácil/intermedio/difícil).
+   - Organización en carpetas.
 
-## 🚀 Cómo Empezar (Instalación)
+3. **Acordes**
+   - Creación de acordes propios o importación de existentes.
+   - Vinculación de acordes a canciones y estrofas.
+   - Posibilidad futura de crear tablaturas.
 
-Si eres desarrollador y quieres correr Rechord en tu máquina local, sigue estos sencillos pasos:
+## Base de datos
 
-### Prerrequisitos
-*   **XAMPP** (o cualquier servidor LAMP/WAMP con PHP 8.2+ y MySQL).
-*   **Git**.
+Se utilizará MySQL para gestionar usuarios, canciones, acordes, estrofas, carpetas, likes y relaciones de seguimiento entre usuarios. La estructura incluirá tablas intermedias para relaciones muchos a muchos, como **CancionCarpeta** y **SeguirUsuario**.
 
-### Pasos
-1.  **Clonar el repositorio:**
-    Descarga el código en tu carpeta `htdocs` (normalmente `C:\xampp\htdocs`).
-    ```bash
-    git clone https://github.com/SantanaOlmo/Rechord.git rechordb
-    ```
+## Frontend
 
-2.  **Preparar la Base de Datos:**
-    *   Abre **phpMyAdmin** (`http://localhost/phpmyadmin`).
-    *   Crea una base de datos llamada `rechord`.
-    *   Importa el archivo `rechord.sql` que encontrarás en la raíz del proyecto.
+- SPA en JavaScript consumiendo la API REST en PHP.  
+- Interfaz interactiva para sincronización de letras y acordes.  
+- Diseño responsivo y multimedia (hover, transiciones, audio).  
 
-3.  **Configurar conexión:**
-    Edita el archivo `backend/db/config.php` (si es necesario) para ajustar tu usuario y contraseña de MySQL.
+## Backend
 
-4.  **¡A rockear!**
-    Abre tu navegador y entra en:
-    `http://localhost/rechordb/frontend/index.html`
+- PHP y MySQL.  
+- Endpoints REST en JSON para todas las operaciones CRUD.  
+- Seguridad: contraseñas hasheadas, manejo de sesiones.  
 
----
+## Objetivo
 
-## 📖 Documentación Técnica
+Crear una herramienta **original y funcional** que combine aprendizaje musical, creatividad y socialización, cumpliendo con los requisitos técnicos y de diseño del proyecto intermodular.
 
-¿Quieres saber cómo funciona Rechord por dentro?
-Tenemos una documentación detallada explicando la arquitectura, la base de datos y cada componente del sistema.
-
-👉 **[Ir a la Documentación Técnica](docs/index.md)** 👈
-
----
-
-© 2025 Rechord Team - Proyecto Intermodular

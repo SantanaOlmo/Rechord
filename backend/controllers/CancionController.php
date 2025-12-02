@@ -1,145 +1,179 @@
 <?php
-require_once __DIR__ . '/../services/CancionManager.php';
+require_once __DIR__ . '/../models/Cancion.php';
 require_once __DIR__ . '/../utils/helper.php';
 
 class CancionController {
-    private $manager;
+    private $cancionModel;
 
     public function __construct() {
-        $this->manager = new CancionManager();
-    }
-
-    private function getUserId() {
-        $headers = getallheaders();
-        return $headers['X-User-Id'] ?? null;
+        $this->cancionModel = new Cancion();
     }
 
     public function getCanciones() {
         setApiHeaders();
-        $idUsuario = $this->getUserId();
-        try {
-            if (isset($_GET['search']) && !empty($_GET['search'])) {
-                $canciones = $this->manager->searchCanciones($_GET['search'], $idUsuario);
-            } else {
-                $canciones = $this->manager->getAll($idUsuario);
-            }
-            sendResponse(["canciones" => $canciones]);
-        } catch (Exception $e) {
-            sendResponse(["message" => $e->getMessage()], 500);
+        // Obtener ID de usuario si está autenticado (opcional, pero necesario para is_liked)
+        $idUsuario = null;
+        // En una app real, extraeríamos el token del header Authorization
+        // Por simplicidad, permitiremos pasar id_usuario por query param o header custom
+        // O mejor, si usamos JWT, lo decodificamos.
+        // Asumiremos que el frontend envía 'X-User-Id' por ahora para simplificar sin JWT completo
+        $headers = getallheaders();
+        if (isset($headers['X-User-Id'])) {
+            $idUsuario = $headers['X-User-Id'];
         }
-    }
 
-    public function getHomeData() {
-        setApiHeaders();
-        try {
-            $sections = $this->manager->getHomeSections($this->getUserId());
-            sendResponse(["sections" => $sections]);
-        } catch (Exception $e) {
-            sendResponse(["message" => $e->getMessage()], 500);
-        }
-    }
-
-    public function getCancion($id) {
-        setApiHeaders();
-        $cancion = $this->manager->getById($id);
-        if ($cancion) sendResponse(["cancion" => $cancion]);
-        else sendResponse(["message" => "No encontrada"], 404);
+        $canciones = $this->cancionModel->obtenerTodas($idUsuario);
+        sendResponse(["canciones" => $canciones]);
     }
 
     public function toggleLike($data) {
         setApiHeaders();
         if (!isset($data['id_usuario'], $data['id_cancion'])) {
-            sendResponse(["message" => "Faltan datos"], 400);
+            sendResponse(["message" => "Faltan datos."], 400);
         }
-        $res = $this->manager->toggleLike($data['id_usuario'], $data['id_cancion']);
-        sendResponse(["message" => "Like actualizado", "is_liked" => $res]);
+
+        $isLiked = $this->cancionModel->toggleLike($data['id_usuario'], $data['id_cancion']);
+        sendResponse(["message" => "Like actualizado", "is_liked" => $isLiked]);
     }
 
-    /**
-     * Endpoint: CREAR Canción
-     */
+    public function getCancion($id) {
+        setApiHeaders();
+        $cancion = $this->cancionModel->obtenerPorId($id);
+        if ($cancion) {
+            sendResponse(["cancion" => $cancion]);
+        } else {
+            sendResponse(["message" => "Canción no encontrada"], 404);
+        }
+    }
+
     public function crearCancion($postData, $files) {
         setApiHeaders();
-        try {
-            // Delegamos TODO al Manager: validación, archivos, lógica.
-            $id = $this->manager->uploadCancion($postData, $files, $postData['id_usuario'] ?? null);
-            sendResponse(["message" => "Canción creada exitosamente", "id_cancion" => $id], 201);
-        } catch (Exception $e) {
-            sendResponse(["message" => $e->getMessage()], 400);
+
+        // 1. Validar campos obligatorios
+        if (!isset($postData['id_usuario'], $postData['titulo'], $postData['artista'], $postData['nivel'])) {
+            sendResponse(["message" => "Faltan campos obligatorios (id_usuario, titulo, artista, nivel)"], 400);
+        }
+
+        // 2. Validar Audio (Obligatorio)
+        if (!isset($files['audio_file']) || $files['audio_file']['error'] !== UPLOAD_ERR_OK) {
+            sendResponse(["message" => "No se ha subido ningún archivo de audio o hubo un error en la subida."], 400);
+        }
+
+        $audioFile = $files['audio_file'];
+        $audioExt = strtolower(pathinfo($audioFile['name'], PATHINFO_EXTENSION));
+        $allowedAudio = ['mp3', 'wav', 'ogg'];
+
+        if (!in_array($audioExt, $allowedAudio)) {
+            sendResponse(["message" => "Formato de audio no permitido. Solo mp3, wav, ogg."], 400);
+        }
+
+        // 3. Validar Imagen (Opcional)
+        $rutaImagen = null;
+        if (isset($files['image_file']) && $files['image_file']['error'] === UPLOAD_ERR_OK) {
+            $imageFile = $files['image_file'];
+            $imageExt = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
+            $allowedImages = ['jpg', 'jpeg', 'png'];
+
+            if (!in_array($imageExt, $allowedImages)) {
+                sendResponse(["message" => "Formato de imagen no permitido. Solo jpg, jpeg, png."], 400);
+            }
+            
+            // Procesar imagen
+            $safeImgName = preg_replace('/[^a-zA-Z0-9._-]/', '', basename($imageFile['name']));
+            $imgFileName = time() . '_img_' . $safeImgName;
+            $uploadImgDir = __DIR__ . '/../uploads/images/';
+            
+            if (!is_dir($uploadImgDir)) {
+                mkdir($uploadImgDir, 0755, true);
+            }
+
+            if (move_uploaded_file($imageFile['tmp_name'], $uploadImgDir . $imgFileName)) {
+                $rutaImagen = 'uploads/images/' . $imgFileName;
+            } else {
+                sendResponse(["message" => "Error al guardar la imagen"], 500);
+            }
+        }
+
+        // 4. Procesar Audio
+        $safeAudioName = preg_replace('/[^a-zA-Z0-9._-]/', '', basename($audioFile['name']));
+        $audioFileName = time() . '_' . $safeAudioName;
+        $uploadAudioDir = __DIR__ . '/../uploads/music/';
+        
+        if (!is_dir($uploadAudioDir)) {
+            mkdir($uploadAudioDir, 0755, true);
+        }
+
+        $targetAudioPath = $uploadAudioDir . $audioFileName;
+
+        if (move_uploaded_file($audioFile['tmp_name'], $targetAudioPath)) {
+            $rutaMp3 = 'uploads/music/' . $audioFileName;
+            
+            // 5. Guardar en BD
+            $id = $this->cancionModel->crear(
+                $postData['id_usuario'],
+                $postData['titulo'],
+                $postData['artista'],
+                $postData['nivel'],
+                $rutaMp3,
+                $rutaImagen
+            );
+
+            if ($id) {
+                sendResponse([
+                    "message" => "Canción creada con éxito", 
+                    "id_cancion" => $id, 
+                    "ruta_mp3" => $rutaMp3,
+                    "ruta_imagen" => $rutaImagen
+                ], 201);
+            } else {
+                // Rollback: borrar archivos si falla BD
+                unlink($targetAudioPath);
+                if ($rutaImagen) {
+                    unlink(__DIR__ . '/../' . $rutaImagen);
+                }
+                sendResponse(["message" => "Error al guardar en la base de datos"], 500);
+            }
+        } else {
+            // Si falla mover audio, borrar imagen si se subió
+            if ($rutaImagen) {
+                unlink(__DIR__ . '/../' . $rutaImagen);
+            }
+            sendResponse(["message" => "Error al mover el archivo de audio al servidor"], 500);
         }
     }
 
-    public function actualizarCancion($postData, $files = []) {
+    public function actualizarCancion($data) {
         setApiHeaders();
-        if (!isset($postData['id_cancion'])) sendResponse(["message" => "ID requerido"], 400);
-        
-        try {
-            // Pasamos archivos al Manager para que decida si actualiza o no
-            if ($this->manager->updateCancion($postData['id_cancion'], $postData, $files)) {
-                sendResponse(["message" => "Canción actualizada"]);
-            } else {
-                sendResponse(["message" => "No se pudo actualizar"], 500);
-            }
-        } catch (Exception $e) {
-            sendResponse(["message" => $e->getMessage()], 400);
-        }
+        sendResponse(["message" => "Actualizar canción no implementado"], 501);
     }
 
     public function eliminarCancion($id) {
         setApiHeaders();
-        if ($this->manager->delete($id)) sendResponse(["message" => "Eliminada"]);
-        else sendResponse(["message" => "No se pudo eliminar"], 500);
-    }
-    
-    // --- Home Config Admin ---
+        
+        $cancion = $this->cancionModel->obtenerPorId($id);
+        
+        if (!$cancion) {
+            sendResponse(["message" => "Canción no encontrada"], 404);
+        }
 
-    public function addHomeCategory($data) {
-        setApiHeaders();
-        if ($this->manager->addHomeCategory($data['tipo'], $data['valor'], $data['titulo'], $data['orden'] ?? 99)) {
-            sendResponse(["message" => "Categoría añadida"]);
-        } else sendResponse(["message" => "Error"], 500);
-    }
-
-    public function deleteHomeCategory($id) {
-        setApiHeaders();
-        if ($this->manager->deleteHomeCategory($id)) {
-            sendResponse(["message" => "Categoría eliminada"]);
-        } else sendResponse(["message" => "Error"], 500);
-    }
-
-    public function updateConfigOrder($items) {
-        setApiHeaders();
-        if ($this->manager->updateConfigOrder($items)) {
-            sendResponse(["message" => "Orden actualizado"]);
-        } else sendResponse(["message" => "Error actualizando alguno"], 500);
-    }
-
-    public function getAdminHomeConfigs() {
-        setApiHeaders();
-        // Permission Check (assuming getUserId returns admin info or middleware handles it)
-        // For now, simpler implementation
-        try {
-            $configs = $this->manager->getAllHomeConfigs();
-            sendResponse(["configs" => $configs]);
-        } catch (Exception $e) {
-            sendResponse(["message" => $e->getMessage()], 500);
+        if ($this->cancionModel->eliminar($id)) {
+            // Eliminar audio
+            $audioPath = __DIR__ . '/../' . $cancion['ruta_mp3'];
+            if (file_exists($audioPath)) {
+                unlink($audioPath);
+            }
+            
+            // Eliminar imagen si existe
+            if ($cancion['ruta_imagen']) {
+                $imagePath = __DIR__ . '/../' . $cancion['ruta_imagen'];
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+            
+            sendResponse(["message" => "Canción y archivos eliminados correctamente"]);
+        } else {
+            sendResponse(["message" => "Error al eliminar la canción de la base de datos"], 500);
         }
     }
-
-    public function updateHomeCategory($data) {
-        setApiHeaders();
-        $activo = isset($data['activo']) ? $data['activo'] : null;
-        if ($this->manager->updateHomeCategory($data['id'], $data['tipo'], $data['valor'], $data['titulo'], $activo)) {
-            sendResponse(["message" => "Categoría actualizada"]);
-        } else sendResponse(["message" => "Error"], 500);
-    }
-    
-    public function toggleHomeVisibility($data) {
-        setApiHeaders();
-        $active = isset($data['active']) ? $data['active'] : (isset($data['activo']) ? $data['activo'] : 1);
-        if ($this->manager->toggleHomeVisibility($data['id'], $active)) {
-            sendResponse(["message" => "Visibilidad actualizada"]);
-        } else sendResponse(["message" => "Error"], 500);
-    }
 }
-?>
