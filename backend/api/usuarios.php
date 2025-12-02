@@ -11,7 +11,36 @@ switch($method) {
         else $controller->getUsuarios();
         break;
     case 'POST':
-        $controller->crearUsuario(json_decode(file_get_contents('php://input'), true));
+        // Check for action in GET or POST
+        $action = isset($_GET['action']) ? $_GET['action'] : (isset($_POST['action']) ? $_POST['action'] : null);
+        
+        // If not found, try JSON body
+        if (!$action) {
+            $json = json_decode(file_get_contents('php://input'), true);
+            if ($json && isset($json['action'])) {
+                $action = $json['action'];
+                $data = $json;
+            }
+        }
+
+        if ($action === 'login') {
+            $data = $data ?? json_decode(file_get_contents('php://input'), true);
+            $controller->login($data);
+        } elseif ($action === 'register') {
+            $data = $data ?? json_decode(file_get_contents('php://input'), true);
+            $controller->crearUsuario($data);
+        } elseif ($action === 'update_profile') {
+            // Handle FormData (POST + FILES)
+            $controller->actualizarPerfil($_POST, $_FILES);
+        } else {
+            // Fallback logic
+            $data = $data ?? json_decode(file_get_contents('php://input'), true);
+            if (isset($data['nombre'])) {
+                $controller->crearUsuario($data);
+            } else {
+                $controller->login($data);
+            }
+        }
         break;
     case 'PUT':
         $controller->actualizarUsuario(json_decode(file_get_contents('php://input'), true));

@@ -92,5 +92,31 @@ export const authService = {
      */
     getToken() {
         return localStorage.getItem('rechord_token');
+    },
+
+    async updateProfile(formData) {
+        try {
+            const response = await fetch(`${API_URL}/usuarios.php?action=update_profile`, {
+                method: 'POST',
+                body: formData // FormData sets Content-Type automatically
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al actualizar perfil');
+            }
+
+            const data = await response.json();
+
+            // Update local storage user if returned
+            if (data.user) {
+                localStorage.setItem('rechord_user', JSON.stringify(data.user));
+            }
+
+            return data;
+        } catch (error) {
+            console.error('Update profile error:', error);
+            throw error;
+        }
     }
 };

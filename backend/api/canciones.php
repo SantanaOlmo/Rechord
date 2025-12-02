@@ -10,7 +10,12 @@ switch($method) {
         else $controller->getCanciones();
         break;
     case 'POST':
-        $controller->crearCancion($_POST, $_FILES);
+        if (isset($_GET['action']) && $_GET['action'] === 'toggle_like') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $controller->toggleLike($data);
+        } else {
+            $controller->crearCancion($_POST, $_FILES);
+        }
         break;
     case 'PUT':
         $controller->actualizarCancion(json_decode(file_get_contents('php://input'), true));

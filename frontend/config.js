@@ -6,6 +6,7 @@
  * Usamos la ruta local por defecto.
  */
 export const API_BASE_URL = 'http://localhost/rechord/backend/api';
+export const CONTENT_BASE_URL = 'http://localhost/rechord/backend';
 
 /**
  * Variables del Administrador (Solo para la demostración de la gestión de usuarios).
@@ -16,5 +17,5 @@ export const ADMIN_EMAIL = 'admin@rechord.com';
 
 // Path a los iconos estáticos
 export const ICON_LOGIN = 'assets/icons/MaterialSymbolsLogin.svg';
-export const ICON_LOGOUT = 'assets/icons/MaterialSymbolsLogout.svg'; 
+export const ICON_LOGOUT = 'assets/icons/MaterialSymbolsLogout.svg';
 export const ICON_EDIT = 'assets/icons/MaterialSymbolsEdit.svg';

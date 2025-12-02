@@ -1,0 +1,574 @@
+{
+    "acorde": {
+        "name": "acorde",
+        "columns": [
+            {
+                "field": "id_acorde",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "nombre",
+                "type": "varchar(50)",
+                "key": "UNI",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "descripcion",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "color_hex",
+                "type": "varchar(7)",
+                "key": "",
+                "default": "#3498DB",
+                "extra": ""
+            }
+        ]
+    },
+    "acorde_cejilla": {
+        "name": "acorde_cejilla",
+        "columns": [
+            {
+                "field": "id_cejilla",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_acorde",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "traste",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_inicio",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_fin",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "acorde_digitacion": {
+        "name": "acorde_digitacion",
+        "columns": [
+            {
+                "field": "id_digitacion",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_acorde",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_6",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_5",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_4",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_3",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_2",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "cuerda_1",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "traste_inicial",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": "1",
+                "extra": ""
+            }
+        ]
+    },
+    "acorde_sincronizado": {
+        "name": "acorde_sincronizado",
+        "columns": [
+            {
+                "field": "id_sincronia_acorde",
+                "type": "int(11)",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_cancion",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_acorde",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tiempo_inicio",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tiempo_fin",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "cancion": {
+        "name": "cancion",
+        "columns": [
+            {
+                "field": "id_cancion",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "titulo",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "artista",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "nivel",
+                "type": "varchar(50)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "archivo_mp3",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "fecha_creacion",
+                "type": "timestamp",
+                "key": "",
+                "default": "current_timestamp()",
+                "extra": ""
+            }
+        ]
+    },
+    "cancion_carpeta": {
+        "name": "cancion_carpeta",
+        "columns": [
+            {
+                "field": "id_cancion_carpeta",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_carpeta",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_cancion",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "carpeta": {
+        "name": "carpeta",
+        "columns": [
+            {
+                "field": "id_carpeta",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "nombre",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "configuracion_temporal": {
+        "name": "configuracion_temporal",
+        "columns": [
+            {
+                "field": "id_cancion",
+                "type": "int(11)",
+                "key": "PRI",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tempo_bpm",
+                "type": "smallint(6)",
+                "key": "",
+                "default": "120",
+                "extra": ""
+            },
+            {
+                "field": "metrica_numerador",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": "4",
+                "extra": ""
+            },
+            {
+                "field": "metrica_denominador",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": "4",
+                "extra": ""
+            },
+            {
+                "field": "beat_marker_inicio",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": "0.000",
+                "extra": ""
+            }
+        ]
+    },
+    "estrofa": {
+        "name": "estrofa",
+        "columns": [
+            {
+                "field": "id_estrofa",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_cancion",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "texto",
+                "type": "text",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "orden",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tiempo_inicio_segundos",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "like_cancion": {
+        "name": "like_cancion",
+        "columns": [
+            {
+                "field": "id_like",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_cancion",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "like_carpeta": {
+        "name": "like_carpeta",
+        "columns": [
+            {
+                "field": "id_like_carpeta",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_carpeta",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "patron_rasgueo": {
+        "name": "patron_rasgueo",
+        "columns": [
+            {
+                "field": "id_patron",
+                "type": "int(11)",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "nombre",
+                "type": "varchar(100)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "patron_data",
+                "type": "longtext",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "duracion_pulsos",
+                "type": "tinyint(4)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "rasgueo_sincronizado": {
+        "name": "rasgueo_sincronizado",
+        "columns": [
+            {
+                "field": "id_sincronia_rasgueo",
+                "type": "int(11)",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_cancion",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_patron",
+                "type": "int(11)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tiempo_inicio",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "tiempo_fin",
+                "type": "decimal(10,3)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "seguir_usuario": {
+        "name": "seguir_usuario",
+        "columns": [
+            {
+                "field": "id_seguir",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "id_usuario_seguidor",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "id_usuario_seguido",
+                "type": "int(10) unsigned",
+                "key": "MUL",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    },
+    "usuario": {
+        "name": "usuario",
+        "columns": [
+            {
+                "field": "id_usuario",
+                "type": "int(10) unsigned",
+                "key": "PRI",
+                "default": null,
+                "extra": "auto_increment"
+            },
+            {
+                "field": "nombre",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "email",
+                "type": "varchar(255)",
+                "key": "UNI",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "password_hash",
+                "type": "varchar(255)",
+                "key": "",
+                "default": null,
+                "extra": ""
+            },
+            {
+                "field": "fecha_registro",
+                "type": "timestamp",
+                "key": "",
+                "default": "current_timestamp()",
+                "extra": ""
+            },
+            {
+                "field": "bio",
+                "type": "text",
+                "key": "",
+                "default": null,
+                "extra": ""
+            }
+        ]
+    }
+}

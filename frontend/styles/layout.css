@@ -3,7 +3,7 @@
 #app-root {
     min-height: 60vh;
     padding: 20px;
-    background-color: #25282a; /* Ligeramente más claro que el fondo del body */
+    background-color: var(--bg-secondary);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     margin-bottom: 20px;
@@ -14,7 +14,7 @@ nav {
     justify-content: center;
     gap: 15px;
     padding: 10px 0;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--border-primary);
 }
 
 nav button {
@@ -27,11 +27,12 @@ nav button {
 }
 
 nav button:hover {
-    background-color: var(--color-primary);
+    background-color: var(--accent-primary);
 }
 
 nav img {
     width: 24px;
     height: 24px;
-    filter: invert(1); /* Para iconos oscuros en fondo claro */
+    filter: invert(1);
+    /* Para iconos oscuros en fondo claro */
 }

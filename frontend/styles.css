@@ -1,4 +1,10 @@
+@import url('styles/colors.css');
 @import url('styles/layout.css');
 @import url('styles/base.css');
+@import url('styles/pages/auth.css');
+@import url('styles/pages/home.css');
 @import url('styles/components/auth.css');
+@import url('styles/components/header.css');
+/* Legacy, might remove later if empty */
 @import url('styles/components/editor.css');
+@import url('styles/components/player.css');

@@ -16,13 +16,28 @@
       "usuarios.php": "file"
     },
     "config": {},
-    "controllers": {},
-    "models": {},
-    "utils": {}
+    "controllers": {
+      "AcordeSincronizadoController.php": "file",
+      "CancionController.php": "file",
+      "CarpetaController.php": "file",
+      "LikeController.php": "file",
+      "PatronRasgueoController.php": "file",
+      "SeguirController.php": "file",
+      "UsuarioController.php": "file"
+    },
+    "models": {
+      "Usuario.php": "file"
+    },
+    "utils": {
+      "helper.php": "file"
+    }
   },
   "db": {
     "conexion.php": "file",
-    "config.php": "file"
+    "config.php": "file",
+    "inspect_schema.php": "file",
+    "schema_output.json": "file",
+    "test_db.php": "file"
   },
   "docker-compose.yml": "file",
   "docs": {
@@ -40,19 +55,16 @@
     "11_DB_development.md": "file",
     "assets": {
       "diagrams": {},
-      "icons": {
-        "back.png": "file",
-        "DeviconPlainMysqlWordmark.png": "file",
-        "MaterialIconThemeDocker.png": "file"
-      },
-      "images": {
-        "creacionDB.png": "file"
-      },
+      "icons": {},
+      "images": {},
       "player_style.png": "file",
       "rechord_logos.png": "file",
       "style": {},
       "wireframes": {}
-    }
+    },
+    "database_implementation_tasks.md": "file",
+    "project_structure.json": "file",
+    "README.md": "file"
   },
   "frontend": {
     "assets": {
@@ -68,7 +80,9 @@
         "Rechord_logo.png": "file"
       }
     },
-    "components": {},
+    "components": {
+      "Player.js": "file"
+    },
     "index.html": "file",
     "main.js": "file",
     "manifest.json": "file",
@@ -79,10 +93,29 @@
       "Register.js": "file",
       "SongEditor.js": "file"
     },
-    "services": {},
-    "styles": {},
+    "services": {
+      "acordeService.js": "file",
+      "acordeSincronizadoService.js": "file",
+      "auth.js": "file",
+      "cancionService.js": "file"
+    },
+    "styles": {
+      "base.css": "file",
+      "components": {
+        "auth.css": "file",
+        "editor.css": "file",
+        "player.css": "file"
+      },
+      "layout.css": "file",
+      "pages": {
+        "auth.css": "file",
+        "home.css": "file"
+      }
+    },
+    "styles.css": "file",
     "utils": {}
   },
+  "project_structure.json": "file",
   "README.MD": "file",
   "uploads": {
     "music": {}

@@ -9,47 +9,46 @@ export function Register() {
     }, 0);
 
     return `
-        <div class="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-900 px-4">
-            <div class="max-w-md w-full bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-extrabold text-white">Crea tu cuenta</h2>
-                    <p class="mt-2 text-sm text-gray-400">Únete a ReChord y empieza a sincronizar</p>
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2 class="auth-title">Crea tu cuenta</h2>
+                    <p class="auth-subtitle">Únete a ReChord y empieza a sincronizar</p>
                 </div>
 
-                <form id="register-form" class="space-y-6">
-                    <div>
-                        <label for="username" class="block text-sm font-medium text-gray-300">Nombre de usuario</label>
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Nombre de usuario</label>
                         <input type="text" id="username" name="username" required 
-                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            class="form-input"
                             placeholder="Tu nombre">
                     </div>
 
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-300">Correo electrónico</label>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo electrónico</label>
                         <input type="email" id="email" name="email" required 
-                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            class="form-input"
                             placeholder="tu@email.com">
                     </div>
 
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-300">Contraseña</label>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Contraseña</label>
                         <input type="password" id="password" name="password" required 
-                            class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            class="form-input"
                             placeholder="••••••••">
                     </div>
 
-                    <div id="error-message" class="text-red-500 text-sm text-center hidden"></div>
+                    <div id="error-message" class="error-message hidden"></div>
 
-                    <button type="submit" 
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition transform hover:scale-[1.02]">
+                    <button type="submit" class="btn-primary">
                         Registrarse
                     </button>
                 </form>
 
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-400">
+                <div class="auth-footer">
+                    <p class="auth-footer-text">
                         ¿Ya tienes una cuenta? 
-                        <a href="#/auth/login" onclick="window.navigate('/auth/login'); return false;" class="font-medium text-indigo-400 hover:text-indigo-300 transition">
+                        <a href="#/auth/login" onclick="window.navigate('/auth/login'); return false;" class="link-primary">
                             Inicia sesión aquí
                         </a>
                     </p>

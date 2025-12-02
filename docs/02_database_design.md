@@ -1,17 +1,15 @@
-[![back](assets/icons/back.png)](00_project_overview.md)
+# Database Design
 
-# DataBase
+## Entity Relationship Diagram
 
-## Class diagrams
-
-````mermaid
+```mermaid
 erDiagram
     %% CORE TABLES
     USUARIO {
         int id_usuario PK
         string nombre
         string email
-        string contraseña
+        string password_hash
         datetime fecha_registro
         string bio
     }
@@ -41,11 +39,11 @@ erDiagram
         string descripcion
         varchar color_hex "Color de visualización en el editor"
     }
-    
+
     ACORDE_DIGITACION {
         int id_digitacion PK
         int id_acorde FK
-        int cuerda_6 
+        int cuerda_6
         int cuerda_5
         int cuerda_4
         int cuerda_3
@@ -53,7 +51,7 @@ erDiagram
         int cuerda_1
         int traste_inicial
     }
-    
+
     ACORDE_CEJILLA {
         int id_cejilla PK
         int id_acorde FK
@@ -61,10 +59,10 @@ erDiagram
         int cuerda_inicio
         int cuerda_fin
     }
-    
+
     %% NEW: CONFIGURACION TEMPORAL (Métrica y Tempo)
     CONFIGURACION_TEMPORAL {
-        int id_cancion PK FK "ID de la Canción"
+        int id_cancion PK "ID de la Canción (FK)"
         int tempo_bpm "BPM"
         int metrica_numerador "Pulso superior (ej. 4)"
         int metrica_denominador "Pulso inferior (ej. 4)"
@@ -142,4 +140,13 @@ erDiagram
     PATRON_RASGUEO ||--o{ RASGUEO_SINCRONIZADO : "es usado en"
 
     CARPETA ||--o{ CANCION_CARPETA : "contiene"
-````
+```
+
+## Schema Notes
+
+### Implementation Details
+*   **Passwords**: The `USUARIO` table uses `password_hash` to store securely hashed passwords (e.g., using `password_hash()` in PHP), replacing the insecure `contraseña` field.
+*   **File Storage**: Binary files like MP3s and Images should **NOT** be stored directly in the database. Instead, store them in the server's filesystem (e.g., `uploads/music/`, `uploads/images/`) and save the relative file path in the database columns (e.g., `archivo_mp3` in `CANCION`).
+*   **Additional Tables**:
+    *   `LIKE_CARPETA`: This table exists in the implementation to support liking folders, although it may not be in the high-level diagram. It links `id_usuario` and `id_carpeta`.
+

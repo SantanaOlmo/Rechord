@@ -1,38 +1,30 @@
 <?php
-/**
- * Funciones auxiliares para la API REST de ReChord
- */
+// utils/helper.php
 
-/**
- * Establece los encabezados CORS y de contenido JSON
- * @param string $allowedMethods Métodos HTTP permitidos
- */
-function setApiHeaders($allowedMethods = 'GET, POST, PUT, DELETE, OPTIONS') {
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: ' . $allowedMethods);
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
-    header('Content-Type: application/json; charset=UTF-8');
+function setApiHeaders() {
+    // Permite acceso desde cualquier origen (CORS) - Ajusta esto en producción
+    header("Access-Control-Allow-Origin: *");
+    header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS");
+    header("Access-Control-Max-Age: 3600");
+    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    
+    // Si la petición es OPTIONS (pre-flight check del navegador), terminamos aquí
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
 }
 
-/**
- * Obtiene los datos JSON del cuerpo de la petición
- * @return array|null Datos decodificados o null si hay error
- */
+function sendResponse($data, $code = 200) {
+    http_response_code($code);
+    echo json_encode($data);
+    exit();
+}
+
 function getJsonData() {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
     return $data;
 }
-
-/**
- * Envía una respuesta JSON con el código de estado HTTP
- * @param array $data Datos a enviar
- * @param int $statusCode Código de estado HTTP
- */
-function sendResponse($data, $statusCode = 200) {
-    http_response_code($statusCode);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-
+?>

@@ -36,9 +36,11 @@ export async function getCancionesUsuario() {
         const token = authService.getToken();
         if (!token) throw new Error('No autenticado');
 
+        const user = authService.getCurrentUser();
         const response = await fetch(`${BASE_URL}?action=mis_canciones`, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'X-User-Id': user ? user.id_usuario : ''
             }
         });
 
@@ -80,6 +82,38 @@ export async function createCancion(formData) {
         return data;
     } catch (error) {
         console.error('Error al crear canción:', error);
+        throw error;
+    }
+}
+
+/**
+ * Da o quita like a una canción
+ */
+export async function toggleLike(idCancion) {
+    try {
+        const user = authService.getCurrentUser();
+        if (!user) throw new Error('No autenticado');
+
+        const response = await fetch(`${BASE_URL}?action=toggle_like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id_usuario: user.id_usuario,
+                id_cancion: idCancion
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al dar like');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error al dar like:', error);
         throw error;
     }
 }
