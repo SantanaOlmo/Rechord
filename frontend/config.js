@@ -5,8 +5,8 @@
  * * NOTA: Asegúrate de que esta URL coincida con la configuración de tu servidor (Docker/XAMPP).
  * Usamos la ruta local por defecto.
  */
-export const API_BASE_URL = 'http://localhost/rechord/backend/api';
-export const CONTENT_BASE_URL = 'http://localhost/rechord/backend';
+export const API_BASE_URL = '../backend/api';
+export const CONTENT_BASE_URL = '../backend';
 
 /**
  * Variables del Administrador (Solo para la demostración de la gestión de usuarios).

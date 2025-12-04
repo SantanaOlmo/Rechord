@@ -3,7 +3,7 @@
  */
 
 import { API_BASE_URL } from '../config.js';
-import { authService } from './auth.js';
+import { authService } from './authService.js';
 
 const BASE_URL = `${API_BASE_URL}/canciones.php`;
 

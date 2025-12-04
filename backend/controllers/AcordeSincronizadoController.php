@@ -1,9 +1,5 @@
 <?php
-/**
- * Controlador para gestionar acordes sincronizados con canciones
- */
-
-require_once __DIR__ . '/../db/conexion.php';
+require_once __DIR__ . '/../../db/conexion.php';
 require_once __DIR__ . '/../utils/helper.php';
 
 class AcordeSincronizadoController {

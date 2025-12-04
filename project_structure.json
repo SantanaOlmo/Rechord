@@ -1,123 +1,147 @@
 {
-  ".gitignore": "file",
-  "backend": {
-    "api": {
-      "acordes.php": "file",
-      "acorde_sincronizado.php": "file",
-      "canciones.php": "file",
-      "cancion_carpeta.php": "file",
-      "carpetas.php": "file",
-      "config_temporal.php": "file",
-      "estrofas.php": "file",
-      "likes.php": "file",
-      "patrones.php": "file",
-      "rasgueo_sincronizado.php": "file",
-      "seguir.php": "file",
-      "usuarios.php": "file"
+    ".gitignore": "file",
+    "DEBUGGING_LOG.md": "file",
+    "README.MD": "file",
+    "backend": {
+        "api": {
+            "acorde_sincronizado.php": "file",
+            "acordes.php": "file",
+            "cancion_carpeta.php": "file",
+            "canciones.php": "file",
+            "carpetas.php": "file",
+            "config_temporal.php": "file",
+            "estrofas.php": "file",
+            "likes.php": "file",
+            "patrones.php": "file",
+            "php_errors.log": "file",
+            "rasgueo_sincronizado.php": "file",
+            "seguir.php": "file",
+            "usuarios.php": "file"
+        },
+        "config": {},
+        "controllers": {
+            "AcordeSincronizadoController.php": "file",
+            "CancionController.php": "file",
+            "CarpetaController.php": "file",
+            "EstrofaController.php": "file",
+            "LikeController.php": "file",
+            "PatronRasgueoController.php": "file",
+            "SeguirController.php": "file",
+            "UsuarioController.php": "file"
+        },
+        "models": {
+            "Cancion.php": "file",
+            "Estrofa.php": "file",
+            "Usuario.php": "file"
+        },
+        "uploads": {
+            "avatars": {},
+            "banners": {},
+            "images": {},
+            "music": {}
+        },
+        "utils": {
+            "helper.php": "file"
+        }
     },
-    "config": {},
-    "controllers": {
-      "AcordeSincronizadoController.php": "file",
-      "CancionController.php": "file",
-      "CarpetaController.php": "file",
-      "LikeController.php": "file",
-      "PatronRasgueoController.php": "file",
-      "SeguirController.php": "file",
-      "UsuarioController.php": "file"
+    "db": {
+        "DB_CREATE_ESTROFA.sql": "file",
+        "DB_MIGRATION.sql": "file",
+        "DB_UPDATE_BANNER.sql": "file",
+        "DB_UPDATE_PROFILE.sql": "file",
+        "DB_UPDATE_V2.sql": "file",
+        "conexion.php": "file",
+        "config.php": "file",
+        "inspect_schema.php": "file",
+        "schema_output.json": "file"
     },
-    "models": {
-      "Usuario.php": "file"
+    "docker-compose.yml": "file",
+    "docs": {
+        "00_project_overview.md": "file",
+        "01_project_structure.md": "file",
+        "02_database_design.md": "file",
+        "03_api_reference.md": "file",
+        "04_backend_architecture.md": "file",
+        "05_frontend_architecture.md": "file",
+        "06_ui_ux_design.md": "file",
+        "07_development_setup.md": "file",
+        "08_testing_and_validation.md": "file",
+        "09_future_features.md": "file",
+        "10_UML_diagram.md": "file",
+        "11_DB_development.md": "file",
+        "12_dev_log_nov_2025.md": "file",
+        "README.md": "file",
+        "assets": {},
+        "database_implementation_tasks.md": "file",
+        "project_structure.json": "file"
     },
-    "utils": {
-      "helper.php": "file"
-    }
-  },
-  "db": {
-    "conexion.php": "file",
-    "config.php": "file",
-    "inspect_schema.php": "file",
-    "schema_output.json": "file",
-    "test_db.php": "file"
-  },
-  "docker-compose.yml": "file",
-  "docs": {
-    "00_project_overview.md": "file",
-    "01_project_structure.md": "file",
-    "02_database_design.md": "file",
-    "03_api_reference.md": "file",
-    "04_backend_architecture.md": "file",
-    "05_frontend_architecture.md": "file",
-    "06_ui_ux_design.md": "file",
-    "07_development_setup.md": "file",
-    "08_testing_and_validation.md": "file",
-    "09_future_features.md": "file",
-    "10_UML_diagram.md": "file",
-    "11_DB_development.md": "file",
-    "assets": {
-      "diagrams": {},
-      "icons": {},
-      "images": {},
-      "player_style.png": "file",
-      "rechord_logos.png": "file",
-      "style": {},
-      "wireframes": {}
+    "frontend": {
+        ".htaccess": "file",
+        "app.js": "file",
+        "assets": {
+            "guitar.png": "file",
+            "guitarLogos.png": "file",
+            "icons": {
+                "MaterialSymbolsLogin.svg": "file",
+                "Rechord_logo.png": "file",
+                "back.svg": "file",
+                "create.svg": "file",
+                "pause.svg": "file",
+                "play.svg": "file",
+                "profile.svg": "file"
+            }
+        },
+        "components": {
+            "Player_deprecated.js": "file"
+        },
+        "config.js": "file",
+        "index.html": "file",
+        "manifest.json": "file",
+        "pages": {
+            "HomePage.js": "file",
+            "Login.js": "file",
+            "PlayerPage.js": "file",
+            "Profile.js": "file",
+            "Register.js": "file",
+            "Sincronizador.js": "file"
+        },
+        "reset.js": "file",
+        "services": {
+            "acordeService.js": "file",
+            "acordeSincronizadoService.js": "file",
+            "authService.js": "file",
+            "cancionService.js": "file",
+            "chordService.js": "file",
+            "estrofaService.js": "file",
+            "likeService.js": "file"
+        },
+        "styles": {
+            "base.css": "file",
+            "colors.css": "file",
+            "components": {
+                "header.css": "file"
+            },
+            "layout.css": "file",
+            "pages": {
+                "auth": {
+                    "main.css": "file"
+                },
+                "editor": {
+                    "main.css": "file"
+                },
+                "home": {
+                    "main.css": "file"
+                },
+                "player": {
+                    "main.css": "file"
+                }
+            }
+        },
+        "styles.css": "file",
+        "test_db.html": "file",
+        "utils": {}
     },
-    "database_implementation_tasks.md": "file",
     "project_structure.json": "file",
-    "README.md": "file"
-  },
-  "frontend": {
-    "assets": {
-      "guitar.png": "file",
-      "guitarLogos.png": "file",
-      "icons": {
-        "back.svg": "file",
-        "create.svg": "file",
-        "MaterialSymbolsLogin.svg": "file",
-        "pause.svg": "file",
-        "play.svg": "file",
-        "profile.svg": "file",
-        "Rechord_logo.png": "file"
-      }
-    },
-    "components": {
-      "Player.js": "file"
-    },
-    "index.html": "file",
-    "main.js": "file",
-    "manifest.json": "file",
-    "pages": {
-      "Home.js": "file",
-      "Login.js": "file",
-      "Profile.js": "file",
-      "Register.js": "file",
-      "SongEditor.js": "file"
-    },
-    "services": {
-      "acordeService.js": "file",
-      "acordeSincronizadoService.js": "file",
-      "auth.js": "file",
-      "cancionService.js": "file"
-    },
-    "styles": {
-      "base.css": "file",
-      "components": {
-        "auth.css": "file",
-        "editor.css": "file",
-        "player.css": "file"
-      },
-      "layout.css": "file",
-      "pages": {
-        "auth.css": "file",
-        "home.css": "file"
-      }
-    },
-    "styles.css": "file",
-    "utils": {}
-  },
-  "project_structure.json": "file",
-  "README.MD": "file",
-  "uploads": {
-    "music": {}
-  }
+    "venv": {},
+    "wireframe.html": "file"
 }

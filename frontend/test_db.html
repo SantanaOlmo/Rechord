@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReChord DB Diagnostic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white p-8 font-mono">
+
+    <h1 class="text-3xl font-bold text-green-400 mb-6">🛠️ ReChord Diagnostic Tool</h1>
+
+    <div class="grid grid-cols-2 gap-8">
+
+        <!-- Left Column: Controls -->
+        <div class="space-y-8">
+
+            <!-- 1. Auth Test -->
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 text-blue-400">1. Authentication</h2>
+                <div class="space-y-3">
+                    <input type="email" id="email" placeholder="Email" value="admin@rechord.com"
+                        class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                    <input type="password" id="password" placeholder="Password" value="123456"
+                        class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                    <button onclick="testLogin()"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">
+                        Test Login & Get Token
+                    </button>
+                </div>
+                <div id="auth-status" class="mt-2 text-sm text-gray-400">Not logged in</div>
+            </div>
+
+            <!-- 2. Connection Test -->
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 text-yellow-400">2. DB Connection & Read</h2>
+                <button onclick="testListSongs()"
+                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded">
+                    Fetch All Songs (Requires Token)
+                </button>
+            </div>
+
+            <!-- 3. Upload Test -->
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 text-purple-400">3. Write Test (Upload)</h2>
+                <form id="upload-form" onsubmit="testUpload(event)" class="space-y-3">
+                    <input type="text" name="titulo" placeholder="Song Title" required
+                        class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                    <input type="text" name="artista" placeholder="Artist" required
+                        class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                    <select name="nivel" class="w-full bg-gray-700 p-2 rounded border border-gray-600">
+                        <option value="Principiante">Principiante</option>
+                        <option value="Intermedio">Intermedio</option>
+                        <option value="Avanzado">Avanzado</option>
+                    </select>
+                    <div class="border border-dashed border-gray-600 p-4 rounded text-center">
+                        <label class="block mb-2 text-sm text-gray-400">Audio File (MP3/WAV)</label>
+                        <input type="file" name="audio_file" accept=".mp3,.wav,.ogg" required class="text-sm">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded">
+                        Test Upload
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Console Output -->
+        <div class="bg-black p-4 rounded-lg border border-green-900 h-[80vh] overflow-auto shadow-inner">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-gray-400 text-sm uppercase tracking-wider">Console Output</h3>
+                <button onclick="clearConsole()" class="text-xs text-gray-500 hover:text-white">Clear</button>
+            </div>
+            <pre id="console-output" class="text-xs text-green-500 whitespace-pre-wrap font-mono"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = './backend/api';
+        let authToken = localStorage.getItem('rechord_token_test') || null;
+        let currentUser = null;
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            let color = 'text-green-500';
+            if (type === 'error') color = 'text-red-500';
+            if (type === 'warn') color = 'text-yellow-500';
+
+            const line = `<div class="${color}">[${timestamp}] ${message}</div>`;
+            output.innerHTML += line;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '';
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            log(`Attempting login for ${email}...`);
+
+            try {
+                const response = await fetch(`${API_BASE}/usuarios.php?action=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                log(`Response Status: ${response.status}`);
+
+                const text = await response.text();
+                log(`Raw Response: ${text.substring(0, 200)}...`);
+
+                try {
+                    const data = JSON.parse(text);
+                    if (data.token) {
+                        authToken = data.token;
+                        currentUser = data.user;
+                        localStorage.setItem('rechord_token_test', authToken);
+                        document.getElementById('auth-status').innerHTML = `Logged in as: <span class="text-green-400">${data.user.nombre}</span> (ID: ${data.user.id_usuario})`;
+                        log('✅ Login Successful! Token stored.');
+                    } else {
+                        log('❌ Login Failed: No token received', 'error');
+                    }
+                } catch (e) {
+                    log('❌ Failed to parse JSON response', 'error');
+                }
+
+            } catch (error) {
+                log(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testListSongs() {
+            if (!authToken) {
+                log('⚠️ No token. Please login first.', 'warn');
+                return;
+            }
+
+            log('Fetching songs...');
+
+            try {
+                const response = await fetch(`${API_BASE}/canciones.php?action=mis_canciones`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'X-User-Id': currentUser ? currentUser.id_usuario : ''
+                    }
+                });
+
+                log(`Response Status: ${response.status}`);
+                const data = await response.json();
+
+                if (data.canciones) {
+                    log(`✅ Success! Found ${data.canciones.length} songs.`);
+                    data.canciones.forEach(song => {
+                        log(`   - [${song.id_cancion}] ${song.titulo} (${song.artista})`);
+                    });
+                } else {
+                    log('❓ No songs array in response', 'warn');
+                    log(JSON.stringify(data, null, 2));
+                }
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpload(e) {
+            e.preventDefault();
+            if (!authToken || !currentUser) {
+                log('⚠️ No token or user. Please login first.', 'warn');
+                return;
+            }
+
+            log('Starting upload...');
+            const form = document.getElementById('upload-form');
+            const formData = new FormData(form);
+            formData.append('id_usuario', currentUser.id_usuario);
+
+            try {
+                const response = await fetch(`${API_BASE}/canciones.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                log(`Response Status: ${response.status}`);
+                const text = await response.text();
+                log(`Raw Response: ${text}`);
+
+                try {
+                    const data = JSON.parse(text);
+                    if (data.success || data.id) { // Adjust based on your API success response
+                        log('✅ Upload Successful!');
+                        testListSongs(); // Refresh list
+                    } else {
+                        log('❌ Upload Failed (API returned error)', 'error');
+                    }
+                } catch (e) {
+                    log('❌ Failed to parse JSON response', 'error');
+                }
+
+            } catch (error) {
+                log(`❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Init
+        if (authToken) {
+            log('Found existing token in localStorage.');
+            document.getElementById('auth-status').textContent = 'Token found (Session might be active)';
+        }
+    </script>
+</body>
+
+</html>

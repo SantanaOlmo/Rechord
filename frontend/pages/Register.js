@@ -1,4 +1,4 @@
-import { authService } from '../services/auth.js';
+import { authService } from '../services/authService.js';
 
 export function Register() {
     setTimeout(() => {
