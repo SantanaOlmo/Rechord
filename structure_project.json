@@ -92,7 +92,21 @@
       }
     },
     "components": {
-      "Player_deprecated.js": "file"
+      "ChordsPanel.js": "file",
+      "DashboardHeader.js": "file",
+      "EditProfileModal.js": "file",
+      "LoginForm.js": "file",
+      "LyricsPanel.js": "file",
+      "NewSongModal.js": "file",
+      "PlayerControls.js": "file",
+      "PlayerHeader.js": "file",
+      "Player_deprecated.js": "file",
+      "ProfileBio.js": "file",
+      "ProfileHeader.js": "file",
+      "RegisterForm.js": "file",
+      "SongCard.js": "file",
+      "SongGrid.js": "file",
+      "StrummingPanel.js": "file"
     },
     "config.js": "file",
     "index.html": "file",
