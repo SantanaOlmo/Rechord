@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../utils/helper.php';
-require_once __DIR__ . '/../db/conexion.php';
+require_once __DIR__ . '/../../db/conexion.php';
 
 class LikeController {
     private $pdo;
@@ -47,5 +47,24 @@ class LikeController {
         $stmt->execute([$id_cancion]);
         $result = $stmt->fetch();
         sendResponse(["total_likes" => $result['total']]);
+    }
+
+    public function checkLike($id_usuario, $id_cancion) {
+        setApiHeaders();
+        $stmt = $this->pdo->prepare("SELECT id_like FROM LIKE_CANCION WHERE id_usuario = ? AND id_cancion = ?");
+        $stmt->execute([$id_usuario, $id_cancion]);
+        if ($stmt->fetch()) {
+            sendResponse(["liked" => true]);
+        } else {
+            sendResponse(["liked" => false]);
+        }
+    }
+
+    public function getUserLikes($id_usuario) {
+        setApiHeaders();
+        $stmt = $this->pdo->prepare("SELECT id_cancion FROM LIKE_CANCION WHERE id_usuario = ?");
+        $stmt->execute([$id_usuario]);
+        $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        sendResponse($result); // Returns array of song IDs
     }
 }

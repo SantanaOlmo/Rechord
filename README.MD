@@ -2,6 +2,8 @@
 
 **[Acceder a la Web (Localhost)](http://localhost/rechord/frontend/)**
 
+**[Acceder al Sincronizador (Ejemplo)](http://localhost/rechord/frontend/#/sincronizador/1)**
+
 
 Rechord es una aplicación web para músicos y amantes de la guitarra que permite subir canciones, añadirles letras y acordes, y visualizarlas de forma dinámica al estilo Musixmatch. Los usuarios pueden organizar canciones en carpetas, seguir a otros músicos, marcar favoritos y editar la sincronización de letras y acordes con el audio. La plataforma combina una interfaz intuitiva con funcionalidades avanzadas para generar y gestionar acordes, facilitando la práctica y creación musical de manera colaborativa.
 
@@ -45,4 +47,3 @@ Se utilizará MySQL para gestionar usuarios, canciones, acordes, estrofas, carpe
 ## Objetivo
 
 Crear una herramienta **original y funcional** que combine aprendizaje musical, creatividad y socialización, cumpliendo con los requisitos técnicos y de diseño del proyecto intermodular.
-

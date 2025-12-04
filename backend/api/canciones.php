@@ -1,6 +1,14 @@
 <?php
 require_once '../controllers/CancionController.php';
 
+// Desactiva la visualización de errores en la salida (Frontend)
+ini_set('display_errors', 0);
+// Asegura que todos los errores se registren en el log (Backend)
+ini_set('log_errors', 1);
+// Log to a file in the same directory for easy access
+ini_set('error_log', __DIR__ . '/php_errors.log');
+error_reporting(E_ALL);
+
 $controller = new CancionController();
 $method = $_SERVER['REQUEST_METHOD'];
 

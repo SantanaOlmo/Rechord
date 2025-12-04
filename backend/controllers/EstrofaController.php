@@ -43,6 +43,7 @@ class EstrofaController {
 
     public function actualizarEstrofa($data) {
         setApiHeaders();
+<<<<<<< HEAD
         
         // Check for Bulk Update (Array)
         if (isset($data[0]) && is_array($data[0])) {
@@ -61,6 +62,8 @@ class EstrofaController {
         }
 
         // Single Update
+=======
+>>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)
         if (!isset($data['id_estrofa'])) {
             sendResponse(["message" => "Falta id_estrofa"], 400);
         }

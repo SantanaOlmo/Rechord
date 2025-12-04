@@ -31,39 +31,6 @@ class Usuario {
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($usuario && password_verify($password, $usuario['password_hash'])) {
-<?php
-require_once __DIR__ . '/../../db/conexion.php';
-
-class Usuario {
-    private $pdo;
-
-    public function __construct() {
-        $conexion = Conexion::obtenerInstancia();
-        $this->pdo = $conexion->obtenerPDO();
-    }
-
-    public function registrar($nombre, $email, $password) {
-        $stmt = $this->pdo->prepare("SELECT id_usuario FROM USUARIO WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->fetch()) {
-            return 'duplicate_email';
-        }
-
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-        $stmt = $this->pdo->prepare("INSERT INTO USUARIO (nombre, email, password_hash) VALUES (?, ?, ?)");
-        if ($stmt->execute([$nombre, $email, $passwordHash])) {
-            return $this->pdo->lastInsertId();
-        }
-        return false;
-    }
-
-    public function login($email, $password) {
-        $stmt = $this->pdo->prepare("SELECT * FROM USUARIO WHERE email = ?");
-        $stmt->execute([$email]);
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($usuario && password_verify($password, $usuario['password_hash'])) {
             unset($usuario['password_hash']);
             return $usuario;
         }

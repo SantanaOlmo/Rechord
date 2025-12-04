@@ -1,4 +1,4 @@
-import { authService } from '../services/auth.js';
+import { authService } from '../services/authService.js';
 import { CONTENT_BASE_URL } from '../config.js';
 
 /**

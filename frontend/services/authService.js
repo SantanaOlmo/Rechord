@@ -120,6 +120,7 @@ export const authService = {
             console.error('Update profile error:', error);
             throw error;
         }
+<<<<<<< HEAD
     },
 
     isAdmin() {
@@ -166,5 +167,7 @@ export const authService = {
             console.error('Impersonate error:', error);
             throw error;
         }
+=======
+>>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)
     }
 };

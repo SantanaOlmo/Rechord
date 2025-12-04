@@ -1,10 +1,52 @@
 @import url('styles/colors.css');
 @import url('styles/layout.css');
 @import url('styles/base.css');
-@import url('styles/pages/auth.css');
-@import url('styles/pages/home.css');
-@import url('styles/components/auth.css');
 @import url('styles/components/header.css');
-/* Legacy, might remove later if empty */
-@import url('styles/components/editor.css');
-@import url('styles/components/player.css');
+
+/* Pages */
+@import url('styles/pages/auth/main.css');
+@import url('styles/pages/home/main.css');
+@import url('styles/pages/player/main.css');
+@import url('styles/pages/editor/main.css');
+
+/* Custom Scrollbar Hiding */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Gradient Mask for Lyrics */
+.mask-image-gradient {
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+/* Range Slider Styling */
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #4B5563;
+    border-radius: 2px;
+}

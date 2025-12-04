@@ -1,6 +1,7 @@
 <?php
 require_once '../controllers/CarpetaController.php';
 
+<<<<<<< HEAD
 // Configuración de errores
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
@@ -17,6 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+=======
+// Desactiva la visualización de errores en la salida (Frontend)
+ini_set('display_errors', 0);
+// Asegura que todos los errores se registren en el log (Backend)
+ini_set('log_errors', 1);
+// Log to a file in the same directory for easy access
+ini_set('error_log', __DIR__ . '/php_errors.log');
+error_reporting(E_ALL);
+>>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)
 $controller = new CarpetaController();
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? null;
