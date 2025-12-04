@@ -2,10 +2,10 @@
 
 # 📂 Estructura General
 
-La raíz del proyecto (`rechord/`) contiene los archivos de configuración de infraestructura (`Docker`) y las carpetas principales de código.
+La raíz del proyecto (`rechordb/`) contiene los archivos de configuración de infraestructura (`Docker`) y las carpetas principales de código.
 
 ```plaintext
-rechord/
+rechordb/
 │
 ├─ backend/                           \# Servidor PHP (API REST) - Lógica de Negocio
 │  ├─ api/                            \# Endpoints PHP que reciben peticiones y las dirigen al Controller.

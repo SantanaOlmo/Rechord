@@ -112,7 +112,8 @@
       "authService.js": "file",
       "cancionService.js": "file",
       "chordService.js": "file",
-      "estrofaService.js": "file"
+      "estrofaService.js": "file",
+      "likeService.js": "file"
     },
     "styles": {
       "base.css": "file",
