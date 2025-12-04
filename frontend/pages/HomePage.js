@@ -2,6 +2,10 @@ import { authService } from '../services/authService.js';
 import { getCancionesUsuario, createCancion } from '../services/cancionService.js';
 import { likeService } from '../services/likeService.js';
 import { CONTENT_BASE_URL } from '../config.js';
+import { DashboardHeader } from '../components/DashboardHeader.js';
+import { SongGrid } from '../components/SongGrid.js';
+import { SongCard } from '../components/SongCard.js';
+import { NewSongModal } from '../components/NewSongModal.js';
 
 export function Home() {
     const user = authService.getCurrentUser();
@@ -14,91 +18,13 @@ export function Home() {
 
     return `
         <div class="dashboard-container">
-            <!-- Header -->
-            <div class="dashboard-header">
-                <div class="header-content">
-                    <div class="header-title">
-                        <h1>Mis Proyectos</h1>
-                        <p>Hola, ${user?.nombre || 'Usuario'}</p>
-                    </div>
-                    <div class="header-actions">
-                        <button id="btn-new-song" class="btn-new-song">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Nueva Canción
-                        </button>
-                    </div>
-                </div>
-            </div>
+            ${DashboardHeader(user)}
 
-            <!-- Content -->
             <main class="dashboard-main">
-                <!-- Loading State -->
-                <div id="loading-songs" class="loading-state">
-                    <svg class="animate-spin h-10 w-10 text-indigo-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <p class="text-gray-400">Cargando tus canciones...</p>
-                </div>
-
-                <!-- Empty State -->
-                <div id="empty-state" class="empty-state hidden">
-                    <div class="empty-icon">
-                        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-medium text-white mb-2">No tienes canciones aún</h3>
-                    <p class="text-gray-400 mb-6">Sube tu primera canción para empezar a sincronizar acordes.</p>
-                    <button onclick="document.getElementById('btn-new-song').click()" class="link-primary">Crear mi primera canción &rarr;</button>
-                </div>
-
-                <!-- Grid de Canciones -->
-                <div id="songs-grid" class="songs-grid hidden">
-                    <!-- Las tarjetas se insertarán aquí -->
-                </div>
+                ${SongGrid()}
             </main>
 
-            <!-- Modal Nueva Canción -->
-            <div id="new-song-modal" class="modal-overlay hidden">
-                <div class="modal-content" id="modal-content">
-                    <h3 class="modal-title">Nueva Canción</h3>
-                    <form id="new-song-form" class="space-y-4">
-                        <div class="form-group">
-                            <label class="form-label">Título</label>
-                            <input type="text" name="titulo" required class="form-input" placeholder="Ej: Wonderwall">
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="form-group">
-                                <label class="form-label">Artista</label>
-                                <input type="text" name="artista" required class="form-input" placeholder="Ej: Oasis">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Nivel</label>
-                                <select name="nivel" class="form-input">
-                                    <option value="Principiante">Principiante</option>
-                                    <option value="Intermedio">Intermedio</option>
-                                    <option value="Avanzado">Avanzado</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Archivo de Audio (MP3, WAV, OGG)</label>
-                            <div id="drop-zone" class="drop-zone border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200">
-                                <input type="file" name="audio_file" accept=".mp3,.wav,.ogg" required class="hidden">
-                                <p class="text-gray-400">Arrastra tu archivo de audio aquí o haz clic para seleccionar</p>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Portada (Opcional)</label>
-                            <input type="file" name="image_file" accept="image/*" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
-                        </div>
-
-                        <div class="modal-actions">
-                            <button type="button" id="btn-cancel-modal" class="btn-cancel">Cancelar</button>
-                            <button type="submit" class="btn-primary" style="width: auto;">Crear Canción</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            ${NewSongModal()}
         </div>
     `;
 }
@@ -132,51 +58,9 @@ async function loadSongs() {
 function renderSongs(songs, likedSongIds = []) {
     const grid = document.getElementById('songs-grid');
     grid.innerHTML = songs.map(song => {
-        // Construir URL completa de la imagen si existe
-        const imageUrl = song.ruta_imagen
-            ? `${CONTENT_BASE_URL}/${song.ruta_imagen}`
-            : null;
-
         const isLiked = likedSongIds.includes(song.id_cancion);
-
-        return `
-        <div class="song-card group">
-            <div class="card-image">
-                ${imageUrl
-                ? `<img src="${imageUrl}" alt="${song.titulo}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">`
-                : `<svg class="w-12 h-12 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>`
-            }
-                
-                <!-- Like Button -->
-                <button class="like-btn" onclick="event.stopPropagation(); toggleLike(${song.id_cancion}, this)" title="${isLiked ? 'Quitar like' : 'Dar like'}">
-                    <svg class="w-6 h-6 ${isLiked ? 'text-red-500 opacity-100' : 'text-black opacity-50 hover:opacity-80'}" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
-                </button>
-
-                <!-- Play Overlay -->
-                <div class="play-overlay" onclick="playSong(${song.id_cancion})">
-                    <div class="play-icon-circle">
-                        <svg class="w-6 h-6 text-indigo-600 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card-content">
-                <div>
-                    <h3 class="song-title" title="${song.titulo}">${song.titulo}</h3>
-                    <p class="song-artist" title="${song.artista}">${song.artista || 'Artista desconocido'}</p>
-                </div>
-                
-                <div class="card-footer">
-                    <span class="song-meta">4/4 • 120 BPM</span>
-                    <a href="#/songeditor/${song.id_cancion}" onclick="window.navigate('/songeditor/${song.id_cancion}'); return false;" class="btn-edit">
-                        Editar <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    `}).join('');
+        return SongCard(song, isLiked);
+    }).join('');
 
     // Exponer función global para el onclick
     window.playSong = (id) => {

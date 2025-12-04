@@ -1,6 +1,11 @@
 import { getCancion } from '../services/cancionService.js';
 import { getEstrofas } from '../services/estrofaService.js';
 import { CONTENT_BASE_URL } from '../config.js';
+import { PlayerHeader } from '../components/PlayerHeader.js';
+import { PlayerControls } from '../components/PlayerControls.js';
+import { LyricsPanel } from '../components/LyricsPanel.js';
+import { ChordsPanel } from '../components/ChordsPanel.js';
+import { StrummingPanel } from '../components/StrummingPanel.js';
 
 let audio = null;
 let isPlaying = false;
@@ -19,99 +24,16 @@ export function PlayerPage(id) {
     // Initial Skeleton/Loading UI
     const html = `
         <div class="player-page-container h-screen flex flex-col bg-gray-900 text-white overflow-hidden relative">
-            <!-- Header -->
-            <header class="absolute top-0 left-0 w-full p-4 z-10 flex items-center">
-                <a href="#/" class="text-white hover:text-green-400 transition">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </a>
-            </header>
+            ${PlayerHeader()}
 
             <!-- Main Content Area -->
             <main class="flex-1 flex relative">
-                
-                <!-- Left: Chords (Piano/Guitar diagrams) -->
-                <div id="chords-panel" class="w-1/4 p-6 flex flex-col items-center justify-center transition-opacity duration-300 ${showChords ? 'opacity-100' : 'opacity-0'}">
-                    <!-- Placeholder for dynamic chords -->
-                    <div class="chord-box bg-green-800/50 p-4 rounded-xl mb-4 border-2 border-green-500">
-                        <h3 class="text-2xl font-bold text-green-300 text-center mb-2">Cm</h3>
-                        <div class="w-24 h-24 bg-gray-800 rounded flex items-center justify-center text-xs text-gray-500">
-                            (Diagrama)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Center: Lyrics -->
-                <div class="w-2/4 flex flex-col items-center justify-center p-4">
-                    <div id="lyrics-container" class="text-center space-y-6 max-h-[60vh] overflow-y-auto no-scrollbar mask-image-gradient">
-                        <!-- Placeholder Lyrics -->
-                        <p class="text-gray-500 text-xl">Cargando canción...</p>
-                    </div>
-                </div>
-
-                <!-- Right: Strumming Patterns -->
-                <div class="w-1/4 p-6 flex flex-col items-center justify-center">
-                    <div class="strumming-box opacity-50">
-                        <div class="flex space-x-2 text-green-400 text-3xl">
-                            <span>↓</span><span>↓</span><span class="opacity-50">↑</span><span>↓</span>
-                        </div>
-                    </div>
-                </div>
-
+                ${ChordsPanel(showChords)}
+                ${LyricsPanel()}
+                ${StrummingPanel()}
             </main>
 
-            <!-- Footer Controls -->
-            <div class="bg-gray-900/90 backdrop-blur-md p-6 pb-8 border-t border-gray-800">
-                
-                <!-- Progress -->
-                <div class="flex items-center space-x-4 mb-4">
-                    <span id="current-time" class="text-xs text-gray-400 w-10 text-right">0:00</span>
-                    <div class="flex-1 h-1 bg-gray-700 rounded-full cursor-pointer group relative" id="progress-bar">
-                        <div id="progress-fill" class="absolute top-0 left-0 h-full bg-green-500 rounded-full w-0"></div>
-                        <div id="progress-handle" class="absolute top-1/2 -mt-1.5 h-3 w-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity" style="left: 0%"></div>
-                    </div>
-                    <span id="total-time" class="text-xs text-gray-400 w-10">0:00</span>
-                </div>
-
-                <!-- Main Buttons -->
-                <div class="flex items-center justify-between max-w-3xl mx-auto">
-                    
-                    <!-- Left Actions -->
-                    <div class="flex items-center space-x-6">
-                        <button class="text-gray-400 hover:text-white" title="Volver">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                        </button>
-                        <button id="btn-font-size" class="text-gray-400 hover:text-white font-serif font-bold text-xl" title="Tamaño Letra">Aa</button>
-                    </div>
-
-                    <!-- Playback Controls -->
-                    <div class="flex items-center space-x-8">
-                        <button class="text-gray-400 hover:text-white">
-                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                        </button>
-                        
-                        <button id="btn-play" class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white hover:bg-indigo-500 shadow-lg hover:scale-105 transition transform">
-                            <svg id="icon-play" class="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            <svg id="icon-pause" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                        </button>
-
-                        <button class="text-gray-400 hover:text-white">
-                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-                        </button>
-                    </div>
-
-                    <!-- Right Actions -->
-                    <div class="flex items-center space-x-6">
-                        <button id="btn-toggle-chords" class="text-gray-400 hover:text-green-400 ${showChords ? 'text-green-400' : ''}" title="Mostrar/Ocultar Acordes">
-                            <!-- Piano Icon -->
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5.6 16H13v-9h1.4v9zm-2.8 0H10.2v-9h1.4v9zm-2.8 0H7.4v-9h1.4v9zm8.4 0h-1.4v-9h1.4v9z"/></svg>
-                        </button>
-                        <a href="#/sincronizador/${id}" class="text-gray-400 hover:text-white" title="Editar Canción">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
+            ${PlayerControls(id, showChords)}
         </div>
     `;
 
