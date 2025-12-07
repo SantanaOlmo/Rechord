@@ -20,7 +20,7 @@
                 "Usuario.php"
             ],
             "services": [
-                "CancionService.php"
+                "CancionManager.php"
             ],
             "api": [
                 "auth.php",
