@@ -262,7 +262,28 @@ function router() {
 
     // 2.5. Route Guard (Protección de rutas)
     const isAuthenticated = authService.isAuthenticated();
-    const isAdmin = authService.isAdmin();
+    // Check for Profile route (e.g., /profile/123)
+    const profileMatch = path.match(/^\/profile(?:\/(\d+))?/);
+    if (profileMatch) {
+        // If exact match /profile, let it fall through to static routes if mapped, 
+        // BUT standardizing on regex handling for consistency if we want arguments.
+        // If path is exactly /profile, profileMatch[1] is undefined.
+        // If path is /profile/123, profileMatch[1] is 123.
+
+        // If it is just /profile, we can treat it as current user or fall through.
+        // Let's handle it here to be explicit.
+        const profileId = profileMatch[1] ? parseInt(profileMatch[1]) : null;
+
+        // If valid ID or plain profile
+        if (path.startsWith('/profile')) {
+            console.log('Navegando a Perfil:', profileId || 'Propio');
+            // We need to wait for Profile events? Profile exports attachProfileEvents.
+            // Standard way:
+            appRoot.innerHTML = Profile(profileId ? { id_usuario: profileId } : null); // null means "me"
+            attachProfileEvents();
+            return;
+        }
+    }
 
     const publicRoutes = ['/auth/login', '/auth/register'];
 
