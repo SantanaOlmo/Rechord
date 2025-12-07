@@ -50,16 +50,20 @@ export function SongCard(song, isLiked) {
 
             <!-- Admin Edit Button -->
             ${isAdmin ? `
-            <button class="absolute top-2 left-2 p-1.5 bg-black/60 backdrop-blur-sm rounded-full text-white hover:bg-indigo-500 hover:text-white transition z-20"
-                onclick="event.stopPropagation(); window.openEditModal(${song.id_cancion})" title="Editar Propiedades">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            </button>
+            <div class="absolute top-2 left-2 flex flex-col items-center z-20">
+                <button class="p-1.5 bg-black/40 backdrop-blur-sm rounded-full text-white hover:bg-indigo-500 hover:text-white transition"
+                    onclick="event.stopPropagation(); window.openEditModal(${song.id_cancion})" title="Editar Propiedades">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </button>
+            </div>
             ` : ''}
 
             <!-- Play Overlay -->
             <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer backdrop-blur-[2px]" onclick="playSong(${song.id_cancion})">
-                <div class="bg-indigo-600 rounded-full p-3 shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
-                    <img src="${ICON_PLAY}" alt="Play" class="w-6 h-6 ml-1 filter invert">
+                <div class="bg-white rounded-full p-3 shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                    <svg class="w-6 h-6 ml-1 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
                 </div>
             </div>
         </div>

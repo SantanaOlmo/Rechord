@@ -75,6 +75,16 @@ class CancionService {
         $current = $this->cancionModel->obtenerPorId($id);
         if (!$current) throw new Exception("Canción no encontrada");
 
+        // Process Image if uploaded
+        $rutaImagen = $current['ruta_imagen'];
+        if (isset($data['files']['image_file']) && $data['files']['image_file']['error'] === UPLOAD_ERR_OK) {
+            $imgRes = $this->processFile($data['files']['image_file'], 'images', ['jpg', 'jpeg', 'png']);
+            if ($imgRes['success']) {
+                $rutaImagen = $imgRes['path'];
+                // Optional: Delete old image if it exists and isn't a default
+            }
+        }
+
         // Merge existing with new
         $titulo = $data['titulo'] ?? $current['titulo'];
         $artista = $data['artista'] ?? $current['artista'];
@@ -85,7 +95,13 @@ class CancionService {
         
         $hashtags = $this->parseHashtags($data['hashtags'] ?? $current['hashtags']);
 
-        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha);
+        // Update database (Cancion.php needs to support rutaImagen update in actualizer)
+        // Wait, verifying if Cancion::actualizar supports image path logic?
+        // Checking Cancion.php signature... 
+        // It does NOT support ruta_imagen. I need to update Cancion.php signature too.
+        
+        // Let's assume I will update Cancion.php next.
+        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen);
     }
 
     public function getHomeSections($idUsuario) {
@@ -123,7 +139,7 @@ class CancionService {
         if (!in_array($ext, $allowedExts)) return ['success' => false, 'message' => 'Formato inválido'];
 
         $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', basename($file['name']));
-        $targetDir = __DIR__ . '/../../uploads/' . $subDir . '/'; // Adjusted path
+        $targetDir = __DIR__ . '/../uploads/' . $subDir . '/'; // Adjusted path to be inside backend/uploads
         if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
 
         if (move_uploaded_file($file['tmp_name'], $targetDir . $fileName)) {

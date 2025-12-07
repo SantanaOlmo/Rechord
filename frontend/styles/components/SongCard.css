@@ -27,11 +27,9 @@
 }
 
 .like-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    z-index: 10;
+    /* Position handled by parent utility classes */
     background: transparent;
+    /* Note: HTML classes might override this if specificity allows, but verifying: HTML has bg-black/40. */
     border: none;
     cursor: pointer;
     transition: transform 0.2s;

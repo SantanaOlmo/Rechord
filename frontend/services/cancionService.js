@@ -144,13 +144,17 @@ export async function getHomeData() {
 export async function updateCancion(songData) {
     try {
         const token = authService.getToken();
+        const isFormData = songData instanceof FormData;
+
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        };
+        if (!isFormData) headers['Content-Type'] = 'application/json';
+
         const response = await fetch(`${BASE_URL}?action=update`, {
-            method: 'POST', // Using POST with action param to avoid PUT issues if using PHP input stream, though we implemented input stream reading
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(songData)
+            method: 'POST',
+            headers: headers,
+            body: isFormData ? songData : JSON.stringify(songData)
         });
 
         const data = await response.json();
