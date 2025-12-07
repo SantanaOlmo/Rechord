@@ -2,7 +2,7 @@ import { authService } from '../services/authService.js';
 import { getCancionesUsuario, createCancion, getHomeData, getCancion, updateCancion } from '../services/cancionService.js';
 import { likeService } from '../services/likeService.js';
 import { CONTENT_BASE_URL } from '../config.js';
-import { DashboardHeader, initUnifiedSearch } from '../components/DashboardHeader.js';
+
 import { SongCard } from '../components/SongCard.js?v=fixed';
 import { NewSongModal } from '../components/NewSongModal.js';
 import { EditSongModal } from '../components/EditSongModal.js';
@@ -25,7 +25,7 @@ export function Home() {
             ${FolderSidebar()}
 
             <div class="flex-1 flex flex-col h-full relative overflow-hidden">
-                ${DashboardHeader(user)}
+                <!-- Header is now Global in app.js -->
                 
                 <main class="flex-1 overflow-y-auto bg-gray-900 p-6 pb-24 scrollbar-hide">
                     <div id="loading-home" class="text-center py-10">
@@ -126,14 +126,11 @@ async function loadHomeContent() {
     }
 }
 
-import { DashboardHeader, initUnifiedSearch } from '../components/DashboardHeader.js';
 
 // ... (existing imports)
 
-function setupEventListeners() {
-    // Init Unified Search
-    initUnifiedSearch();
 
+function setupEventListeners() {
     // === NEW SONG MODAL ===
     const modal = document.getElementById('new-song-modal');
     const modalContent = document.getElementById('modal-content');

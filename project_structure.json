@@ -52,7 +52,7 @@
                 "LyricsPanel.js",
                 "ChordsPanel.js",
                 "StrummingPanel.js",
-                "DashboardHeader.js"
+                "StrummingPanel.js"
             ],
             "pages": [
                 "HomePage.js",
