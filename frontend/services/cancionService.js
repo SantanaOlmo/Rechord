@@ -117,3 +117,117 @@ export async function toggleLike(idCancion) {
         throw error;
     }
 }
+
+/**
+ * Obtiene los datos para la Home Page (secciones configuradas)
+ */
+export async function getHomeData() {
+    try {
+        const user = authService.getCurrentUser();
+        const headers = {};
+        if (user) headers['X-User-Id'] = user.id_usuario;
+
+        const response = await fetch(`${BASE_URL}?action=home_data`, { headers });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Error al obtener datos');
+        return data.sections || [];
+    } catch (error) {
+        console.error('Error loading home data:', error);
+        throw error;
+    }
+}
+
+/**
+ * Actualiza los datos de una canción
+ */
+export async function updateCancion(songData) {
+    try {
+        const token = authService.getToken();
+        const response = await fetch(`${BASE_URL}?action=update`, {
+            method: 'POST', // Using POST with action param to avoid PUT issues if using PHP input stream, though we implemented input stream reading
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(songData)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Error al actualizar');
+        return data;
+    } catch (error) {
+        console.error('Update error:', error);
+        throw error;
+    }
+}
+
+/**
+ * Admin: Añadir categoría a Home
+ */
+export async function addHomeCategory(categoryData) {
+    try {
+        const token = authService.getToken();
+        const response = await fetch(`${BASE_URL}?action=add_category`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(categoryData)
+        });
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * Admin: Eliminar categoría
+ */
+export async function deleteHomeCategory(idConfig) {
+    try {
+        const token = authService.getToken();
+        const response = await fetch(`${BASE_URL}?action=delete_category&id=${idConfig}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * Admin: Actualizar orden de categorías
+ */
+export async function updateHomeConfigOrder(items) {
+    try {
+        const token = authService.getToken();
+        const response = await fetch(`${BASE_URL}?action=update_config_order`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ items })
+        });
+        return await response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+/**
+ * Busca canciones por término
+ */
+export async function search(term) {
+    try {
+        const response = await fetch(`${BASE_URL}?search=${encodeURIComponent(term)}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Error en búsqueda');
+        return data.canciones || [];
+    } catch (error) {
+        console.error('Search error:', error);
+        return [];
+    }
+}

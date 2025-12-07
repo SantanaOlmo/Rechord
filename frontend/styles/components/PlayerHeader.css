@@ -1,0 +1,20 @@
+/* Player Header Styles */
+.player-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+}
+
+.player-header a {
+    color: white;
+    transition: color 0.2s;
+}
+
+.player-header a:hover {
+    color: var(--green-400);
+}

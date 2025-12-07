@@ -7,17 +7,19 @@ import { LyricsPanel } from '../components/LyricsPanel.js';
 import { ChordsPanel } from '../components/ChordsPanel.js';
 import { StrummingPanel } from '../components/StrummingPanel.js';
 
-let audio = null;
+import { audioService } from '../services/audioService.js';
+
 let isPlaying = false;
 let currentSong = null;
 let showChords = true; // Piano toggle state
 
 export function PlayerPage(id) {
     // Reset state on new load
-    if (audio) {
-        audio.pause();
-        audio = null;
-    }
+    // audioService.stop(); // Optional: Stop previous song or keep playing? User wants continuity? 
+    // Usually entering a new song page implies playing THAT song.
+    // But if we come from Sincronizador of SAME song... 
+    // For now, let's stop previous to be safe, or let initAudio handle it.
+
     isPlaying = false;
     currentSong = null;
 
@@ -55,51 +57,86 @@ export function PlayerPage(id) {
 }
 
 function initAudio(song) {
-    audio = new Audio();
+    const audio = audioService.getInstance();
 
     // Construct path
     const path = song.ruta_mp3.startsWith('http')
         ? song.ruta_mp3
         : `${CONTENT_BASE_URL}/${song.ruta_mp3}`;
 
-    audio.src = path;
+    // Only set src if different, to allow continuity if same song
+    if (audioService.currentUrl !== path) {
+        audio.src = path;
+        audioService.currentUrl = path;
+    }
+
+    // Update isPlaying state based on actual audio state
+    isPlaying = !audio.paused;
+    updatePlayButton();
 
     // Events
-    audio.addEventListener('timeupdate', updateProgress);
-    audio.addEventListener('loadedmetadata', () => {
-        document.getElementById('total-time').textContent = formatTime(audio.duration);
-    });
-    audio.addEventListener('ended', () => {
+    // Remove previous listeners to avoid duplicates? 
+    // AudioService is singleton, listeners persist. We need to be careful.
+    // Ideally, we should use a wrapper that cleans up. 
+    // For now, let's assign ontimeupdate directly or use named functions.
+
+    audio.ontimeupdate = updateProgress;
+    audio.onloadedmetadata = () => {
+        const totalTime = document.getElementById('total-time');
+        if (totalTime) totalTime.textContent = formatTime(audio.duration);
+    };
+    audio.onended = () => {
+        // Check Queue
+        const queueStr = localStorage.getItem('playbackQueue');
+        if (queueStr) {
+            try {
+                const queue = JSON.parse(queueStr);
+                // Match by ID (loose equality for string/int safety)
+                const currentIndex = queue.findIndex(s => s.id == song.id_cancion);
+
+                if (currentIndex >= 0 && currentIndex < queue.length - 1) {
+                    const nextSong = queue[currentIndex + 1];
+                    console.log('Playing next:', nextSong.title);
+                    window.navigate('/player/' + nextSong.id);
+                    return;
+                }
+            } catch (e) { console.error('Queue error', e); }
+        }
+
         isPlaying = false;
         updatePlayButton();
-    });
+    };
 
     // Controls
     const btnPlay = document.getElementById('btn-play');
-    btnPlay.onclick = togglePlay;
+    if (btnPlay) btnPlay.onclick = togglePlay;
 
     const progressBar = document.getElementById('progress-bar');
-    progressBar.onclick = (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const pos = (e.clientX - rect.left) / rect.width;
-        audio.currentTime = pos * audio.duration;
-    };
+    if (progressBar) {
+        progressBar.onclick = (e) => {
+            const rect = progressBar.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pos * audio.duration;
+        };
+    }
 
     // Toggle Chords
     const btnChords = document.getElementById('btn-toggle-chords');
-    btnChords.onclick = () => {
-        showChords = !showChords;
-        const panel = document.getElementById('chords-panel');
-        if (showChords) {
-            panel.classList.remove('opacity-0');
-            panel.classList.add('opacity-100');
-            btnChords.classList.add('text-green-400');
-        } else {
-            panel.classList.remove('opacity-100');
-            panel.classList.add('opacity-0');
-            btnChords.classList.remove('text-green-400');
-        }
-    };
+    if (btnChords) {
+        btnChords.onclick = () => {
+            showChords = !showChords;
+            const panel = document.getElementById('chords-panel');
+            if (showChords) {
+                panel.classList.remove('opacity-0');
+                panel.classList.add('opacity-100');
+                btnChords.classList.add('text-green-400');
+            } else {
+                panel.classList.remove('opacity-100');
+                panel.classList.add('opacity-0');
+                btnChords.classList.remove('text-green-400');
+            }
+        };
+    }
 }
 
 function updateUI(song) {
@@ -126,7 +163,9 @@ function updateUI(song) {
 }
 
 function togglePlay() {
+    const audio = audioService.getInstance();
     if (!audio) return;
+
     if (isPlaying) {
         audio.pause();
     } else {
@@ -140,15 +179,16 @@ function updatePlayButton() {
     const iconPlay = document.getElementById('icon-play');
     const iconPause = document.getElementById('icon-pause');
     if (isPlaying) {
-        iconPlay.classList.add('hidden');
-        iconPause.classList.remove('hidden');
+        if (iconPlay) iconPlay.classList.add('hidden');
+        if (iconPause) iconPause.classList.remove('hidden');
     } else {
-        iconPlay.classList.remove('hidden');
-        iconPause.classList.add('hidden');
+        if (iconPlay) iconPlay.classList.remove('hidden');
+        if (iconPause) iconPause.classList.add('hidden');
     }
 }
 
 function updateProgress() {
+    const audio = audioService.getInstance();
     if (!audio) return;
 
     const progressFill = document.getElementById('progress-fill');

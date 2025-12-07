@@ -1,0 +1,42 @@
+.dashboard-main {
+    max-width: 80rem;
+    /* max-w-7xl */
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 0;
+    background-color: var(--bg-secondary);
+    /* gray-800 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    border: 2px dashed var(--border-primary);
+    /* gray-700 */
+}
+
+.empty-icon {
+    width: 5rem;
+    height: 5rem;
+    background-color: var(--gray-700);
+    /* gray-700 */
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.songs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+

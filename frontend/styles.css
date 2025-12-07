@@ -2,19 +2,31 @@
 @import url('styles/layout.css');
 @import url('styles/base.css');
 @import url('styles/components/header.css');
+@import url('styles/components/DashboardHeader.css');
+@import url('styles/components/SongGrid.css');
+@import url('styles/components/SongCard.css');
+@import url('styles/components/NewSongModal.css');
+@import url('styles/components/LoginForm.css');
+@import url('styles/components/RegisterForm.css');
+@import url('styles/components/ProfileHeader.css');
+@import url('styles/components/ProfileBio.css');
+@import url('styles/components/EditProfileModal.css');
+@import url('styles/components/PlayerHeader.css');
+@import url('styles/components/PlayerControls.css');
+@import url('styles/components/LyricsPanel.css');
+@import url('styles/components/ChordsPanel.css');
+@import url('styles/components/StrummingPanel.css');
 
 /* Pages */
-@import url('styles/pages/auth/main.css');
-@import url('styles/pages/home/main.css');
-@import url('styles/pages/player/main.css');
-@import url('styles/pages/editor/main.css');
+@import url('styles/EditorPage.css');
+@import url('styles/PlayerPage.css');
 
 /* Custom Scrollbar Hiding */
-.no-scrollbar::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
 
-.no-scrollbar {
+.scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }

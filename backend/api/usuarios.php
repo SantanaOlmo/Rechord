@@ -41,6 +41,9 @@ switch($method) {
         } elseif ($action === 'update_profile') {
             // Handle FormData (POST + FILES)
             $controller->actualizarPerfil($_POST, $_FILES);
+        } elseif ($action === 'impersonate') {
+            $data = $data ?? json_decode(file_get_contents('php://input'), true);
+            $controller->impersonate($data);
         } else {
             // Fallback logic
             $data = $data ?? json_decode(file_get_contents('php://input'), true);

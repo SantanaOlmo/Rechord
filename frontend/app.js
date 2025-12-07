@@ -6,6 +6,8 @@ import { Register } from './pages/Register.js';
 import { Profile, attachProfileEvents } from './pages/Profile.js';
 import { render as Sincronizador, attachEditorEvents } from './pages/Sincronizador.js';
 import { PlayerPage } from './pages/PlayerPage.js';
+import { ComponentShowcase } from './pages/ComponentShowcase.js';
+import { AdminDashboard } from './pages/AdminDashboard.js';
 import { authService } from './services/authService.js';
 import { CONTENT_BASE_URL } from './config.js';
 
@@ -23,6 +25,8 @@ const routes = {
     '/auth/register': Register,
 
     '/profile': Profile,
+    '/admin': AdminDashboard,
+    '/components': ComponentShowcase,
 };
 
 /**
@@ -37,11 +41,13 @@ function updateHeader() {
 
     const user = authService.getCurrentUser();
     const isAuthenticated = authService.isAuthenticated();
+    const isAdmin = authService.isAdmin();
 
     // Iconos SVG
     const iconHome = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>`;
     const iconSearch = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>`;
     const iconLogin = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>`;
+    const iconAdmin = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>`;
 
     // Left Navigation (Home + Search)
     const leftNav = `
@@ -57,6 +63,10 @@ function updateHeader() {
                     <input type="text" id="global-search" placeholder="Buscar canción..." class="search-input">
                 </div>
             </div>
+            ${isAdmin ? `
+            <a href="#/admin" class="nav-icon-btn text-purple-400 hover:text-purple-300 ml-2" title="Panel de Admin">
+                ${iconAdmin}
+            </a>` : ''}
         </div>
     `;
 
@@ -127,11 +137,39 @@ function router() {
         path = '/' + path;
     }
 
+    // Hide global header and reset app-root for Sincronizador AND Home (Dashboard Layout)
+    const isSincronizador = path.startsWith('/sincronizador') || path.startsWith('/songeditor');
+    const isHome = path === '/' || path === '/home';
+    const useFullLayout = isSincronizador || isHome;
+
+    const header = document.querySelector('body > header');
+    if (header) {
+        header.style.display = isSincronizador ? 'none' : 'flex';
+    }
+
+    if (useFullLayout) {
+        appRoot.classList.remove('container', 'mx-auto', 'p-4');
+        appRoot.classList.add('h-screen', 'w-screen', 'overflow-hidden', 'p-0', 'm-0');
+    } else {
+        appRoot.classList.add('container', 'mx-auto', 'p-4');
+        appRoot.classList.remove('h-screen', 'w-screen', 'overflow-hidden', 'p-0', 'm-0');
+    }
+
     // Check for dynamic routes (e.g., /sincronizador/123)
     const sincronizadorMatch = path.match(/^\/sincronizador(?:\/(\d+))?/);
     if (sincronizadorMatch) {
         const songId = sincronizadorMatch[1] ? parseInt(sincronizadorMatch[1]) : null;
         console.log('Navegando a Sincronizador con ID:', songId);
+        appRoot.innerHTML = Sincronizador(songId);
+        attachEditorEvents();
+        return;
+    }
+
+    // Check for Song Editor route (alias for Sincronizador)
+    const editorMatch = path.match(/^\/songeditor(?:\/(\d+))?/);
+    if (editorMatch) {
+        const songId = editorMatch[1] ? parseInt(editorMatch[1]) : null;
+        console.log('Navegando a Editor (Alias) con ID:', songId);
         appRoot.innerHTML = Sincronizador(songId);
         attachEditorEvents();
         return;
@@ -156,13 +194,22 @@ function router() {
     }
 
     // 2.5. Route Guard (Protección de rutas)
-    // Si NO está autenticado y NO está en login/register, redirigir a Register
-    const publicRoutes = ['/auth/login', '/auth/register'];
     const isAuthenticated = authService.isAuthenticated();
+    const isAdmin = authService.isAdmin();
 
+    const publicRoutes = ['/auth/login', '/auth/register'];
+
+    // Auth Guard
     if (!isAuthenticated && !publicRoutes.includes(path)) {
         console.log('Usuario no autenticado. Redirigiendo a registro...');
         window.location.hash = '#/auth/register';
+        return;
+    }
+
+    // Admin Guard
+    if (path === '/admin' && !isAdmin) {
+        console.log('Acceso denegado a ruta admin.');
+        window.location.hash = '#/';
         return;
     }
 
@@ -192,3 +239,15 @@ window.addEventListener('hashchange', router);
 
 // Ejecutar el router al inicio de la carga
 window.addEventListener('load', router);
+
+// Global Playback Queue Handler
+import { Store, EVENTS } from './core/StateStore.js';
+
+Store.subscribe(EVENTS.PLAYER.PLAY_QUEUE, (data) => {
+    const { queue, startIndex } = data;
+    localStorage.setItem('playbackQueue', JSON.stringify(queue));
+    const songToPlay = queue[startIndex];
+    if (songToPlay) {
+        window.navigate('/player/' + songToPlay.id);
+    }
+});

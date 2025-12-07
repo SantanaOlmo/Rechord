@@ -120,5 +120,50 @@ export const authService = {
             console.error('Update profile error:', error);
             throw error;
         }
+    },
+
+    isAdmin() {
+        const user = this.getCurrentUser();
+        return user && user.rol === 'admin';
+    },
+
+    async getAllUsers() {
+        try {
+            const response = await fetch(`${API_URL}/usuarios.php`);
+            if (!response.ok) throw new Error('Error al obtener usuarios');
+            const data = await response.json();
+            return data.users;
+        } catch (error) {
+            console.error('Get all users error:', error);
+            throw error;
+        }
+    },
+
+    async impersonate(targetUserId) {
+        const currentUser = this.getCurrentUser();
+        if (!currentUser) throw new Error('No estás autenticado');
+
+        try {
+            const response = await fetch(`${API_URL}/usuarios.php?action=impersonate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    admin_id: currentUser.id_usuario,
+                    target_user_id: targetUserId
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Error al impersonar');
+
+            if (data.token) {
+                localStorage.setItem('rechord_token', data.token);
+                localStorage.setItem('rechord_user', JSON.stringify(data.user));
+            }
+            return data;
+        } catch (error) {
+            console.error('Impersonate error:', error);
+            throw error;
+        }
     }
 };

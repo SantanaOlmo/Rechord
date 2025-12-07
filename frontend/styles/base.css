@@ -6,13 +6,20 @@
     padding: 0;
 }
 
+/* base.css: Reset y estilos globales */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     /* Updated font */
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    padding: 20px;
 }
 
 h1 {

@@ -4,6 +4,8 @@ export function NewSongModal() {
             <div class="modal-content" id="modal-content">
                 <h3 class="modal-title">Nueva Canción</h3>
                 <form id="new-song-form" class="space-y-4">
+                    <input type="hidden" name="duracion" id="song-duration" value="0">
+                    
                     <div class="form-group">
                         <label class="form-label">Título</label>
                         <input type="text" name="titulo" required class="form-input" placeholder="Ej: Wonderwall">
@@ -13,6 +15,17 @@ export function NewSongModal() {
                         <div class="form-group">
                             <label class="form-label">Artista</label>
                             <input type="text" name="artista" required class="form-input" placeholder="Ej: Oasis">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Álbum</label>
+                            <input type="text" name="album" class="form-input" placeholder="Ej: (What's the Story) Morning Glory?">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label class="form-label">Fecha Lanzamiento</label>
+                            <input type="date" name="fecha_lanzamiento" class="form-input">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Nivel</label>
@@ -25,9 +38,14 @@ export function NewSongModal() {
                     </div>
 
                     <div class="form-group">
+                        <label class="form-label">Hashtags (separados por coma)</label>
+                        <input type="text" name="hashtags" class="form-input" placeholder="Ej: rock, 90s, britpop">
+                    </div>
+
+                    <div class="form-group">
                         <label class="form-label">Archivo de Audio (MP3, WAV, OGG)</label>
                         <div id="drop-zone" class="drop-zone border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200">
-                            <input type="file" name="audio_file" accept=".mp3,.wav,.ogg" required class="hidden">
+                            <input type="file" name="audio_file" id="audio-input" accept=".mp3,.wav,.ogg" required class="hidden">
                             <p class="text-gray-400">Arrastra tu archivo de audio aquí o haz clic para seleccionar</p>
                         </div>
                     </div>
@@ -42,6 +60,7 @@ export function NewSongModal() {
                         <button type="submit" class="btn-primary" style="width: auto;">Crear Canción</button>
                     </div>
                 </form>
+
             </div>
         </div>
     `;

@@ -9,16 +9,28 @@ class Cancion {
         $this->pdo = $conexion->obtenerPDO();
     }
 
-    public function crear($id_usuario, $titulo, $artista, $nivel, $rutaMp3, $rutaImagen = null) {
-        $sql = "INSERT INTO CANCION (id_usuario, titulo, artista, nivel, ruta_mp3, ruta_imagen, fecha_creacion) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW())";
+    public function crear($id_usuario, $titulo, $artista, $nivel, $rutaMp3, $rutaImagen = null, $album = null, $duracion = 0, $hashtags = null, $fecha_lanzamiento = null) {
+        $sql = "INSERT INTO CANCION (id_usuario, titulo, artista, nivel, ruta_mp3, ruta_imagen, album, duracion, hashtags, fecha_lanzamiento, fecha_creacion) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         
         $stmt = $this->pdo->prepare($sql);
         
-        if ($stmt->execute([$id_usuario, $titulo, $artista, $nivel, $rutaMp3, $rutaImagen])) {
+        // Hashtags to JSON string if array
+        $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags;
+
+        if ($stmt->execute([$id_usuario, $titulo, $artista, $nivel, $rutaMp3, $rutaImagen, $album, $duracion, $hashtagsJson, $fecha_lanzamiento])) {
             return $this->pdo->lastInsertId();
         }
         return false;
+    }
+
+    public function actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha_lanzamiento) {
+        $sql = "UPDATE CANCION SET titulo = ?, artista = ?, nivel = ?, album = ?, duracion = ?, hashtags = ?, fecha_lanzamiento = ? WHERE id_cancion = ?";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags;
+
+        return $stmt->execute([$titulo, $artista, $nivel, $album, $duracion, $hashtagsJson, $fecha_lanzamiento, $id]);
     }
 
     public function obtenerPorId($id) {
@@ -28,24 +40,67 @@ class Cancion {
     }
 
     public function obtenerTodas($idUsuario = null) {
+        // ... (Existing logic for liked status is good, just adding order)
+        // Note: For "Recent" we use this one.
         $sql = "SELECT c.*";
+        if ($idUsuario) {
+            $sql .= ", (SELECT COUNT(*) FROM LIKE_CANCION l WHERE l.id_cancion = c.id_cancion AND l.id_usuario = ?) as is_liked";
+        } else {
+            $sql .= ", 0 as is_liked";
+        }
+        $sql .= " FROM CANCION c ORDER BY c.fecha_creacion DESC";
         
+        $stmt = $this->pdo->prepare($sql);
+        if ($idUsuario) $stmt->execute([$idUsuario]);
+        else $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerPopulares($limit = 10, $idUsuario = null) {
+        $sql = "SELECT c.*, COUNT(l.id_like) as total_likes";
+        if ($idUsuario) {
+            $sql .= ", (SELECT COUNT(*) FROM LIKE_CANCION l2 WHERE l2.id_cancion = c.id_cancion AND l2.id_usuario = ?) as is_liked";
+        } else {
+            $sql .= ", 0 as is_liked";
+        }
+        
+        $sql .= " FROM CANCION c 
+                  LEFT JOIN LIKE_CANCION l ON c.id_cancion = l.id_cancion 
+                  GROUP BY c.id_cancion 
+                  HAVING total_likes > 0
+                  ORDER BY total_likes DESC, c.fecha_creacion DESC 
+                  LIMIT " . (int)$limit;
+
+        $stmt = $this->pdo->prepare($sql);
+        if ($idUsuario) $stmt->execute([$idUsuario]);
+        else $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerPorHashtag($hashtag, $idUsuario = null) {
+        // MySQL 5.7+ JSON support: JSON_CONTAINS(hashtags, '"tag"') or LIKE '%"tag"%'
+        // Using LIKE for broader compatibility if JSON type isn't strictly enforced or old MariaDB
+        // But ideal is JSON_SEARCH or JSON_CONTAINS. Let's use JSON_SEARCH for exact match in array
+        // "One of the hashtags" matches.
+        
+        $sql = "SELECT c.*";
         if ($idUsuario) {
             $sql .= ", (SELECT COUNT(*) FROM LIKE_CANCION l WHERE l.id_cancion = c.id_cancion AND l.id_usuario = ?) as is_liked";
         } else {
             $sql .= ", 0 as is_liked";
         }
         
-        $sql .= " FROM CANCION c ORDER BY c.fecha_creacion DESC";
-        
+        // JSON_CONTAINS requires the target to be a JSON doc, passing keys
+        // Simpler approach for simple array: WHERE JSON_SEARCH(hashtags, 'one', ?) IS NOT NULL
+        $sql .= " FROM CANCION c WHERE JSON_SEARCH(c.hashtags, 'one', ?) IS NOT NULL ORDER BY c.fecha_creacion DESC";
+
         $stmt = $this->pdo->prepare($sql);
-        
-        if ($idUsuario) {
-            $stmt->execute([$idUsuario]);
-        } else {
-            $stmt->execute();
-        }
-        
+        $params = [$hashtag];
+        if ($idUsuario) array_unshift($params, $idUsuario);
+
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -66,6 +121,24 @@ class Cancion {
             $stmt->execute([$idUsuario, $idCancion]);
             return true; // Liked = true
         }
+    }
+
+    public function buscar($term, $idUsuario = null) {
+        $term = "%$term%";
+        $sql = "SELECT c.*";
+        if ($idUsuario) {
+            $sql .= ", (SELECT COUNT(*) FROM LIKE_CANCION l WHERE l.id_cancion = c.id_cancion AND l.id_usuario = ?) as is_liked";
+        } else {
+            $sql .= ", 0 as is_liked";
+        }
+        $sql .= " FROM CANCION c WHERE c.titulo LIKE ? OR c.artista LIKE ? OR c.tags LIKE ? ORDER BY c.titulo ASC LIMIT 20";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $params = [$term, $term, $term];
+        if ($idUsuario) array_unshift($params, $idUsuario);
+        
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function eliminar($id) {

@@ -1,0 +1,9 @@
+/* Edit Profile Modal Styles */
+/* Most styles are shared with NewSongModal or generic modal styles, 
+   but specific overrides can go here */
+
+.edit-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
