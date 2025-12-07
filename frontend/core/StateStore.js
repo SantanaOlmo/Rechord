@@ -6,11 +6,16 @@
 class StateStore {
     constructor() {
         this.events = {};
+        // Initial state as per requirements
         this.state = {
-            currentUser: null,
+            user: null,
+            currentSongId: null,
+            isPlaying: false,
+            volume: 1.0,
+            // Keeping 'playback' for backward compatibility with existing components if they used it, 
+            // though requirements asked for top level keys. 
+            // I'll keep the top level keys as the primary truth.
             playback: {
-                currentSong: null,
-                isPlaying: false,
                 queue: []
             },
             ui: {
@@ -69,13 +74,16 @@ export const Store = new StateStore();
 export const EVENTS = {
     PLAYER: {
         PLAY_SONG: 'PLAYER:PLAY_SONG',
+        PAUSE: 'PLAYER:PAUSE',
+        RESUME: 'PLAYER:RESUME',
+        UPDATE_POSITION: 'PLAYER:UPDATE_POSITION',
         PLAY_QUEUE: 'PLAYER:PLAY_QUEUE',
         TOGGLE_PLAY: 'PLAYER:TOGGLE_PLAY',
         SONG_CHANGED: 'PLAYER:SONG_CHANGED'
     },
-    AUTH: {
-        LOGIN: 'AUTH:LOGIN',
-        LOGOUT: 'AUTH:LOGOUT'
+    USER: {
+        AUTH_SUCCESS: 'USER:AUTH_SUCCESS',
+        LOGOUT: 'USER:LOGOUT'
     },
     UI: {
         THEME_CHANGED: 'UI:THEME_CHANGED'
