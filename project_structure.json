@@ -40,30 +40,17 @@
             "components": [
                 "FolderSidebar.js",
                 "SidebarRenderer.js",
-                "SongCard.js",
-                "PlayerControls.js",
-                "NewSongModal.js",
-                "EditSongModal.js"
-            ],
-            "pages": [
-                "HomePage.js",
-                "PlayerPage.js",
-                "Profile.js",
-                "Login.js",
-                "Register.js",
-                "Sincronizador.js"
-            ],
-            "services": [
-                "authService.js",
-                "cancionService.js",
-                "carpetaService.js",
-                "likeService.js",
-                "socketService.js"
-            ],
-            "root": [
-                "app.js",
-                "config.js"
-            ]
+                "services": [
+                    "authService.js",
+                    "cancionService.js",
+                    "carpetaService.js",
+                    "likeService.js",
+                    "socketService.js"
+                ],
+                "root": [
+                    "app.js",
+                    "config.js"
+                ]
+            }
         }
     }
-}
