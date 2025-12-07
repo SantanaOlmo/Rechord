@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../models/Cancion.php';
 require_once __DIR__ . '/../models/HomeConfig.php';
 
-class CancionService {
+class CancionManager {
     private $cancionModel;
     private $homeConfigModel;
 
@@ -15,7 +15,7 @@ class CancionService {
         return $this->cancionModel->obtenerTodas($idUsuario);
     }
 
-    public function search($term, $idUsuario) {
+    public function searchCanciones($term, $idUsuario) {
         return $this->cancionModel->buscar($term, $idUsuario);
     }
 
@@ -31,29 +31,39 @@ class CancionService {
         return $this->cancionModel->eliminar($id);
     }
 
-    public function create($idUsuario, $data, $files) {
-        // Validation calls could be here or in Controller. Service is better for business rules.
+    /**
+     * Maneja la subida de una canción completa: Audio, Imagen y Metadatos
+     */
+    public function uploadCancion($data, $files, $idUsuario) {
+        // 1. Validaciones de Negocio
         if (empty($data['titulo']) || empty($data['artista'])) {
-            throw new Exception("Faltan datos obligatorios");
+            throw new Exception("Faltan datos obligatorios (Título o Artista)");
         }
 
-        // Process Audio
+        // 2. Procesamiento de Archivos (Audio Requerido para nueva canción)
+        // Para actualizaciones, podría ser opcional, pero uploadCancion implica creación principal o "subida".
+        // Asumo que este método es para CREAR (según el prompt "Subir Canción").
         if (!isset($files['audio_file']) || $files['audio_file']['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception("Archivo de audio requerido");
+            throw new Exception("El archivo de audio es obligatorio");
         }
+
         $audioRes = $this->processFile($files['audio_file'], 'music', ['mp3', 'wav', 'ogg']);
-        if (!$audioRes['success']) throw new Exception($audioRes['message']);
-        
-        // Process Image
+        if (!$audioRes['success']) {
+            throw new Exception("Error en audio: " . $audioRes['message']);
+        }
+
         $rutaImagen = null;
         if (isset($files['image_file']) && $files['image_file']['error'] === UPLOAD_ERR_OK) {
             $imgRes = $this->processFile($files['image_file'], 'images', ['jpg', 'jpeg', 'png']);
-            if ($imgRes['success']) $rutaImagen = $imgRes['path'];
+            if ($imgRes['success']) {
+                $rutaImagen = $imgRes['path'];
+            }
         }
 
-        // Hashtags
+        // 3. Lógica de Datos (Hashtags)
         $hashtags = $this->parseHashtags($data['hashtags'] ?? null);
 
+        // 4. Persistencia en Modelo
         $id = $this->cancionModel->crear(
             $idUsuario,
             $data['titulo'],
@@ -67,40 +77,37 @@ class CancionService {
             $data['fecha_lanzamiento'] ?? null
         );
 
-        if (!$id) throw new Exception("Error al guardar en base de datos");
+        if (!$id) {
+            // Podríamos intentar borrar los archivos subidos si falla la DB
+            throw new Exception("Error al guardar la canción en la base de datos");
+        }
+
         return $id;
     }
 
-    public function update($id, $data) {
+    public function updateCancion($id, $data, $files) {
         $current = $this->cancionModel->obtenerPorId($id);
         if (!$current) throw new Exception("Canción no encontrada");
 
-        // Process Image if uploaded
+        // Imagen
         $rutaImagen = $current['ruta_imagen'];
-        if (isset($data['files']['image_file']) && $data['files']['image_file']['error'] === UPLOAD_ERR_OK) {
-            $imgRes = $this->processFile($data['files']['image_file'], 'images', ['jpg', 'jpeg', 'png']);
+        if (isset($files['image_file']) && $files['image_file']['error'] === UPLOAD_ERR_OK) {
+            $imgRes = $this->processFile($files['image_file'], 'images', ['jpg', 'jpeg', 'png']);
             if ($imgRes['success']) {
                 $rutaImagen = $imgRes['path'];
-                // Optional: Delete old image if it exists and isn't a default
             }
         }
 
-        // Merge existing with new
+        // Datos
         $titulo = $data['titulo'] ?? $current['titulo'];
         $artista = $data['artista'] ?? $current['artista'];
         $nivel = $data['nivel'] ?? $current['nivel'];
         $album = $data['album'] ?? $current['album'];
         $duracion = $data['duracion'] ?? $current['duracion'];
         $fecha = $data['fecha_lanzamiento'] ?? $current['fecha_lanzamiento'];
-        
         $hashtags = $this->parseHashtags($data['hashtags'] ?? $current['hashtags']);
 
-        // Update database (Cancion.php needs to support rutaImagen update in actualizer)
-        // Wait, verifying if Cancion::actualizar supports image path logic?
-        // Checking Cancion.php signature... 
-        // It does NOT support ruta_imagen. I need to update Cancion.php signature too.
-        
-        // Let's assume I will update Cancion.php next.
+        // Modelo
         return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen);
     }
 
@@ -134,49 +141,49 @@ class CancionService {
         return $sections;
     }
 
+    // --- Helpers Internos ---
+
     private function processFile($file, $subDir, $allowedExts) {
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, $allowedExts)) return ['success' => false, 'message' => 'Formato inválido'];
 
+        // Secure Name
         $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', basename($file['name']));
-        $targetDir = __DIR__ . '/../uploads/' . $subDir . '/'; // Adjusted path to be inside backend/uploads
+        
+        // Correct path: backend/uploads/subDir
+        $targetDir = __DIR__ . '/../uploads/' . $subDir . '/';
+        
         if (!is_dir($targetDir)) mkdir($targetDir, 0755, true);
 
         if (move_uploaded_file($file['tmp_name'], $targetDir . $fileName)) {
+            // Return relative path for DB
             return ['success' => true, 'path' => 'uploads/' . $subDir . '/' . $fileName];
         }
-        return ['success' => false, 'message' => 'Error al subir archivo'];
+        return ['success' => false, 'message' => 'Error al mover el archivo subido'];
     }
 
     private function parseHashtags($input) {
         if (is_array($input)) return $input;
         if (is_string($input)) {
-            // Try JSON decode first
             $json = json_decode($input, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json)) return $json;
-            // Else comma separated
             return array_map('trim', explode(',', $input));
         }
         return [];
     }
-
+    
     // --- Home Config Admin ---
     public function addHomeCategory($tipo, $valor, $titulo, $orden) {
         return $this->homeConfigModel->agregarCategoria($tipo, $valor, $titulo, $orden);
     }
-
     public function deleteHomeCategory($id) {
         return $this->homeConfigModel->eliminarCategoria($id);
     }
-
     public function updateConfigOrder($items) {
         $success = true;
         foreach ($items as $item) {
-            if (!$this->homeConfigModel->actualizarOrden($item['id'], $item['orden'])) {
-                $success = false;
-            }
+            if (!$this->homeConfigModel->actualizarOrden($item['id'], $item['orden'])) $success = false;
         }
         return $success;
     }
 }
-?>

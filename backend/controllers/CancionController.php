@@ -1,12 +1,12 @@
 <?php
-require_once __DIR__ . '/../services/CancionService.php';
+require_once __DIR__ . '/../services/CancionManager.php';
 require_once __DIR__ . '/../utils/helper.php';
 
 class CancionController {
-    private $service;
+    private $manager;
 
     public function __construct() {
-        $this->service = new CancionService();
+        $this->manager = new CancionManager();
     }
 
     private function getUserId() {
@@ -19,9 +19,9 @@ class CancionController {
         $idUsuario = $this->getUserId();
         try {
             if (isset($_GET['search']) && !empty($_GET['search'])) {
-                $canciones = $this->service->search($_GET['search'], $idUsuario);
+                $canciones = $this->manager->searchCanciones($_GET['search'], $idUsuario);
             } else {
-                $canciones = $this->service->getAll($idUsuario);
+                $canciones = $this->manager->getAll($idUsuario);
             }
             sendResponse(["canciones" => $canciones]);
         } catch (Exception $e) {
@@ -32,7 +32,7 @@ class CancionController {
     public function getHomeData() {
         setApiHeaders();
         try {
-            $sections = $this->service->getHomeSections($this->getUserId());
+            $sections = $this->manager->getHomeSections($this->getUserId());
             sendResponse(["sections" => $sections]);
         } catch (Exception $e) {
             sendResponse(["message" => $e->getMessage()], 500);
@@ -41,7 +41,7 @@ class CancionController {
 
     public function getCancion($id) {
         setApiHeaders();
-        $cancion = $this->service->getById($id);
+        $cancion = $this->manager->getById($id);
         if ($cancion) sendResponse(["cancion" => $cancion]);
         else sendResponse(["message" => "No encontrada"], 404);
     }
@@ -51,15 +51,19 @@ class CancionController {
         if (!isset($data['id_usuario'], $data['id_cancion'])) {
             sendResponse(["message" => "Faltan datos"], 400);
         }
-        $res = $this->service->toggleLike($data['id_usuario'], $data['id_cancion']);
+        $res = $this->manager->toggleLike($data['id_usuario'], $data['id_cancion']);
         sendResponse(["message" => "Like actualizado", "is_liked" => $res]);
     }
 
+    /**
+     * Endpoint: CREAR Canción
+     */
     public function crearCancion($postData, $files) {
         setApiHeaders();
         try {
-            $id = $this->service->create($postData['id_usuario'] ?? null, $postData, $files);
-            sendResponse(["message" => "Creada", "id_cancion" => $id], 201);
+            // Delegamos TODO al Manager: validación, archivos, lógica.
+            $id = $this->manager->uploadCancion($postData, $files, $postData['id_usuario'] ?? null);
+            sendResponse(["message" => "Canción creada exitosamente", "id_cancion" => $id], 201);
         } catch (Exception $e) {
             sendResponse(["message" => $e->getMessage()], 400);
         }
@@ -69,14 +73,10 @@ class CancionController {
         setApiHeaders();
         if (!isset($postData['id_cancion'])) sendResponse(["message" => "ID requerido"], 400);
         
-        // Merge files into data for service
-        if (!empty($files)) {
-            $postData['files'] = $files;
-        }
-
         try {
-            if ($this->service->update($postData['id_cancion'], $postData)) {
-                sendResponse(["message" => "Actualizada"]);
+            // Pasamos archivos al Manager para que decida si actualiza o no
+            if ($this->manager->updateCancion($postData['id_cancion'], $postData, $files)) {
+                sendResponse(["message" => "Canción actualizada"]);
             } else {
                 sendResponse(["message" => "No se pudo actualizar"], 500);
             }
@@ -87,28 +87,29 @@ class CancionController {
 
     public function eliminarCancion($id) {
         setApiHeaders();
-        if ($this->service->delete($id)) sendResponse(["message" => "Eliminada"]);
+        if ($this->manager->delete($id)) sendResponse(["message" => "Eliminada"]);
         else sendResponse(["message" => "No se pudo eliminar"], 500);
     }
     
+    // --- Home Config Admin ---
+
     public function addHomeCategory($data) {
         setApiHeaders();
-        // Check Admin logic needed here or in service? keeping thin.
-        if ($this->service->addHomeCategory($data['tipo'], $data['valor'], $data['titulo'], $data['orden'] ?? 99)) {
+        if ($this->manager->addHomeCategory($data['tipo'], $data['valor'], $data['titulo'], $data['orden'] ?? 99)) {
             sendResponse(["message" => "Categoría añadida"]);
         } else sendResponse(["message" => "Error"], 500);
     }
 
     public function deleteHomeCategory($id) {
         setApiHeaders();
-        if ($this->service->deleteHomeCategory($id)) {
+        if ($this->manager->deleteHomeCategory($id)) {
             sendResponse(["message" => "Categoría eliminada"]);
         } else sendResponse(["message" => "Error"], 500);
     }
 
     public function updateConfigOrder($items) {
         setApiHeaders();
-        if ($this->service->updateConfigOrder($items)) {
+        if ($this->manager->updateConfigOrder($items)) {
             sendResponse(["message" => "Orden actualizado"]);
         } else sendResponse(["message" => "Error actualizando alguno"], 500);
     }
