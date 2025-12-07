@@ -1,30 +1,34 @@
-# Implementación del Frontend Core: Gestión de Estado (StateStore)
+# Implementación del Backend: Capa de Servicios (CancionManager)
 
-En esta tarea, hemos establecido la base de la arquitectura reactiva del frontend mediante la implementación del patrón **Publicador-Subscriptor (Pub-Sub)**.
+En esta fase, hemos reestructurado el Backend para seguir una arquitectura de 3 capas estricta, desacoplando la lógica de negocio de los controladores.
 
-## 1. Nuevo Componente: `StateStore.js`
-Ubicación: `frontend/core/StateStore.js`
+## 1. Nueva Capa de Servicios: `CancionManager.php`
+Ubicación: `backend/services/CancionManager.php`
 
-Este archivo actúa como la única fuente de la verdad para el estado de la aplicación.
+Este archivo centraliza toda la lógica de negocio relacionada con las canciones.
+*   **Responsabilidades**:
+    *   Validación de datos (título, artista).
+    *   Procesamiento de subida de archivos (audio e imagen) usando `processFile`.
+    *   Lógica de parsing (e.g., hashtags).
+    *   Coordinación con el Modelo (`Cancion.php`).
+*   **Métodos Clave**:
+    *   `uploadCancion($data, $files, $idUsuario)`: Maneja el flujo completo de creación.
+    *   `searchCanciones($term, $idUsuario)`: Abstrae la búsqueda.
 
-### Características Principales:
-*   **Patrón Pub-Sub**: Métodos `subscribe(event, callback)` y `publish(event, data)` para desacoplar componentes.
-*   **Estado Centralizado**: Inicializado con las claves requeridas:
-    *   `user`: Información del usuario actual.
-    *   `currentSongId`: ID de la canción activa.
-    *   `isPlaying`: Estado de reproducción.
-    *   `volume`: Nivel de volumen global.
-*   **Constantes de Eventos (`EVENTS`)**:
-    *   `PLAYER`: Eventos de reproducción (`PLAY_SONG`, `PAUSE`, `UPDATE_POSITION`).
-    *   `USER`: Eventos de sesión (`AUTH_SUCCESS`, `LOGOUT`).
-    *   `UI`: Cambios de interfaz (`THEME_CHANGED`).
+## 2. Refactorización del Controlador (`CancionController.php`)
 
-## 2. Integración con el Router Principal (`app.js`)
+El controlador `backend/controllers/CancionController.php` se ha convertido en un "Thin Controller".
+*   **Antes**: Contenía lógica de validación, manejo de `$_FILES` y llamadas directas al modelo.
+*   **Ahora**:
+    *   Solo recibe la petición HTTP.
+    *   Instancia `CancionManager`.
+    *   Delega la acción (ej. `$this->manager->uploadCancion(...)`).
+    *   Devuelve la respuesta JSON estándar.
 
-Hemos modificado el punto de entrada de la aplicación (`frontend/app.js`) para integrar el Store.
+## 3. Modelo (`Cancion.php`)
 
-*   **Inicialización**: El Store se importa y está listo para usarse globalmente.
-*   **Demostración**: Se añadió una suscripción de prueba al evento `EVENTS.USER.AUTH_SUCCESS` para verificar que el router puede reaccionar a cambios de estado (como un inicio de sesión exitoso) sin acoplamiento directo.
+Se ha verificado que el modelo `backend/models/Cancion.php` se limite estrictamente a **Data Access (SQL)**. No contiene lógica de negocio, solo operaciones CRUD y consultas SQL puras.
 
 ---
-*Esta implementación cumple con la regla de arquitectura de desacoplar el estado de la UI y los componentes.*
+### Nuevo Flujo de Datos
+**Petición** $\rightarrow$ `Router` $\rightarrow$ `CancionController` $\rightarrow$ `CancionManager` $\rightarrow$ `Cancion (Model)` $\rightarrow$ `Base de Datos`
