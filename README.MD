@@ -42,3 +42,8 @@ Se utilizará MySQL para gestionar usuarios, canciones, acordes, estrofas, carpe
 ## Objetivo
 
 Crear una herramienta **original y funcional** que combine aprendizaje musical, creatividad y socialización, cumpliendo con los requisitos técnicos y de diseño del proyecto intermodular.
+
+---
+## 📘 Documentación de Arquitectura
+
+Para consultar los detalles sobre la arquitectura modular (Service Layer, State Store) y el flujo de trabajo implementado recientemente, ver: [explicacion.md](./explicacion.md).
