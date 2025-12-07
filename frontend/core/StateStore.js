@@ -12,73 +12,6 @@ class StateStore {
             currentSongId: null,
             isPlaying: false,
             volume: 1.0,
-            // Keeping 'playback' for backward compatibility with existing components if they used it, 
-            // though requirements asked for top level keys. 
-            // I'll keep the top level keys as the primary truth.
-            playback: {
-                queue: []
-            },
-            ui: {
-                theme: 'dark'
-            },
-            room: {
-                id: null,
-                isMaster: false,
-                members: []
-            }
-        };
-    }
-
-    /**
-     * Subscribe to an event
-     * @param {string} eventName 
-     * @param {Function} callback 
-     * @returns {Function} unsubscribe function
-     */
-    subscribe(eventName, callback) {
-        if (!this.events[eventName]) {
-            this.events[eventName] = [];
-        }
-        this.events[eventName].push(callback);
-
-        // Return unsubscribe
-        return () => {
-            this.events[eventName] = this.events[eventName].filter(cb => cb !== callback);
-        };
-    }
-
-    /**
-     * Publish an event with data
-     * @param {string} eventName 
-     * @param {any} data 
-     */
-    publish(eventName, data) {
-        if (!this.events[eventName]) return;
-        this.events[eventName].forEach(callback => callback(data));
-    }
-
-    /**
-     * Set state and notify if changed (optional simple store pattern)
-     * @param {string} key 
-     * @param {any} value 
-     */
-/**
- * StateStore.js
- * Centralized State Management (Pub-Sub)
- */
-
-class StateStore {
-    constructor() {
-        this.events = {};
-        // Initial state as per requirements
-        this.state = {
-            user: null,
-            currentSongId: null,
-            isPlaying: false,
-            volume: 1.0,
-            // Keeping 'playback' for backward compatibility with existing components if they used it, 
-            // though requirements asked for top level keys. 
-            // I'll keep the top level keys as the primary truth.
             playback: {
                 queue: []
             },
@@ -156,12 +89,6 @@ export const EVENTS = {
     },
     UI: {
         THEME_CHANGED: 'UI:THEME_CHANGED'
-    },
-    SOCKET: {
-        CONNECTED: 'SOCKET:CONNECTED',
-        DISCONNECTED: 'SOCKET:DISCONNECTED',
-        SYNC_STATE: 'SOCKET:SYNC_STATE',
-        MEMBER_UPDATE: 'SOCKET:MEMBER_UPDATE'
     },
     SOCKET: {
         CONNECTED: 'SOCKET:CONNECTED',
