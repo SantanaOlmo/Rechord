@@ -1,6 +1,6 @@
 
-import { authService } from '../services/authService.js';
-import { createCancion } from '../services/cancionService.js';
+import { authService } from '../../services/authService.js';
+import { createCancion } from '../../services/cancionService.js';
 
 /**
  * Encapsulates Logic for New Song Modal

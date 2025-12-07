@@ -1,6 +1,6 @@
 
-import { getCancion, updateCancion } from '../services/cancionService.js';
-import { CONTENT_BASE_URL } from '../config.js';
+import { getCancion, updateCancion } from '../../services/cancionService.js';
+import { CONTENT_BASE_URL } from '../../config.js';
 
 /**
  * Encapsulates Logic for Edit Song Modal
