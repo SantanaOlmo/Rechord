@@ -9,6 +9,13 @@ export function ProfileHeader(user, isOwner) {
         ? `${CONTENT_BASE_URL}/${user.foto_perfil}`
         : 'assets/icons/default_avatar.png';
 
+    const statsHtml = `
+        <div class="flex space-x-6 mt-2 text-sm">
+            <div class="text-gray-300"><span class="font-bold text-white text-lg" id="stat-followers">${user.seguidores || 0}</span> swguidores</div>
+            <div class="text-gray-300"><span class="font-bold text-white text-lg" id="stat-following">${user.seguidos || 0}</span> seguidos</div>
+        </div>
+    `;
+
     return `
         <!-- Banner -->
         <div class="h-48 w-full bg-gray-800 relative group">
@@ -37,11 +44,18 @@ export function ProfileHeader(user, isOwner) {
                 
                 <div class="mt-4 md:mt-0 md:ml-6 flex-1">
                     <h2 class="text-4xl font-extrabold text-white">${user.nombre}</h2>
-                    <p class="text-indigo-400 font-medium">${user.email}</p>
+                    <p class="text-indigo-400 font-medium mb-1">${user.email}</p>
+                    ${statsHtml}
                 </div>
 
-                ${isOwner ? `
                 <div class="mt-4 md:mt-0 flex gap-3">
+                    ${!isOwner ? `
+                        <button id="btn-follow" data-id="${user.id_usuario}" class="flex items-center font-bold py-2 px-6 rounded-full transition duration-150 shadow-md ${user.es_seguido ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}">
+                            ${user.es_seguido ? 'Siguiendo' : 'Seguir'}
+                        </button>
+                    ` : ''}
+
+                    ${isOwner ? `
                     ${user.email === 'alberto16166@alumnos.ilerna.com' ? `
                     <a href="#/components"
                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-indigo-400 font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md border border-indigo-500/30">
@@ -61,8 +75,8 @@ export function ProfileHeader(user, isOwner) {
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                         Salir
                     </button>
+                    ` : ''}
                 </div>
-                ` : ''}
             </div>
     `;
 }

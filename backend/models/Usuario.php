@@ -74,4 +74,22 @@ class Usuario {
         $stmt->execute([$termino, $termino]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function contarSeguidores($idUsuario) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM SEGUIR_USUARIO WHERE id_usuario_seguido = ?");
+        $stmt->execute([$idUsuario]);
+        return $stmt->fetchColumn();
+    }
+
+    public function contarSeguidos($idUsuario) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM SEGUIR_USUARIO WHERE id_usuario_seguidor = ?");
+        $stmt->execute([$idUsuario]);
+        return $stmt->fetchColumn();
+    }
+
+    public function esSeguidor($idSeguidor, $idSeguido) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM SEGUIR_USUARIO WHERE id_usuario_seguidor = ? AND id_usuario_seguido = ?");
+        $stmt->execute([$idSeguidor, $idSeguido]);
+        return $stmt->fetchColumn() > 0;
+    }
 }

@@ -141,7 +141,20 @@ class UsuarioController {
     public function getUsuario($id) {
         setApiHeaders();
         $usuario = $this->usuarioModel->obtenerPorId($id);
+        
         if ($usuario) {
+            // Stats
+            $usuario['seguidores'] = $this->usuarioModel->contarSeguidores($id);
+            $usuario['seguidos'] = $this->usuarioModel->contarSeguidos($id);
+            
+            // Context (Is Following?)
+            $viewerId = isset($_GET['viewer_id']) ? $_GET['viewer_id'] : null;
+            if ($viewerId && $viewerId != $id) {
+                $usuario['es_seguido'] = $this->usuarioModel->esSeguidor($viewerId, $id);
+            } else {
+                $usuario['es_seguido'] = false;
+            }
+
             sendResponse(["user" => $usuario]);
         } else {
             sendResponse(["message" => "Usuario no encontrado"], 404);
