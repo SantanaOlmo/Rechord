@@ -67,4 +67,11 @@ class Usuario {
         $stmt = $this->pdo->prepare("DELETE FROM USUARIO WHERE id_usuario = ?");
         return $stmt->execute([$id]);
     }
+
+    public function buscarUsuario($termino) {
+        $termino = "%$termino%";
+        $stmt = $this->pdo->prepare("SELECT id_usuario, nombre, email, foto_perfil FROM USUARIO WHERE nombre LIKE ? OR email LIKE ? LIMIT 10");
+        $stmt->execute([$termino, $termino]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

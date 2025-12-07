@@ -16,8 +16,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch($method) {
     case 'GET':
-        if(isset($_GET['id'])) $controller->getUsuario($_GET['id']);
-        else $controller->getUsuarios();
+    case 'GET':
+        if (isset($_GET['search'])) {
+            $controller->search($_GET['search']);
+        } elseif (isset($_GET['id'])) {
+            $controller->getUsuario($_GET['id']);
+        } else {
+            $controller->getUsuarios();
+        }
         break;
     case 'POST':
         // Check for action in GET or POST

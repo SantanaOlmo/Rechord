@@ -180,4 +180,12 @@ class UsuarioController {
             "token" => $token
         ], 200);
     }
+
+    public function search($term) {
+        setApiHeaders();
+        require_once __DIR__ . '/../services/UsuarioManager.php';
+        $manager = new UsuarioManager();
+        $results = $manager->searchUsuarios($term);
+        sendResponse(["users" => $results], 200);
+    }
 }
