@@ -33,7 +33,7 @@ import { getCancion } from '../services/cancionService.js';
 import { getEstrofas } from '../services/estrofaService.js';
 import { CONTENT_BASE_URL } from '../config.js';
 import { PlayerHeader } from '../components/PlayerHeader.js';
-import { PlayerControls } from '../components/PlayerControls.js';
+import { PlayerControls, attachPlayerControlsEvents } from '../components/PlayerControls.js';
 import { LyricsPanel } from '../components/LyricsPanel.js';
 import { ChordsPanel } from '../components/ChordsPanel.js';
 import { StrummingPanel } from '../components/StrummingPanel.js';
@@ -111,18 +111,20 @@ function initAudio(song) {
     // Ideally, we should use a wrapper that cleans up. 
     // For now, let's assign ontimeupdate directly or use named functions.
 
+    // Audio Event Bindings (Progress, End)
+    // Kept local as they update the UI bars
     audio.ontimeupdate = updateProgress;
     audio.onloadedmetadata = () => {
         const totalTime = document.getElementById('total-time');
         if (totalTime) totalTime.textContent = formatTime(audio.duration);
     };
     audio.onended = () => {
+        // ... (Queue Logic remains, optional to move to Controls but complex)
         // Check Queue
         const queueStr = localStorage.getItem('playbackQueue');
         if (queueStr) {
             try {
                 const queue = JSON.parse(queueStr);
-                // Match by ID (loose equality for string/int safety)
                 const currentIndex = queue.findIndex(s => s.id == song.id_cancion);
 
                 if (currentIndex >= 0 && currentIndex < queue.length - 1) {
@@ -138,9 +140,8 @@ function initAudio(song) {
         updatePlayButton();
     };
 
-    // Controls
-    const btnPlay = document.getElementById('btn-play');
-    if (btnPlay) btnPlay.onclick = togglePlay;
+    // Attach Unified Controls Events (Local + Socket)
+    attachPlayerControlsEvents(song);
 
     const progressBar = document.getElementById('progress-bar');
     if (progressBar) {
