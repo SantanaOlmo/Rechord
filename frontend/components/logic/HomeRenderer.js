@@ -1,5 +1,5 @@
 
-import { SongCard } from '../components/SongCard.js?v=fixed';
+import { SongCard } from '../SongCard.js?v=fixed';
 
 // Expose scroll helper to window globally as it's used in inline onclicks
 window.scrollContainer = (id, direction) => {

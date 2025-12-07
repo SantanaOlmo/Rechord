@@ -78,10 +78,33 @@ function updateHeader() {
         </div>
     `;
 
-    // ... (Right Nav code remains same but I need to include it if I replace the whole block, or just target the search part)
-    // Detailed replacement of leftNav construction:
-
-    // Right Navigation (Auth) construction... (lines 74-98 unchanged in logic but need to be careful with replace tool)
+    // Right Navigation (Auth)
+    let rightNav = '';
+    if (isAuthenticated && user) {
+        const avatarUrl = user.foto_perfil ? CONTENT_BASE_URL + '/' + user.foto_perfil : 'assets/images/default-avatar.png';
+        rightNav = `
+            <div class="header-right flex items-center">
+                 <div class="relative group ml-4">
+                    <button class="flex items-center focus:outline-none">
+                        <img src="${avatarUrl}" alt="Perfil" class="w-8 h-8 rounded-full object-cover border-2 border-indigo-500 hover:border-indigo-400 transition-colors">
+                        <span class="ml-2 text-sm font-medium text-gray-300 group-hover:text-white hidden md:block">${user.nombre}</span>
+                    </button>
+                    <!-- Dropdown -->
+                    <div class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl py-2 hidden group-hover:block z-50 border border-gray-700">
+                        <a href="#/profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Mi Perfil</a>
+                        <a href="#" onclick="authService.logout()" class="block px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300">Cerrar Sesión</a>
+                    </div>
+                 </div>
+            </div>
+        `;
+    } else {
+        rightNav = `
+            <div class="header-right flex items-center space-x-3">
+                <a href="#/auth/login" class="text-gray-300 hover:text-white text-sm font-medium transition-colors">Iniciar Sesión</a>
+                <a href="#/auth/register" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-full transition-colors shadow-lg hover:shadow-indigo-500/30 font-medium">Registrarse</a>
+            </div>
+        `;
+    }
 
     // Construct Header
     header.innerHTML = leftNav + rightNav;
