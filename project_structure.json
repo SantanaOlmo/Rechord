@@ -24,6 +24,9 @@
                 "CancionManager.php",
                 "RoomManager.php"
             ],
+            "server": [
+                "WebSocketServer.php"
+            ],
             "websocket": [
                 "WSRouter.php"
             ],
