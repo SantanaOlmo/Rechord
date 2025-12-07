@@ -251,3 +251,10 @@ Store.subscribe(EVENTS.PLAYER.PLAY_QUEUE, (data) => {
         window.navigate('/player/' + songToPlay.id);
     }
 });
+
+// Demo: Subscribe to Auth Event
+Store.subscribe(EVENTS.USER.AUTH_SUCCESS, (user) => {
+    console.log('⚡ Event Received: AUTH_SUCCESS for user', user);
+    // Could manually trigger header update here if needed
+    updateHeader();
+});
