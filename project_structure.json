@@ -52,7 +52,8 @@
                 "LyricsPanel.js",
                 "ChordsPanel.js",
                 "StrummingPanel.js",
-                "DashboardHeader.js"
+                "DashboardHeader.js",
+                "UserSearchModal.js"
             ],
             "pages": [
                 "HomePage.js",
@@ -69,7 +70,8 @@
                 "likeService.js",
                 "socketService.js",
                 "audioService.js",
-                "estrofaService.js"
+                "estrofaService.js",
+                "usuarioService.js"
             ],
             "root": [
                 "app.js",
