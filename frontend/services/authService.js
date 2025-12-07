@@ -120,13 +120,11 @@ export const authService = {
             console.error('Update profile error:', error);
             throw error;
         }
-<<<<<<< HEAD
     },
 
     isAdmin() {
         const user = this.getCurrentUser();
-        // Allow role 'admin' OR the specific hardcoded email
-        return user && (user.rol === 'admin' || user.email === 'alberto16166@alumnos.ilerna.com');
+        return user && user.rol === 'admin';
     },
 
     async getAllUsers() {
@@ -167,7 +165,5 @@ export const authService = {
             console.error('Impersonate error:', error);
             throw error;
         }
-=======
->>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)
     }
 };

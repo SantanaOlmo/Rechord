@@ -14,14 +14,38 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch($method) {
     case 'GET':
-        if(isset($_GET['id'])) $controller->getCancion($_GET['id']);
-        else $controller->getCanciones();
+        if (isset($_GET['action']) && $_GET['action'] === 'home_data') {
+            $controller->getHomeData();
+        } elseif(isset($_GET['id'])) {
+            $controller->getCancion($_GET['id']);
+        } else {
+            // Default: getCanciones (handles 'mis_canciones' or no action)
+            $controller->getCanciones();
+        }
         break;
     case 'POST':
-        if (isset($_GET['action']) && $_GET['action'] === 'toggle_like') {
+        $action = $_GET['action'] ?? ($_POST['action'] ?? null);
+        
+        // Check JSON body if action not found
+        if (!$action) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if ($input && isset($input['action'])) $action = $input['action'];
+        }
+
+        if ($action === 'toggle_like') {
             $data = json_decode(file_get_contents('php://input'), true);
             $controller->toggleLike($data);
+        } elseif ($action === 'update') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $controller->actualizarCancion($data);
+        } elseif ($action === 'add_category') {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $controller->addHomeCategory($data);
+        } elseif ($action === 'update_config_order') {
+             $data = json_decode(file_get_contents('php://input'), true);
+             $controller->updateConfigOrder($data['items']);
         } else {
+            // Default POST = Create Song (FormData)
             $controller->crearCancion($_POST, $_FILES);
         }
         break;
@@ -29,6 +53,10 @@ switch($method) {
         $controller->actualizarCancion(json_decode(file_get_contents('php://input'), true));
         break;
     case 'DELETE':
-        $controller->eliminarCancion($_GET['id']);
+        if (isset($_GET['action']) && $_GET['action'] === 'delete_category') {
+            $controller->deleteHomeCategory($_GET['id']);
+        } else {
+            $controller->eliminarCancion($_GET['id']);
+        }
         break;
 }

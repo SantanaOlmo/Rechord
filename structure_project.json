@@ -32,6 +32,7 @@
     "models": {
       "Cancion.php": "file",
       "Estrofa.php": "file",
+      "HomeConfig.php": "file",
       "Usuario.php": "file"
     },
     "uploads": {
@@ -41,14 +42,17 @@
       "music": {}
     },
     "utils": {
-      "helper.php": "file"
+      "helper.php": "file",
+      "migrate_role.php": "file"
     }
   },
   "db": {
     "DB_CREATE_ESTROFA.sql": "file",
     "DB_MIGRATION.sql": "file",
     "DB_UPDATE_BANNER.sql": "file",
+    "DB_UPDATE_METADATA.sql": "file",
     "DB_UPDATE_PROFILE.sql": "file",
+    "DB_UPDATE_ROLES.sql": "file",
     "DB_UPDATE_V2.sql": "file",
     "conexion.php": "file",
     "config.php": "file",
@@ -95,6 +99,7 @@
       "ChordsPanel.js": "file",
       "DashboardHeader.js": "file",
       "EditProfileModal.js": "file",
+      "EditSongModal.js": "file",
       "LoginForm.js": "file",
       "LyricsPanel.js": "file",
       "NewSongModal.js": "file",
@@ -112,6 +117,8 @@
     "index.html": "file",
     "manifest.json": "file",
     "pages": {
+      "AdminDashboard.js": "file",
+      "ComponentShowcase.js": "file",
       "HomePage.js": "file",
       "Login.js": "file",
       "PlayerPage.js": "file",
@@ -133,22 +140,26 @@
       "base.css": "file",
       "colors.css": "file",
       "components": {
+        "ChordsPanel.css": "file",
+        "DashboardHeader.css": "file",
+        "EditProfileModal.css": "file",
+        "LoginForm.css": "file",
+        "LyricsPanel.css": "file",
+        "NewSongModal.css": "file",
+        "PlayerControls.css": "file",
+        "PlayerHeader.css": "file",
+        "ProfileBio.css": "file",
+        "ProfileHeader.css": "file",
+        "RegisterForm.css": "file",
+        "SongCard.css": "file",
+        "SongGrid.css": "file",
+        "StrummingPanel.css": "file",
         "header.css": "file"
       },
       "layout.css": "file",
       "pages": {
-        "auth": {
-          "main.css": "file"
-        },
-        "editor": {
-          "main.css": "file"
-        },
-        "home": {
-          "main.css": "file"
-        },
-        "player": {
-          "main.css": "file"
-        }
+        "EditorPage.css": "file",
+        "PlayerPage.css": "file"
       }
     },
     "styles.css": "file",

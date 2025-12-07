@@ -19,3 +19,4 @@ export const ADMIN_EMAIL = 'admin@rechord.com';
 export const ICON_LOGIN = 'assets/icons/MaterialSymbolsLogin.svg';
 export const ICON_LOGOUT = 'assets/icons/MaterialSymbolsLogout.svg';
 export const ICON_EDIT = 'assets/icons/MaterialSymbolsEdit.svg';
+export const ICON_PLAY = 'assets/icons/play.svg';

@@ -1,5 +1,3 @@
-import { ICON_PLAY } from '../../config.js';
-
 export function EditorControls(isPlaying, currentTime, duration, zoomLevel) {
     return `
         <div class="h-24 bg-gray-900/95 backdrop-blur border-t border-gray-700 flex flex-col justify-center px-6 z-20">
@@ -29,7 +27,7 @@ export function EditorControls(isPlaying, currentTime, duration, zoomLevel) {
                     </button>
                     
                     <button id="btn-play-pause" class="w-14 h-14 bg-green-600 rounded-full flex items-center justify-center text-white hover:bg-green-500 shadow-lg hover:scale-105 transition transform">
-                        <img id="icon-play" src="${ICON_PLAY}" class="w-7 h-7 ml-1 ${isPlaying ? 'hidden' : ''}" alt="Play">
+                        <svg id="icon-play" class="w-7 h-7 ml-1 ${isPlaying ? 'hidden' : ''}" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         <svg id="icon-pause" class="w-7 h-7 ${isPlaying ? '' : 'hidden'}" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     </button>
 

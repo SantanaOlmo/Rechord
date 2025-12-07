@@ -6,22 +6,15 @@
 class StateStore {
     constructor() {
         this.events = {};
-        // Initial state as per requirements
         this.state = {
-            user: null,
-            currentSongId: null,
-            isPlaying: false,
-            volume: 1.0,
+            currentUser: null,
             playback: {
+                currentSong: null,
+                isPlaying: false,
                 queue: []
             },
             ui: {
                 theme: 'dark'
-            },
-            room: {
-                id: null,
-                isMaster: false,
-                members: []
             }
         };
     }
@@ -76,24 +69,15 @@ export const Store = new StateStore();
 export const EVENTS = {
     PLAYER: {
         PLAY_SONG: 'PLAYER:PLAY_SONG',
-        PAUSE: 'PLAYER:PAUSE',
-        RESUME: 'PLAYER:RESUME',
-        UPDATE_POSITION: 'PLAYER:UPDATE_POSITION',
         PLAY_QUEUE: 'PLAYER:PLAY_QUEUE',
         TOGGLE_PLAY: 'PLAYER:TOGGLE_PLAY',
         SONG_CHANGED: 'PLAYER:SONG_CHANGED'
     },
-    USER: {
-        AUTH_SUCCESS: 'USER:AUTH_SUCCESS',
-        LOGOUT: 'USER:LOGOUT'
+    AUTH: {
+        LOGIN: 'AUTH:LOGIN',
+        LOGOUT: 'AUTH:LOGOUT'
     },
     UI: {
         THEME_CHANGED: 'UI:THEME_CHANGED'
-    },
-    SOCKET: {
-        CONNECTED: 'SOCKET:CONNECTED',
-        DISCONNECTED: 'SOCKET:DISCONNECTED',
-        SYNC_STATE: 'SOCKET:SYNC_STATE',
-        MEMBER_UPDATE: 'SOCKET:MEMBER_UPDATE'
     }
 };

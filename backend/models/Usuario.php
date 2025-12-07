@@ -38,12 +38,12 @@ class Usuario {
     }
 
     public function obtenerTodos() {
-        $stmt = $this->pdo->query("SELECT id_usuario, nombre, email, fecha_registro, foto_perfil, banner, bio FROM USUARIO");
+        $stmt = $this->pdo->query("SELECT id_usuario, nombre, email, rol, fecha_registro, foto_perfil, banner, bio FROM USUARIO");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function obtenerPorId($id) {
-        $stmt = $this->pdo->prepare("SELECT id_usuario, nombre, email, fecha_registro, foto_perfil, banner, bio FROM USUARIO WHERE id_usuario = ?");
+        $stmt = $this->pdo->prepare("SELECT id_usuario, nombre, email, rol, fecha_registro, foto_perfil, banner, bio FROM USUARIO WHERE id_usuario = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

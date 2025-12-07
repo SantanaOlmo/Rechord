@@ -8,6 +8,7 @@ erDiagram
         int id_usuario PK
         varchar nombre
         varchar email
+        varchar rol
         varchar foto_perfil
         varchar password_hash
         timestamp fecha_registro
@@ -20,10 +21,23 @@ erDiagram
         int id_usuario FK
         varchar titulo
         varchar artista
+        varchar album
         varchar nivel
+        int duracion
+        json hashtags
         varchar ruta_mp3
         varchar ruta_imagen
         timestamp fecha_creacion
+        date fecha_lanzamiento
+    }
+
+    HOME_CONFIG {
+        int id_config PK
+        varchar tipo
+        varchar valor
+        varchar titulo_mostrar
+        int orden
+        tinyint activo
     }
 
     ESTROFA {

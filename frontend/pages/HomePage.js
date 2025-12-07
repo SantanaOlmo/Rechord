@@ -1,56 +1,45 @@
-<<<<<<< HEAD
-
-import { SidebarContainer } from '../components/layout/SidebarContainer.js';
-import { NewSongModal } from '../components/modals/NewSongModal.js';
-import { EditSongModal } from '../components/modals/EditSongModal.js';
-import { Footer } from '../components/layout/Footer.js';
-import { initHeroCarousel } from '../components/home/HeroCarousel.js';
-import { setupHeroScroll } from '../components/home/HeroScroll.js';
-import { loadHomeContent, setupHomeEventListeners } from '../components/home/HomeLogic.js';
+import { authService } from '../services/authService.js';
+import { getCancionesUsuario, createCancion, getHomeData, getCancion, updateCancion } from '../services/cancionService.js';
+import { likeService } from '../services/likeService.js';
+import { CONTENT_BASE_URL } from '../config.js';
+import { DashboardHeader } from '../components/DashboardHeader.js';
+import { SongCard } from '../components/SongCard.js?v=fixed';
+import { NewSongModal } from '../components/NewSongModal.js';
+import { EditSongModal } from '../components/EditSongModal.js';
+import { FolderSidebar } from '../components/FolderSidebar.js';
 
 export function Home() {
-    // Initialization Logic
+    const user = authService.getCurrentUser();
+
+    // Init Logic moved to loadHomeContent called via setTimeout
     setTimeout(() => {
         loadHomeContent();
-        setupHomeEventListeners();
-        setupHeroScroll();
-        initHeroCarousel();
+        setupEventListeners();
     }, 0);
 
     return `
-        <div class="dashboard-container flex h-full w-full overflow-hidden">
-            ${SidebarContainer()}
+        <div class="dashboard-container flex h-screen overflow-hidden">
+            <!-- Sidebar -->
+            ${FolderSidebar()}
 
             <div class="flex-1 flex flex-col h-full relative overflow-hidden">
-                <main id="main-scroll-container" class="flex-1 overflow-y-auto bg-gray-900 scrollbar-hide scroll-smooth">
-                    <!-- Hero Section -->
-                    <section id="hero-section">
-                        <div class="hero-overlay"></div>
-                        <div class="hero-content">
-                            <h1 class="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">Siente la música</h1>
-                            <p class="text-xl text-gray-200 mb-8 drop-shadow-md">Descubre, crea y toca tus canciones favoritas.</p>
-                            <button onclick="document.getElementById('home-content').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold shadow-lg transition transform hover:scale-105">Explorar</button>
-                        </div>
-                    </section>
-
-                    <div class="p-6">
-                        <div id="loading-home" class="text-center py-10">
-                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-                            <p class="mt-4 text-gray-500">Cargando música...</p>
-                        </div>
-                        
-                        <div id="home-content" class="space-y-12 min-h-[500px] scroll-mt-5">
-                             <!-- Sections injected via HomeLogic -->
-                        </div>
-                        
-                        ${Footer()}
+                ${DashboardHeader(user)}
+                
+                <main class="flex-1 overflow-y-auto bg-gray-900 p-6 pb-24 scrollbar-hide">
+                    <div id="loading-home" class="text-center py-10">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-500">Cargando música...</p>
+                    </div>
+                    
+                    <div id="home-content" class="space-y-12">
+                         <!-- Sections will be injected here -->
                     </div>
                 </main>
 
-                <!-- Floating FAB -->
-                <button id="btn-new-song" class="fixed bottom-8 right-8 z-50 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full h-14 transition-all duration-300 shadow-lg flex items-center justify-center overflow-hidden hover:pr-6 hover:pl-2 min-w-14 group">
+                <!-- Fixed Bottom Floating Action Button -->
+                <button id="btn-new-song" class="fixed bottom-8 right-8 z-50 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full h-14 transition-all duration-300 shadow-lg flex items-center justify-center overflow-hidden hover:pr-6 hover:pl-2 w-14 hover:w-auto group">
                     <svg class="w-8 h-8 flex-shrink-0 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    <span class="font-bold whitespace-nowrap opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 ease-in-out delay-75">Nueva Canción</span>
+                    <span class="font-bold whitespace-nowrap opacity-0 max-w-0 group-hover:opacity-100 group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 ease-in-out">Nueva Canción</span>
                 </button>
             </div>
 
@@ -59,126 +48,84 @@ export function Home() {
         </div>
     `;
 }
-=======
-import { authService } from '../services/authService.js';
-import { getCancionesUsuario, createCancion } from '../services/cancionService.js';
-import { likeService } from '../services/likeService.js';
-import { CONTENT_BASE_URL } from '../config.js';
-import { DashboardHeader } from '../components/DashboardHeader.js';
-import { SongGrid } from '../components/SongGrid.js';
-import { SongCard } from '../components/SongCard.js';
-import { NewSongModal } from '../components/NewSongModal.js';
 
-export function Home() {
-    const user = authService.getCurrentUser();
-
-    // Programar la carga de datos y eventos para después del renderizado
-    setTimeout(() => {
-        loadSongs();
-        setupEventListeners();
-    }, 0);
-
-    return `
-        <div class="dashboard-container">
-            ${DashboardHeader(user)}
-
-            <main class="dashboard-main">
-                ${SongGrid()}
-            </main>
-
-            ${NewSongModal()}
-        </div>
-    `;
-}
-
-async function loadSongs() {
-    const grid = document.getElementById('songs-grid');
-    const loading = document.getElementById('loading-songs');
-    const empty = document.getElementById('empty-state');
-
-    try {
-        const songs = await getCancionesUsuario();
-        const user = authService.getCurrentUser();
-        const likedSongIds = user ? await likeService.getUserLikes(user.id_usuario) : [];
-
-        loading.classList.add('hidden');
-
-        if (songs.length === 0) {
-            empty.classList.remove('hidden');
-            grid.classList.add('hidden');
-        } else {
-            empty.classList.add('hidden');
-            grid.classList.remove('hidden');
-            renderSongs(songs, likedSongIds);
-        }
-    } catch (error) {
-        console.error('Error loading songs:', error);
-        loading.innerHTML = `<p class="text-red-500">Error al cargar canciones. Intenta recargar.</p>`;
+// Expose scroll helper to window
+window.scrollContainer = (id, direction) => {
+    const container = document.getElementById(id);
+    if (container) {
+        const scrollAmount = 600; // Scroll width of approx 3 cards
+        container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
-}
+};
 
-function renderSongs(songs, likedSongIds = []) {
-    const grid = document.getElementById('songs-grid');
-    grid.innerHTML = songs.map(song => {
+function renderSection(section, likedSongIds) {
+    if (!section.songs || section.songs.length === 0) return '';
+
+    const sectionId = `section-${section.type || 'custom'}-${section.id || Math.random().toString(36).substr(2, 9)}`;
+    const cardsHtml = section.songs.map(song => {
         const isLiked = likedSongIds.includes(song.id_cancion);
         return SongCard(song, isLiked);
     }).join('');
 
-    // Exponer función global para el onclick
-    window.playSong = (id) => {
-        // Navegar a la página del reproductor inmersivo
-        if (window.navigate) {
-            window.navigate('/player/' + id);
-        } else {
-            window.location.hash = '/player/' + id;
-        }
-    };
+    return `
+        <section class="home-section animate-fade-in-up">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white tracking-tight">${section.title}</h2>
+            </div>
+            
+            <div class="relative group/carousel">
+                <!-- Left Button -->
+                <button onclick="window.scrollContainer('${sectionId}', -1)" 
+                        class="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-30 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-black/80 backdrop-blur-sm hidden md:block">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
 
-    window.toggleLike = async (id, btn) => {
+                <!-- Swimlane container -->
+                <div id="${sectionId}" class="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth" style="-webkit-overflow-scrolling: touch;">
+                    ${cardsHtml}
+                </div>
+
+                <!-- Right Button -->
+                <button onclick="window.scrollContainer('${sectionId}', 1)"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-30 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-black/80 backdrop-blur-sm hidden md:block">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </section>
+    `;
+}
+
+async function loadHomeContent() {
+    const container = document.getElementById('home-content');
+    const loading = document.getElementById('loading-home');
+
+    try {
+        const sections = await getHomeData();
         const user = authService.getCurrentUser();
-        if (!user) {
-            alert('Debes iniciar sesión para dar like.');
-            return;
-        }
+        const likedSongIds = user ? await likeService.getUserLikes(user.id_usuario) : [];
 
-        // Optimistic UI update
-        const svg = btn.querySelector('svg');
-        const isCurrentlyLiked = svg.classList.contains('text-red-500');
+        if (loading) loading.classList.add('hidden');
+        if (container) {
+            container.innerHTML = '';
 
-        // Toggle visual state immediately
-        if (isCurrentlyLiked) {
-            svg.classList.remove('text-red-500', 'opacity-100');
-            svg.classList.add('text-black', 'opacity-50');
-            svg.setAttribute('fill', 'none');
-            btn.title = 'Dar like';
-        } else {
-            svg.classList.remove('text-black', 'opacity-50');
-            svg.classList.add('text-red-500', 'opacity-100');
-            svg.setAttribute('fill', 'currentColor');
-            btn.title = 'Quitar like';
-        }
-
-        try {
-            await likeService.toggleLike(user.id_usuario, id);
-            // Success - state already updated
-        } catch (error) {
-            console.error('Error toggling like:', error);
-            // Revert on error
-            if (isCurrentlyLiked) {
-                svg.classList.add('text-red-500', 'opacity-100');
-                svg.classList.remove('text-black', 'opacity-50');
-                svg.setAttribute('fill', 'currentColor');
-            } else {
-                svg.classList.add('text-black', 'opacity-50');
-                svg.classList.remove('text-red-500', 'opacity-100');
-                svg.setAttribute('fill', 'none');
+            if (sections.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500">No hay contenido disponible.</p>';
+                return;
             }
-            alert('Error al actualizar el like.');
+
+            sections.forEach(section => {
+                const html = renderSection(section, likedSongIds);
+                container.insertAdjacentHTML('beforeend', html);
+            });
         }
-    };
+    } catch (error) {
+        console.error('Error loading home:', error);
+        if (loading) loading.innerHTML = `<p class="text-red-500 text-center">Error al cargar contenido. Intenta recargar.</p>`;
+    }
 }
 
 function setupEventListeners() {
+    // === NEW SONG MODAL ===
     const modal = document.getElementById('new-song-modal');
     const modalContent = document.getElementById('modal-content');
     const btnNew = document.getElementById('btn-new-song');
@@ -205,91 +152,156 @@ function setupEventListeners() {
     btnNew?.addEventListener('click', openModal);
     btnCancel?.addEventListener('click', closeModal);
 
-    // Drag & Drop Logic
+    // Audio Duration Logic
+    const audioInput = document.getElementById('audio-input');
     const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.querySelector('input[name="audio_file"]');
 
-    if (dropZone && fileInput) {
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
+    if (audioInput) {
+        audioInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Update dropzone text
+                if (dropZone) dropZone.querySelector('p').textContent = `Archivo: ${file.name}`;
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-
-        function highlight(e) {
-            dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
-        }
-
-        function unhighlight(e) {
-            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
-        }
-
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-
-            if (files.length > 0) {
-                fileInput.files = files;
-                // Visual feedback
-                const fileName = files[0].name;
-                dropZone.querySelector('p').textContent = `Archivo seleccionado: ${fileName}`;
-            }
-        }
-
-        // Also update text when selecting via click
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                dropZone.querySelector('p').textContent = `Archivo seleccionado: ${fileInput.files[0].name}`;
+                // Get Duration
+                const audio = new Audio(URL.createObjectURL(file));
+                audio.onloadedmetadata = function () {
+                    const dur = Math.round(audio.duration);
+                    document.getElementById('song-duration').value = dur;
+                    console.log('Duration detected:', dur);
+                };
             }
         });
     }
 
-    // Form Submit
+    // Drag & Drop
+    if (dropZone && audioInput) {
+        dropZone.addEventListener('click', () => audioInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('bg-indigo-50'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-indigo-50'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-indigo-50');
+            if (e.dataTransfer.files.length) {
+                audioInput.files = e.dataTransfer.files;
+                // Trigger change manually to calc duration
+                const event = new Event('change');
+                audioInput.dispatchEvent(event);
+            }
+        });
+    }
+
+    // New Song Submit
     document.getElementById('new-song-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button[type="submit"]');
         const originalText = btn.textContent;
-
         try {
             btn.disabled = true;
             btn.textContent = 'Subiendo...';
-
             const formData = new FormData(e.target);
-
-            // Append user ID
             const user = authService.getCurrentUser();
-            if (user && user.id_usuario) {
-                formData.append('id_usuario', user.id_usuario);
-            } else {
-                throw new Error('Usuario no identificado. Recarga la página.');
-            }
+            if (user) formData.append('id_usuario', user.id_usuario);
 
             await createCancion(formData);
-
             closeModal();
-            loadSongs(); // Reload list
+            loadHomeContent();
             e.target.reset();
-            if (dropZone) dropZone.querySelector('p').textContent = 'Arrastra tu archivo de audio aquí o haz clic para seleccionar';
+            if (dropZone) dropZone.querySelector('p').textContent = 'Arrastra audio...';
         } catch (error) {
-            console.error(error);
-            alert(error.message || 'Error al subir la canción');
+            alert(error.message);
         } finally {
             btn.disabled = false;
             btn.textContent = originalText;
         }
     });
+
+
+    // === EDIT SONG MODAL ===
+    const editModal = document.getElementById('edit-song-modal');
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    const editForm = document.getElementById('edit-song-form');
+
+    const closeEditModal = () => {
+        editModal.classList.add('hidden');
+    };
+
+    btnCancelEdit?.addEventListener('click', closeEditModal);
+
+    window.openEditModal = async (id) => {
+        try {
+            const song = await getCancion(id);
+            if (!song) throw new Error('No se pudo cargar la canción');
+            document.getElementById('edit-id-cancion').value = song.id_cancion;
+            document.getElementById('edit-titulo').value = song.titulo;
+            document.getElementById('edit-artista').value = song.artista;
+            document.getElementById('edit-album').value = song.album || '';
+            document.getElementById('edit-nivel').value = song.nivel;
+            document.getElementById('edit-duracion').value = song.duracion || 0;
+            document.getElementById('edit-fecha').value = song.fecha_lanzamiento || '';
+            let tags = song.hashtags;
+            if (typeof tags === 'string') { try { tags = JSON.parse(tags); } catch (e) { tags = []; } }
+            if (!Array.isArray(tags)) tags = [];
+            document.getElementById('edit-hashtags').value = tags.join(', ');
+            editModal.classList.remove('hidden');
+            editModal.classList.add('flex');
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    };
+
+    editForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData(editForm);
+            const data = Object.fromEntries(formData.entries());
+            data.action = 'update';
+            await updateCancion(data);
+            closeEditModal();
+            loadHomeContent();
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+
+
+
+    // Global Player Navigation
+    window.playSong = (id) => {
+        if (window.navigate) window.navigate('/player/' + id);
+        else window.location.hash = '/player/' + id;
+    };
+
+    // Global Like
+    window.toggleLike = async (id, btn) => {
+        const user = authService.getCurrentUser();
+        if (!user) return alert('Inicia sesión');
+
+        const svg = btn.querySelector('svg');
+        const wasLiked = svg.classList.contains('text-red-500');
+
+        if (wasLiked) {
+            svg.classList.remove('text-red-500', 'opacity-100');
+            svg.classList.add('text-black', 'opacity-50');
+            svg.setAttribute('fill', 'none');
+        } else {
+            svg.classList.remove('text-black', 'opacity-50');
+            svg.classList.add('text-red-500', 'opacity-100');
+            svg.setAttribute('fill', 'currentColor');
+        }
+
+        try {
+            await likeService.toggleLike(user.id_usuario, id);
+        } catch (error) {
+            if (wasLiked) {
+                svg.classList.add('text-red-500', 'opacity-100');
+                svg.classList.remove('text-black', 'opacity-50');
+                svg.setAttribute('fill', 'currentColor');
+            } else {
+                svg.classList.add('text-black', 'opacity-50');
+                svg.classList.remove('text-red-500', 'opacity-100');
+                svg.setAttribute('fill', 'none');
+            }
+        }
+    };
 }
->>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)

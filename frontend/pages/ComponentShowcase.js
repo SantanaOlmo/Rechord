@@ -1,16 +1,17 @@
-import { SongGrid } from '../components/cards/SongGrid.js';
-import { SongCard } from '../components/cards/SongCard.js';
-import { NewSongModal } from '../components/modals/NewSongModal.js';
-import { LoginForm } from '../components/auth/LoginForm.js';
-import { RegisterForm } from '../components/auth/RegisterForm.js';
-import { ProfileHeader } from '../components/profile/ProfileHeader.js';
-import { ProfileBio } from '../components/profile/ProfileBio.js';
-import { EditProfileModal } from '../components/modals/EditProfileModal.js';
-import { PlayerHeader } from '../components/player/PlayerHeader.js';
-import { PlayerControls } from '../components/player/PlayerControls.js';
-import { LyricsPanel } from '../components/editor/LyricsPanel.js';
-import { ChordsPanel } from '../components/editor/ChordsPanel.js';
-import { StrummingPanel } from '../components/editor/StrummingPanel.js';
+import { DashboardHeader } from '../components/DashboardHeader.js';
+import { SongGrid } from '../components/SongGrid.js';
+import { SongCard } from '../components/SongCard.js';
+import { NewSongModal } from '../components/NewSongModal.js';
+import { LoginForm } from '../components/LoginForm.js';
+import { RegisterForm } from '../components/RegisterForm.js';
+import { ProfileHeader } from '../components/ProfileHeader.js';
+import { ProfileBio } from '../components/ProfileBio.js';
+import { EditProfileModal } from '../components/EditProfileModal.js';
+import { PlayerHeader } from '../components/PlayerHeader.js';
+import { PlayerControls } from '../components/PlayerControls.js';
+import { LyricsPanel } from '../components/LyricsPanel.js';
+import { ChordsPanel } from '../components/ChordsPanel.js';
+import { StrummingPanel } from '../components/StrummingPanel.js';
 
 export function ComponentShowcase() {
     setTimeout(() => {
@@ -26,6 +27,7 @@ export function ComponentShowcase() {
                     <p class="text-xs text-gray-400">ReChord UI Kit</p>
                 </div>
                 <div class="flex-1 overflow-y-auto p-2 space-y-1" id="component-list">
+                    ${renderComponentButton('DashboardHeader')}
                     ${renderComponentButton('SongGrid')}
                     ${renderComponentButton('SongCard')}
                     ${renderComponentButton('NewSongModal')}
@@ -92,6 +94,9 @@ function renderComponent(name, container) {
     const mockSong = { id_cancion: 1, titulo: 'Wonderwall', artista: 'Oasis', ruta_imagen: '' };
 
     switch (name) {
+        case 'DashboardHeader':
+            content = `<div class="w-full">${DashboardHeader(mockUser)}</div>`;
+            break;
         case 'SongGrid':
             content = `<div class="w-full">${SongGrid()}</div>`;
             break;
@@ -100,6 +105,7 @@ function renderComponent(name, container) {
             break;
         case 'NewSongModal':
             content = `<div class="relative w-full h-96">${NewSongModal()}</div><script>document.getElementById('new-song-modal').classList.remove('hidden'); document.getElementById('new-song-modal').classList.add('flex'); document.getElementById('modal-content').classList.remove('scale-95', 'opacity-0'); document.getElementById('modal-content').classList.add('scale-100', 'opacity-100');</script>`;
+            // Note: Modal might need adjustments to show inline
             break;
         case 'LoginForm':
             content = `<div class="w-full max-w-md">${LoginForm()}</div>`;
@@ -151,4 +157,3 @@ function renderComponent(name, container) {
         }
     }
 }
-

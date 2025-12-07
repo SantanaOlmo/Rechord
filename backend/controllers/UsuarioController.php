@@ -147,4 +147,37 @@ class UsuarioController {
             sendResponse(["message" => "Usuario no encontrado"], 404);
         }
     }
+
+    public function impersonate($data) {
+        setApiHeaders();
+
+        // 1. Verificar que el que solicita es ADMIN
+        // Como no tenemos middleware de token real en PHP (todo es "token simulado"), 
+        // asumiremos que el frontend envía el ID del admin actual y verificamos su rol en DB.
+        // EN PRODUCCION: Esto se valida decodificando el JWT del header Authorization.
+        
+        if (!isset($data['admin_id'], $data['target_user_id'])) {
+            sendResponse(["message" => "Faltan datos para impersonar."], 400); 
+        }
+
+        $admin = $this->usuarioModel->obtenerPorId($data['admin_id']);
+        if (!$admin || $admin['rol'] !== 'admin') {
+            sendResponse(["message" => "Acceso denegado. Se requieren permisos de administrador."], 403);
+        }
+
+        // 2. Obtener el usuario objetivo
+        $targetUser = $this->usuarioModel->obtenerPorId($data['target_user_id']);
+        if (!$targetUser) {
+            sendResponse(["message" => "Usuario objetivo no encontrado."], 404);
+        }
+
+        // 3. Generar token nuevo (simulado)
+        $token = bin2hex(random_bytes(32));
+
+        sendResponse([
+            "message" => "Impersonación exitosa.",
+            "user" => $targetUser,
+            "token" => $token
+        ], 200);
+    }
 }
