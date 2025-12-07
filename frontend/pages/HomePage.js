@@ -2,7 +2,7 @@ import { authService } from '../services/authService.js';
 import { getCancionesUsuario, createCancion, getHomeData, getCancion, updateCancion } from '../services/cancionService.js';
 import { likeService } from '../services/likeService.js';
 import { CONTENT_BASE_URL } from '../config.js';
-import { DashboardHeader } from '../components/DashboardHeader.js';
+import { DashboardHeader, initUnifiedSearch } from '../components/DashboardHeader.js';
 import { SongCard } from '../components/SongCard.js?v=fixed';
 import { NewSongModal } from '../components/NewSongModal.js';
 import { EditSongModal } from '../components/EditSongModal.js';
@@ -126,7 +126,14 @@ async function loadHomeContent() {
     }
 }
 
+import { DashboardHeader, initUnifiedSearch } from '../components/DashboardHeader.js';
+
+// ... (existing imports)
+
 function setupEventListeners() {
+    // Init Unified Search
+    initUnifiedSearch();
+
     // === NEW SONG MODAL ===
     const modal = document.getElementById('new-song-modal');
     const modalContent = document.getElementById('modal-content');
