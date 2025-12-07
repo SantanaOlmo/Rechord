@@ -1,35 +1,26 @@
-# Implementación de UI de Salas y Sincronización del Reproductor
+# Infraestructura WebSocket y Robustez
 
-Hemos completado la integración visual y lógica del sistema de "Modo Fiesta" (Sincronización), permitiendo a los usuarios crear salas y controlar la reproducción de forma colaborativa.
+En esta etapa final de la implementación de WebSockets, hemos establecido la infraestructura necesaria para ejecutar el servidor de manera persistente y asegurado que el cliente pueda manejar desconexiones de manera elegante.
 
-## 1. Nuevos Componentes de UI
+## 1. Servidor WebSocket (Backend)
 
-*   **`frontend/components/RoomModal.js`**:
-    *   Interfaz para **Crear Sala** o **Unirse a Sala**.
-    *   Utiliza `socketService.send('CREATE_ROOM')` y `socketService.send('JOIN_ROOM',Info)` para comunicar la intención al servidor.
+Se ha creado el punto de entrada real del servidor usando la librería **Ratchet**:
 
-*   **`frontend/components/RoomIndicator.js`**:
-    *   Componente visual (badge) que muestra el **Código de la Sala** y el número de miembros activos.
-    *   Se muestra/oculta automáticamente suscribiéndose a cambios en `Store.state.room`.
+*   **`backend/server/WebSocketServer.php`**:
+    *   Este script inicializa el servidor WebSocket en el puerto `8080`.
+    *   Implementa la interfaz `MessageComponentInterface`.
+    *   Delega el manejo de mensajes al `WSRouter` existente, conectando la lógica de negocio (`RoomManager`) con la infraestructura de red.
+    *   Maneja eventos de ciclo de vida: `onOpen`, `onMessage`, `onClose`, `onError`.
 
-## 2. Adaptación del Reproductor (`PlayerControls.js`)
+*   **`deployment/run_ws.sh`**:
+    *   Script de utilidad para ejecutar el servidor en segundo plano (`nohup`), facilitando el despliegue.
 
-Se ha refactorizado la lógica de control para soportar dos modos de operación en el botón Play/Pause:
+## 2. Robustez del Cliente (Frontend)
 
-1.  **Modo Local (Normal)**:
-    *   Comportamiento estándar: `audio.play()` / `audio.pause()`.
-2.  **Modo Sincronizado (En Sala)**:
-    *   Si el usuario está en una sala (`Store.state.room.id` existe), el botón **bloquea la acción local**.
-    *   En su lugar, envía un comando `UPDATE_PLAYBACK` vía WebSockets.
-    *   La acción real de play/pause se ejecuta **solo cuando llega el evento de vuelta** (`SOCKET:SYNC_STATE`) del servidor, garantizando que todos escuchen lo mismo al mismo tiempo.
+El servicio `frontend/services/socketService.js` ha sido blindado para entornos de producción inestables:
 
-## 3. Integración Global (`HomePage.js`)
+*   **Reconexión Automática**: Implementa un algoritmo de "Exponential Backoff". Si la conexión se pierde, intenta reconectar esperando tiempos crecientes (1s, 2s, 4s...) hasta un límite de intentos.
+*   **Manejo de Cierres**: Distingue entre cierres limpios y caídas inesperadas.
+*   **Notificación al Estado**: Publica el evento `EVENTS.SOCKET.DISCONNECTED` en el `StateStore` cuando la conexión falla definitivamente, permitiendo que la UI informe al usuario.
 
-*   La función global `playSong(id)` ha sido modificada.
-*   Antes: Navegaba directamente a `/player/:id`.
-*   Ahora: Verifica si hay una sala activa. Si es así, envía primero un comando para cargar la canción en la sala (`UPDATE_PLAYBACK` con acción `PLAY` y nueva canción), y luego navega.
-
-## 4. Unificación de Eventos (`PlayerPage.js`)
-
-*   Se creó la función `attachPlayerControlsEvents` en `PlayerControls.js`.
-*   `PlayerPage.js` ahora delega la gestión de eventos de botones a esta función centralizada, asegurando que la lógica de sincronización esté disponible en la vista del reproductor.
+Con esto, el sistema de sincronización no solo es funcional, sino que es capaz de auto-recuperarse y mantenerse operativo en un entorno real.
