@@ -17,10 +17,15 @@
                 "Carpeta.php",
                 "Estrofa.php",
                 "HomeConfig.php",
+                "Sala.php",
                 "Usuario.php"
             ],
             "services": [
-                "CancionManager.php"
+                "CancionManager.php",
+                "RoomManager.php"
+            ],
+            "websocket": [
+                "WSRouter.php"
             ],
             "api": [
                 "auth.php",
