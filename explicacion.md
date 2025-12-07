@@ -1,85 +1,30 @@
-# 📘 Guía de Arquitectura y Flujo de Trabajo (Rechord)
+# Implementación del Frontend Core: Gestión de Estado (StateStore)
 
-Este documento explica cómo trabajar con la nueva arquitectura modular implementada en el proyecto, siguiendo las reglas definidas en `instructions.md`.
+En esta tarea, hemos establecido la base de la arquitectura reactiva del frontend mediante la implementación del patrón **Publicador-Subscriptor (Pub-Sub)**.
 
-## 1. Backend: Capa de Servicios
+## 1. Nuevo Componente: `StateStore.js`
+Ubicación: `frontend/core/StateStore.js`
 
-Para mantener los controladores "delgados" y centralizar la lógica de negocio, utilizamos una **Capa de Servicios**.
+Este archivo actúa como la única fuente de la verdad para el estado de la aplicación.
 
-### Flujo de Datos
-`Router (API)` $\rightarrow$ `Controller` $\rightarrow$ `Service` $\rightarrow$ `Model`
+### Características Principales:
+*   **Patrón Pub-Sub**: Métodos `subscribe(event, callback)` y `publish(event, data)` para desacoplar componentes.
+*   **Estado Centralizado**: Inicializado con las claves requeridas:
+    *   `user`: Información del usuario actual.
+    *   `currentSongId`: ID de la canción activa.
+    *   `isPlaying`: Estado de reproducción.
+    *   `volume`: Nivel de volumen global.
+*   **Constantes de Eventos (`EVENTS`)**:
+    *   `PLAYER`: Eventos de reproducción (`PLAY_SONG`, `PAUSE`, `UPDATE_POSITION`).
+    *   `USER`: Eventos de sesión (`AUTH_SUCCESS`, `LOGOUT`).
+    *   `UI`: Cambios de interfaz (`THEME_CHANGED`).
 
-### Cómo implementar una nueva funcionalidad:
-1.  **Model (`models/`)**: Crea métodos que solo ejecuten SQL. No incluyas validaciones complejas aquí.
-2.  **Service (`services/`)**: Crea un método que contenga la lógica.
-    *   Valida datos de negocio.
-    *   Llama a uno o más Modelos.
-    *   Maneja subida de archivos (usando `processFile`).
-    *   Retorna los datos procesados o lanza `Exception`.
-3.  **Controller (`controllers/`)**:
-    *   Recibe la petición HTTP.
-    *   Instancia el Servicio.
-    *   Llama al método del Servicio dentro de un `try-catch`.
-    *   Devuelve `json_encode` con la respuesta o el error.
+## 2. Integración con el Router Principal (`app.js`)
 
-**Ejemplo:**
-```php
-// Controller
-$service = new CancionService();
-try {
-    $data = $service->create($userId, $_POST, $_FILES);
-    echo json_encode(['success' => true, 'data' => $data]);
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-}
-```
+Hemos modificado el punto de entrada de la aplicación (`frontend/app.js`) para integrar el Store.
 
-## 2. Frontend: Gestión de Estado (Store)
+*   **Inicialización**: El Store se importa y está listo para usarse globalmente.
+*   **Demostración**: Se añadió una suscripción de prueba al evento `EVENTS.USER.AUTH_SUCCESS` para verificar que el router puede reaccionar a cambios de estado (como un inicio de sesión exitoso) sin acoplamiento directo.
 
-Para desacoplar componentes, usamos un patrón **Pub-Sub** centralizado en `StateStore.js`.
-
-### Principios
-*   **Componentes Agnósticos**: `PlayerControls` no sabe que `SongCard` existe.
-*   **Fuente de Verdad**: El estado (qué canción suena, volumen, cola) vive en el Store, no en el DOM.
-
-### Uso del Store:
-*   **Publicar un evento** (Hacer que pase algo):
-    ```javascript
-    import { Store, EVENTS } from '../core/StateStore.js';
-    Store.publish(EVENTS.PLAYER.PLAY_SONG, { id: 123 });
-    ```
-*   **Suscribirse a un cambio** (Reaccionar a algo):
-    ```javascript
-    Store.subscribe(EVENTS.PLAYER.PLAY_SONG, (data) => {
-        console.log('Nueva canción:', data.id);
-        // Actualizar UI
-    });
-    ```
-
-## 3. Base de Datos y Migraciones
-
-Cualquier cambio en la base de datos debe ser rastreable.
-
-### Flujo de Modificación:
-1.  **Modificar DB**: Realiza tus cambios en MySQL (phpMyAdmin, etc.).
-2.  **Documentar Esquema**: Actualiza el diagrama Mermaid en `db_schema.md`.
-3.  **Crear Migración**: Genera un archivo `.sql` en `db/` con el nombre `db_migration_N.sql` (incrementando N).
-    *   Incluye solo los comandos `ALTER`, `CREATE` o `INSERT` necesarios para replicar el cambio.
-
-## 4. WebSockets (Planificación)
-
-Para el futuro "Modo Fiesta" (Sincronización):
-*   **Backend**: Usaremos `backend/services/RoomManager.php` para gestionar salas.
-*   **Frontend**: `frontend/services/socketService.js` manejará la conexión.
-*   El Store tendrá eventos como `SOCKET:JOIN_ROOM` y `SOCKET:SYNC_STATE`.
-
-## 5. Git Workflow
-
-Al finalizar una tarea:
-1.  Actualiza `project_structure.json` si añadiste/borraste archivos.
-2.  Ejecuta:
-    ```bash
-    git add .
-    git commit -m "feat: [Descripción clara del cambio]"
-    git push
-    ```
+---
+*Esta implementación cumple con la regla de arquitectura de desacoplar el estado de la UI y los componentes.*
