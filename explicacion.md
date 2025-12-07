@@ -1,35 +1,26 @@
-# Implementación del Backend: WebSockets y Sincronización (RoomManager)
+# Implementación del Frontend: WebSockets y Sincronización (socketService)
 
-En esta fase, hemos establecido la infraestructura del lado del servidor para soportar la funcionalidad de tiempo real (WebSockets), necesaria para el "Modo Fiesta" o sincronización entre dispositivos.
+En esta fase, hemos habilitado la capacidad de comunicación en tiempo real en el cliente, integrando el nuevo servicio de WebSockets con el sistema de estado central.
 
-## 1. Punto de Entrada: `WSRouter.php`
-Ubicación: `backend/websocket/WSRouter.php`
+## 1. Configuración (`config.js`)
+Se añadió la constante `WS_URL` ('ws://localhost:8080') para definir el punto de conexión con el servidor de WebSockets.
 
-Este componente actúa como el "Controlador" para las conexiones WebSocket.
-*   **Función**: Recibe mensajes JSON crudos, decodifica la `action` (ej. `CREATE_ROOM`, `UPDATE_PLAYBACK`) y despacha la lógica al `RoomManager`.
-*   **Respuesta**: Devuelve estructuras estandarizadas (`status`, `payload`, `broadcast`) que el servidor WebSocket real utilizaría para responder al cliente o emitir a la sala.
+## 2. Servicio de Comunicación: `socketService.js`
+Ubicación: `frontend/services/socketService.js`
 
-## 2. Lógica de Negocio: `RoomManager.php`
-Ubicación: `backend/services/RoomManager.php`
+Este servicio gestiona toda la lógica de transporte de datos en tiempo real.
+*   **Conexión y Reconexión**: Intenta mantener la conexión activa automáticamente.
+*   **Integración con Store**: No manipula el DOM directamente. Al recibir un mensaje del servidor, lo traduce a un evento del sistema y lo publica en el `StateStore`.
+    *   Ejemplo: Recibe `{ action: 'PLAYBACK_UPDATED' }` $\rightarrow$ Publica `EVENTS.SOCKET.SYNC_STATE`.
 
-Gestiona el ciclo de vida de las salas y el estado de reproducción.
-*   **Gestión de Salas**: `createRoom` (genera códigos únicos), `joinRoom`, `leaveRoom`.
-*   **Estado de Reproducción**: `updatePlaybackState` actualiza qué canción suena, en qué segundo y si está en pausa/play.
-*   **Persistencia**: Delega en el modelo `Sala` para guardar estos estados en la base de datos.
+## 3. Actualización del Estado (`StateStore.js`)
 
-## 3. Persistencia (Modelo y Base de Datos)
-
-Hemos creado una estructura relacional para mantener vivas las salas.
-
-*   **Modelo (`backend/models/Sala.php`)**: Abstrae las consultas SQL para crear, buscar y actualizar salas.
-*   **Tabla (`SALAS`)**: Definida en `db/db_migration_1.sql`.
-    *   Almacena: `codigo_sala`, `id_maestro`, `current_song_id`, `current_position`, `is_playing`, `estado`.
-    *   Permite que una sala "recuerde" qué canción estaba sonando incluso si el socket se desconecta momentáneamente.
+Se ha ampliado el `StateStore` para soportar la lógica de salas y sincronización.
+*   **Nuevos Eventos (`EVENTS.SOCKET`)**:
+    *   `CONNECTED` / `DISCONNECTED`: Para indicar el estado de la conexión en la UI.
+    *   `SYNC_STATE`: Evento crítico que notifica que la canción o posición ha cambiado remotamente.
+*   **Estado Inicial**: Se añadió la clave `room` para almacenar el ID de la sala y los miembros.
 
 ---
-### Flujo de Sincronización
-1.  **Cliente (Maestro)** envía `UPDATE_PLAYBACK` (e.g. Pause en seg 45).
-2.  **WSRouter** recibe y valida.
-3.  **RoomManager** guarda el nuevo estado en DB (Tabla `SALAS`).
-4.  **WSRouter** construye una respuesta de `broadcast`.
-5.  **Servidor WS** retransmite a todos los clientes en la sala $\rightarrow$ Clientes se pausan en seg 45.
+### Flujo de Datos en el Cliente
+**Servidor WS** $\rightarrow$ `socketService` (Recibe JSON) $\rightarrow$ `StateStore.publish(SOCKET:SYNC_STATE)` $\rightarrow$ **Componentes (Player)** (Reaccionan y actualizan UI)
