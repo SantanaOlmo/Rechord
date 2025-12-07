@@ -40,6 +40,8 @@ switch($method) {
             $controller->reordenar($data);
         } elseif ($action === 'rename') {
             $controller->renombrar($data);
+        } elseif ($action === 'remove_song') {
+            $controller->quitarCancion($data);
         }
         break;
 

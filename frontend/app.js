@@ -149,10 +149,10 @@ function router() {
 
     if (useFullLayout) {
         appRoot.classList.remove('container', 'mx-auto', 'p-4');
-        appRoot.classList.add('h-screen', 'w-screen', 'overflow-hidden', 'p-0', 'm-0');
+        appRoot.classList.add('flex-1', 'w-full', 'overflow-hidden', 'p-0', 'm-0', 'relative');
     } else {
-        appRoot.classList.add('container', 'mx-auto', 'p-4');
-        appRoot.classList.remove('h-screen', 'w-screen', 'overflow-hidden', 'p-0', 'm-0');
+        appRoot.classList.add('container', 'mx-auto', 'p-4', 'overflow-y-auto', 'scrollbar-hide');
+        appRoot.classList.remove('flex-1', 'w-full', 'overflow-hidden', 'p-0', 'm-0', 'relative');
     }
 
     // Check for dynamic routes (e.g., /sincronizador/123)

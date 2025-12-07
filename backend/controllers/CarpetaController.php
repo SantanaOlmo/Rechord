@@ -65,6 +65,14 @@ class CarpetaController {
         }
     }
 
+    public function quitarCancion($data) {
+        if ($this->carpetaModel->quitarCancion($data['id_carpeta'], $data['id_cancion'])) {
+            $this->jsonResponse(['message' => 'Canción eliminada de carpeta']);
+        } else {
+            $this->jsonResponse(['message' => 'Error al eliminar'], 500);
+        }
+    }
+
     public function listarCanciones($idCarpeta) {
         $canciones = $this->carpetaModel->obtenerCanciones($idCarpeta);
         $this->jsonResponse($canciones);

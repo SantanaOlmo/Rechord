@@ -24,13 +24,20 @@ class Cancion {
         return false;
     }
 
-    public function actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha_lanzamiento) {
-        $sql = "UPDATE CANCION SET titulo = ?, artista = ?, nivel = ?, album = ?, duracion = ?, hashtags = ?, fecha_lanzamiento = ? WHERE id_cancion = ?";
+    public function actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha_lanzamiento, $rutaImagen = null) {
+        $sql = "UPDATE CANCION SET titulo = ?, artista = ?, nivel = ?, album = ?, duracion = ?, hashtags = ?, fecha_lanzamiento = ?";
+        $params = [$titulo, $artista, $nivel, $album, $duracion, $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags, $fecha_lanzamiento];
         
-        $stmt = $this->pdo->prepare($sql);
-        $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags;
+        if ($rutaImagen) {
+            $sql .= ", ruta_imagen = ?";
+            $params[] = $rutaImagen;
+        }
 
-        return $stmt->execute([$titulo, $artista, $nivel, $album, $duracion, $hashtagsJson, $fecha_lanzamiento, $id]);
+        $sql .= " WHERE id_cancion = ?";
+        $params[] = $id;
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function obtenerPorId($id) {
@@ -124,18 +131,31 @@ class Cancion {
     }
 
     public function buscar($term, $idUsuario = null) {
-        $term = "%$term%";
-        $sql = "SELECT c.*";
+        $termWild = "%$term%";
+        $termStart = "$term%";
+
+        $sql = "SELECT c.*, 
+                (CASE 
+                    WHEN c.titulo = ? THEN 1 
+                    WHEN c.titulo LIKE ? THEN 2 
+                    ELSE 3 
+                END) as relevance";
+
         if ($idUsuario) {
             $sql .= ", (SELECT COUNT(*) FROM LIKE_CANCION l WHERE l.id_cancion = c.id_cancion AND l.id_usuario = ?) as is_liked";
         } else {
             $sql .= ", 0 as is_liked";
         }
-        $sql .= " FROM CANCION c WHERE c.titulo LIKE ? OR c.artista LIKE ? OR c.tags LIKE ? ORDER BY c.titulo ASC LIMIT 20";
+        
+        $sql .= " FROM CANCION c WHERE c.titulo LIKE ? OR c.artista LIKE ? OR c.hashtags LIKE ? 
+                  ORDER BY relevance ASC, c.titulo ASC LIMIT 20";
         
         $stmt = $this->pdo->prepare($sql);
-        $params = [$term, $term, $term];
-        if ($idUsuario) array_unshift($params, $idUsuario);
+        
+        // Params: ExactTerm, StartTerm, [User], WildTerm, WildTerm, WildTerm
+        $params = [$term, $termStart];
+        if ($idUsuario) $params[] = $idUsuario;
+        array_push($params, $termWild, $termWild, $termWild);
         
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

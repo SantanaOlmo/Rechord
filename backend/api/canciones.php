@@ -36,8 +36,14 @@ switch($method) {
             $data = json_decode(file_get_contents('php://input'), true);
             $controller->toggleLike($data);
         } elseif ($action === 'update') {
-            $data = json_decode(file_get_contents('php://input'), true);
-            $controller->actualizarCancion($data);
+            if (!empty($_FILES) || !empty($_POST)) {
+                 $data = $_POST;
+                 $files = $_FILES;
+                 $controller->actualizarCancion($data, $files);
+            } else {
+                 $data = json_decode(file_get_contents('php://input'), true);
+                 $controller->actualizarCancion($data);
+            }
         } elseif ($action === 'add_category') {
             $data = json_decode(file_get_contents('php://input'), true);
             $controller->addHomeCategory($data);

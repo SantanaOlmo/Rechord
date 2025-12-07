@@ -65,9 +65,15 @@ class CancionController {
         }
     }
 
-    public function actualizarCancion($postData) {
+    public function actualizarCancion($postData, $files = []) {
         setApiHeaders();
         if (!isset($postData['id_cancion'])) sendResponse(["message" => "ID requerido"], 400);
+        
+        // Merge files into data for service
+        if (!empty($files)) {
+            $postData['files'] = $files;
+        }
+
         try {
             if ($this->service->update($postData['id_cancion'], $postData)) {
                 sendResponse(["message" => "Actualizada"]);

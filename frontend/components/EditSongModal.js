@@ -45,7 +45,23 @@ export function EditSongModal() {
                         </div>
                         <div class="form-group">
                             <label class="form-label">Duración (segundos)</label>
-                            <input type="number" name="duracion" id="edit-duracion" class="form-input">
+                            <div class="flex items-center space-x-2">
+                                <input type="number" name="duracion" id="edit-duracion" class="form-input flex-1">
+                                <button type="button" id="btn-detect-duration" class="p-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs" title="Detectar desde archivo">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Portada (Opcional)</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative w-16 h-16 rounded overflow-hidden bg-gray-800 border border-gray-700">
+                                <img id="edit-image-preview" src="" alt="Preview" class="w-full h-full object-cover">
+                            </div>
+                            <input type="file" name="image_file" id="edit-image-input" accept="image/*" 
+                                   class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100 flex-1">
                         </div>
                     </div>
 
