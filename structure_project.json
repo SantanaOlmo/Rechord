@@ -1,6 +1,7 @@
 {
   ".gitignore": "file",
   "DEBUGGING_LOG.md": "file",
+  "explicacion.md": "file",
   "README.MD": "file",
   "backend": {
     "api": {
