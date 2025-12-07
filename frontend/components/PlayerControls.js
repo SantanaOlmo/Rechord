@@ -1,3 +1,7 @@
+import { Store, EVENTS } from '../core/StateStore.js';
+import { socketService } from '../services/socketService.js';
+import { audioService } from '../services/audioService.js';
+
 export function PlayerControls(songId, showChords) {
     return `
         <div class="bg-gray-900/90 backdrop-blur-md p-6 pb-8 border-t border-gray-800">
@@ -53,4 +57,70 @@ export function PlayerControls(songId, showChords) {
             </div>
         </div>
     `;
+}
+
+/**
+ * Attaches event listeners for the player controls.
+ * Handles both local logic and WebSocket logic if in a room.
+ */
+export function attachPlayerControlsEvents(currentSong) {
+    const btnPlay = document.getElementById('btn-play');
+    const audio = audioService.getInstance();
+
+    // Subscribe to Sync State
+    Store.subscribe(EVENTS.SOCKET.SYNC_STATE, (payload) => {
+        const { stateAction, position, songId } = payload;
+
+        // Ensure correct song is loaded if needed (optional implementation)
+        // For now we assume song is same.
+
+        if (Math.abs(audio.currentTime - position) > 2) {
+            audio.currentTime = position;
+        }
+
+        if (stateAction === 'PLAY' || stateAction === 'RESUME') {
+            audio.play().catch(e => console.error(e));
+        } else {
+            audio.pause();
+        }
+        updatePlayButtonState();
+    });
+
+    if (btnPlay) {
+        btnPlay.onclick = () => {
+            const state = Store.getState();
+            const roomId = state.room?.id;
+
+            if (roomId) {
+                // Remote Logic
+                const action = audio.paused ? 'PLAY' : 'PAUSE';
+                socketService.send('UPDATE_PLAYBACK', {
+                    roomId: roomId,
+                    stateAction: action,
+                    position: audio.currentTime,
+                    songId: currentSong.id_cancion
+                });
+            } else {
+                // Local Logic
+                if (audio.paused) audio.play();
+                else audio.pause();
+                updatePlayButtonState();
+            }
+        };
+    }
+}
+
+function updatePlayButtonState() {
+    const audio = audioService.getInstance();
+    const isPlaying = !audio.paused;
+
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    if (isPlaying) {
+        if (iconPlay) iconPlay.classList.add('hidden');
+        if (iconPause) iconPause.classList.remove('hidden');
+    } else {
+        if (iconPlay) iconPlay.classList.remove('hidden');
+        if (iconPause) iconPause.classList.add('hidden');
+    }
 }

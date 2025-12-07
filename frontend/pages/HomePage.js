@@ -330,47 +330,32 @@ function setupEventListeners() {
             loadHomeContent();
         } catch (error) {
             alert(error.message);
-        }
-    });
 
+            const svg = btn.querySelector('svg');
+            const wasLiked = svg.classList.contains('text-red-500');
 
-
-    // Global Player Navigation
-    window.playSong = (id) => {
-        if (window.navigate) window.navigate('/player/' + id);
-        else window.location.hash = '/player/' + id;
-    };
-
-    // Global Like
-    window.toggleLike = async (id, btn) => {
-        const user = authService.getCurrentUser();
-        if (!user) return alert('Inicia sesión');
-
-        const svg = btn.querySelector('svg');
-        const wasLiked = svg.classList.contains('text-red-500');
-
-        if (wasLiked) {
-            svg.classList.remove('text-red-500', 'opacity-100');
-            svg.classList.add('text-black', 'opacity-50');
-            svg.setAttribute('fill', 'none');
-        } else {
-            svg.classList.remove('text-black', 'opacity-50');
-            svg.classList.add('text-red-500', 'opacity-100');
-            svg.setAttribute('fill', 'currentColor');
-        }
-
-        try {
-            await likeService.toggleLike(user.id_usuario, id);
-        } catch (error) {
             if (wasLiked) {
-                svg.classList.add('text-red-500', 'opacity-100');
-                svg.classList.remove('text-black', 'opacity-50');
-                svg.setAttribute('fill', 'currentColor');
-            } else {
-                svg.classList.add('text-black', 'opacity-50');
                 svg.classList.remove('text-red-500', 'opacity-100');
+                svg.classList.add('text-black', 'opacity-50');
                 svg.setAttribute('fill', 'none');
+            } else {
+                svg.classList.remove('text-black', 'opacity-50');
+                svg.classList.add('text-red-500', 'opacity-100');
+                svg.setAttribute('fill', 'currentColor');
             }
-        }
-    };
-}
+
+            try {
+                await likeService.toggleLike(user.id_usuario, id);
+            } catch (error) {
+                if (wasLiked) {
+                    svg.classList.add('text-red-500', 'opacity-100');
+                    svg.classList.remove('text-black', 'opacity-50');
+                    svg.setAttribute('fill', 'currentColor');
+                } else {
+                    svg.classList.add('text-black', 'opacity-50');
+                    svg.classList.remove('text-red-500', 'opacity-100');
+                    svg.setAttribute('fill', 'none');
+                }
+            }
+        };
+    }
