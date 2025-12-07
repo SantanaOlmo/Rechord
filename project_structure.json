@@ -57,7 +57,8 @@
                 "authService.js",
                 "cancionService.js",
                 "carpetaService.js",
-                "likeService.js"
+                "likeService.js",
+                "socketService.js"
             ],
             "root": [
                 "app.js",

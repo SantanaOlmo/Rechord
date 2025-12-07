@@ -7,6 +7,7 @@
  */
 export const API_BASE_URL = '../backend/api';
 export const CONTENT_BASE_URL = '../backend';
+export const WS_URL = 'ws://localhost:8080'; // WebSocket Server configuration
 
 /**
  * Variables del Administrador (Solo para la demostración de la gestión de usuarios).
