@@ -50,6 +50,9 @@ switch($method) {
         } elseif ($action === 'impersonate') {
             $data = $data ?? json_decode(file_get_contents('php://input'), true);
             $controller->impersonate($data);
+        } elseif ($action === 'update_config') {
+            $data = $data ?? json_decode(file_get_contents('php://input'), true);
+            $controller->actualizarConfiguracion($data);
         } else {
             // Fallback logic
             $data = $data ?? json_decode(file_get_contents('php://input'), true);

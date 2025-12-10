@@ -43,7 +43,7 @@ class Usuario {
     }
 
     public function obtenerPorId($id) {
-        $stmt = $this->pdo->prepare("SELECT id_usuario, nombre, email, rol, fecha_registro, foto_perfil, banner, bio FROM USUARIO WHERE id_usuario = ?");
+        $stmt = $this->pdo->prepare("SELECT id_usuario, nombre, email, rol, fecha_registro, foto_perfil, banner, bio, configuracion FROM USUARIO WHERE id_usuario = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -61,6 +61,11 @@ class Usuario {
     public function actualizarDatos($id, $nombre, $email, $bio) {
         $stmt = $this->pdo->prepare("UPDATE USUARIO SET nombre = ?, email = ?, bio = ? WHERE id_usuario = ?");
         return $stmt->execute([$nombre, $email, $bio, $id]);
+    }
+
+    public function actualizarConfiguracion($id, $configuracion) {
+        $stmt = $this->pdo->prepare("UPDATE USUARIO SET configuracion = ? WHERE id_usuario = ?");
+        return $stmt->execute([$configuracion, $id]);
     }
 
     public function eliminar($id) {

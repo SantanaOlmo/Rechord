@@ -2,7 +2,7 @@ import { getCancion } from '../services/cancionService.js';
 import { getEstrofas } from '../services/estrofaService.js';
 import { CONTENT_BASE_URL } from '../config.js';
 import { PlayerHeader } from '../components/player/PlayerHeader.js';
-import { PlayerControls, attachPlayerControlsEvents } from '../components/player/PlayerControls.js';
+import { PlayerControls, attachPlayerControlsEvents, updatePlayerMeta } from '../components/player/PlayerControls.js';
 import { LyricsPanel } from '../components/editor/LyricsPanel.js';
 import { ChordsPanel } from '../components/editor/ChordsPanel.js';
 import { StrummingPanel } from '../components/editor/StrummingPanel.js';
@@ -53,6 +53,7 @@ export function PlayerPage(id) {
             currentSong = { ...song, estrofas }; // Combine data
             initAudio(currentSong);
             updateUI(currentSong);
+            updatePlayerMeta(currentSong);
         } catch (error) {
             console.error(error);
             document.getElementById('lyrics-container').innerHTML = `<p class="text-red-500">Error al cargar la canción.</p>`;

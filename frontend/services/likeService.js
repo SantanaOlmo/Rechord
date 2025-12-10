@@ -45,5 +45,11 @@ export const likeService = {
         const response = await fetch(`${API_BASE_URL}/likes.php?id_usuario=${id_usuario}`);
         if (!response.ok) return [];
         return await response.json(); // Returns array of song IDs
+    },
+
+    async getUserLikedSongs(id_usuario) {
+        const response = await fetch(`${API_BASE_URL}/likes.php?id_usuario=${id_usuario}&full=true`);
+        if (!response.ok) return [];
+        return await response.json(); // Returns array of song objects
     }
 };
