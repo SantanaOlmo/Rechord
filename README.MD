@@ -1,4 +1,4 @@
-# [Rechord](frontend/assets/branding/logo_large.png)
+# [Rechord](http://localhost/rechordb/frontend/index.html)
 
 **Rechord** es una plataforma web integral diseñada para músicos y entusiastas de la guitarra. Permite subir canciones, sincronizar letras y acordes de manera interactiva estilo karaoke/Musixmatch, y socializar con otros usuarios.
 
@@ -40,6 +40,7 @@ Navega por la documentación detallada del proyecto en la carpeta `/docs`:
 ### 📊 Modelado de Datos
 - [📊 Diagramas UML y DB](docs/10_UML_diagram.md) 
 - [💾 Desarrollo de Base de Datos](docs/11_DB_development.md) - Notas sobre persistencia y gestión de archivos.
+- [🛠️ Guía Configuración DB](docs/14_database_setup_guide.md) - Explicación de conexión y config.php.
 
 ### 🚀 Otros
 - [🧪 Testing y Validación](docs/08_testing_and_validation.md) - Estrategias de prueba.

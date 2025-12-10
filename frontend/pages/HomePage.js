@@ -41,7 +41,7 @@ export function Home() {
                         <div class="hero-overlay"></div>
                         <div class="hero-content">
                             <h1 class="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">Siente la música</h1>
-                            <p class="text-xl text-gray-200 mb-8 drop-shadow-md">Descubre, crea y comparte tus acordes favoritos.</p>
+                            <p class="text-xl text-gray-200 mb-8 drop-shadow-md">Descubre, crea y toca tus canciones favoritas.</p>
                             <button onclick="document.getElementById('home-content').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-bold shadow-lg transition transform hover:scale-105">Explorar</button>
                         </div>
                     </section>
