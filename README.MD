@@ -1,12 +1,12 @@
-# 🎸 Rechord
+# ![Rechord Banner](docs/assets/images/RECHORD_HEADER.png) 
 
 **La plataforma definitiva para músicos.**
 
 Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
-![Rechord Banner](frontend/assets/img/hero/default-hero.jpg)
+![gif](docs/assets/gif/rechord.gif)git add .
 
-## ✨ ¿Qué ofrece Rechord?
+##  ¿Qué ofrece Rechord?
 
 *   **Sincronización Perfecta:** Nuestro editor te permite alinear letras y acordes milimétricamente con el audio. ¡Como un karaoke profesional, pero mejor!
 *   **Tu Biblioteca en la Nube:** Sube tus MP3, organiza tus carpetas y ten tus canciones siempre a mano.
