@@ -1,3 +1,5 @@
+[ Volver al �ndice](index.md)
+
 # Arquitectura Backend
 
 El backend de Rechordb es una API RESTful construida con **PHP 8+** puro, siguiendo el patrón **MVC (Modelo-Vista-Controlador)**.
@@ -35,3 +37,4 @@ Implementación de tiempo real usando `Ratchet`.
 *   **Prepared Statements**: Todas las consultas SQL utilizan sentencias preparadas para prevenir inyección SQL.
 
 [⬅️ Volver al Índice](index.md)
+

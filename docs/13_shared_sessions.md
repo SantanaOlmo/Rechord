@@ -1,3 +1,5 @@
+[ Volver al �ndice](index.md)
+
 # Sesiones Compartidas (Modo Fiesta)
 
 Esta funcionalidad permite a múltiples usuarios escuchar música sincronizada en tiempo real. Un usuario crea una "Sala" y comparte el código con otros. Todos los miembros de la sala escuchan la misma canción en el mismo punto de reproducción.
@@ -85,3 +87,4 @@ socketService.send('UPDATE_PLAYBACK', {
 *   **Seguridad**: Actualmente el sistema se basa en compartir el código de sala. Cualquier usuario con el código puede unirse; no hay una lista blanca o aprobación por parte del creador.
 
 [⬅️ Volver al Índice](index.md)
+

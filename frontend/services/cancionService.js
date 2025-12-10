@@ -87,76 +87,6 @@ export async function createCancion(formData) {
 }
 
 /**
- * Da o quita like a una canción
- */
-export async function toggleLike(idCancion) {
-    try {
-        const user = authService.getCurrentUser();
-        if (!user) throw new Error('No autenticado');
-
-        const response = await fetch(`${BASE_URL}?action=toggle_like`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id_usuario: user.id_usuario,
-                id_cancion: idCancion
-            })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Error al dar like');
-        }
-
-        return data;
-    } catch (error) {
-        console.error('Error al dar like:', error);
-        throw error;
-    }
-}
-
-/**
- * Obtiene los datos para la Home Page (secciones configuradas)
- */
-export async function getHomeData() {
-    try {
-        const user = authService.getCurrentUser();
-        const headers = {};
-        if (user) headers['X-User-Id'] = user.id_usuario;
-
-        const endpoint = `${BASE_URL}?action=home_data`;
-        console.log('cancionService: getHomeData calling', endpoint);
-
-        const response = await fetch(endpoint, { headers });
-        console.log('cancionService: getHomeData response status', response.status);
-
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('cancionService: Server Error', text);
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('cancionService: getHomeData data', data);
-
-        if (data && data.sections) {
-            return data.sections;
-        } else if (Array.isArray(data)) {
-            return data;
-        } else {
-            console.warn('cancionService: Unexpected data format', data);
-            return [];
-        }
-    } catch (error) {
-        console.error('cancionService: getHomeData failed', error);
-        throw error;
-    }
-}
-
-/**
  * Actualiza los datos de una canción
  */
 export async function updateCancion(songData) {
@@ -184,128 +114,34 @@ export async function updateCancion(songData) {
     }
 }
 
-const HOME_CONFIG_URL = `${API_BASE_URL}/home_config.php`;
-
 /**
- * Admin: Obtener configuración completa (incluyendo inactivos)
+ * Da o quita like a una canción
  */
-export async function getAdminHomeData() {
+export async function toggleLike(idCancion) {
     try {
-        const token = authService.getToken();
-        const response = await fetch(`${HOME_CONFIG_URL}?action=admin_list`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const user = authService.getCurrentUser();
+        if (!user) throw new Error('No autenticado');
 
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('getAdminHomeData error:', text);
-            throw new Error(`Error ${response.status}: ${text}`);
-        }
+        const response = await fetch(`${BASE_URL}?action=toggle_like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id_usuario: user.id_usuario,
+                id_cancion: idCancion
+            })
+        });
 
         const data = await response.json();
-        return data.configs || data.sections || data;
-    } catch (error) {
-        console.error('Error fetching admin home data:', error);
-        throw error;
-    }
-}
 
-/**
- * Admin: Añadir categoría a Home
- */
-export async function addHomeCategory(categoryData) {
-    try {
-        const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'add', ...categoryData })
-        });
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al dar like');
+        }
 
-/**
- * Admin: Eliminar categoría
- */
-export async function deleteHomeCategory(idConfig) {
-    try {
-        const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'delete', id: idConfig })
-        });
-        return await response.json();
+        return data;
     } catch (error) {
-        throw error;
-    }
-}
-
-/**
- * Admin: Actualizar orden de categorías
- */
-export async function updateHomeConfigOrder(items) {
-    try {
-        const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'reorder', items })
-        });
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}
-
-/**
- * Admin: Actualizar categoría
- */
-export async function updateHomeCategory(categoryData) {
-    try {
-        const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'update', ...categoryData })
-        });
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}
-
-/**
- * Admin: Toggle Visibilidad
- */
-export async function toggleHomeVisibility(idConfig, active) {
-    try {
-        const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ action: 'toggle', id: idConfig, active: active ? 1 : 0 })
-        });
-        return await response.json();
-    } catch (error) {
+        console.error('Error al dar like:', error);
         throw error;
     }
 }

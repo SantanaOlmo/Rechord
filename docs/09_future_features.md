@@ -1,3 +1,5 @@
+[ Volver al �ndice](index.md)
+
 # Características Futuras (Roadmap)
 
 Este documento detalla las ideas y planes para próximas versiones de Rechordb.
@@ -28,3 +30,4 @@ Este documento detalla las ideas y planes para próximas versiones de Rechordb.
 3.  **Seguridad**: Rate limiting en la API y validación de emails.
 
 [⬅️ Volver al Índice](index.md)
+

@@ -9,7 +9,7 @@ import { NotificationsPage } from '../pages/NotificationsPage.js';
 import { Header } from '../components/layout/Header.js';
 import { AdminDashboard } from '../pages/AdminDashboard.js'; // Already added in previous step effectively (context), but ensuring order.
 import { authService } from '../services/authService.js';
-import { render as Sincronizador, attachEditorEvents } from '../pages/Sincronizador.js';
+import { render as Sincronizador } from '../pages/Sincronizador.js';
 import { PlayerPage } from '../pages/PlayerPage.js';
 
 
@@ -95,7 +95,7 @@ const router = () => {
     if (sincronizadorMatch) {
         const songId = sincronizadorMatch[1] ? parseInt(sincronizadorMatch[1]) : null;
         appRoot.innerHTML = Sincronizador(songId);
-        attachEditorEvents();
+        // Sincronizador handles its own initialization
         return;
     }
 
@@ -104,7 +104,6 @@ const router = () => {
     if (editorMatch) {
         const songId = editorMatch[1] ? parseInt(editorMatch[1]) : null;
         appRoot.innerHTML = Sincronizador(songId);
-        attachEditorEvents();
         return;
     }
 

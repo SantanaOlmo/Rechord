@@ -1,3 +1,5 @@
+[ Volver al �ndice](index.md)
+
 # Testing y Validación
 
 ## ✅ Estrategias de Pruebas
@@ -28,3 +30,4 @@ Para futuras iteraciones se planea incorporar:
 *   **E2E Tests**: Cypress o Playwright para flujos críticos del frontend.
 
 [⬅️ Volver al Índice](index.md)
+
