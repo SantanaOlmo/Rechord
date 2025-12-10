@@ -128,18 +128,6 @@ export function attachUserEvents() {
                 };
             }
 
-            // Support Admin Edit on User Page
-            if (isAdmin && !isOwner) {
-                // Import logic dynamically or duplicate? 
-                // Profile.js has a big 'setupStandardEvents' for editing.
-                // We should probably factor that out if we want DRY, but for now allow duplicating the edit-modal logic
-                // OR we can import 'attachProfileEvents' logic? No, too coupled.
-                // Let's assume for this step user just wants VIEWING. 
-                // "no quiero ver editar perfil a menos que YO sea admin"
-                // If I am admin, I see the button (rendered by Header). I need the logic to open the modal.
-                // I will duplicate the modal logic here briefly for safety and speed.
-                setupEditLogic(user);
-            }
         }
     }
 
@@ -149,14 +137,5 @@ export function attachUserEvents() {
             let val = parseInt(el.textContent) || 0;
             el.textContent = Math.max(0, val + change);
         }
-    }
-
-    function setupEditLogic(user) {
-        // Re-use the existing modal in the DOM? 
-        // The modal is currently injected by Profile.js. 
-        // User.js needs to inject its own modal or assume one exists in layout?
-        // Profile.js injects: ${EditProfileModal(authService.getCurrentUser())}
-        // app.js root clears content. So we need to inject the modal here too.
-        // Let's add the modal to HTML above.
     }
 }

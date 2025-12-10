@@ -1,18 +1,9 @@
-import { getCancion } from '../services/cancionService.js';
-import { getEstrofas } from '../services/estrofaService.js';
-import { audioService } from '../services/audioService.js';
-import { CONTENT_BASE_URL } from '../config.js';
-
-// Import from Modules
-import { state } from './synchronizer/store.js';
-import { renderTimeline, updatePlayIcon, drawRuler, updatePreview, renderHeaders, updateActiveVerse } from './synchronizer/rendering.js';
-import { attachListeners, handleGlobalMouseMove, handleGlobalMouseUp } from './synchronizer/events.js';
-import { formatMMSS, showErrorToast } from './synchronizer/utils.js';
-
-// This file is now the Entry Point (Controller)
+import { attachEditorEvents } from '../components/synchronizer/SyncController.js';
 
 export function render(songId) {
-    console.log('Sincronizador Module Loaded v2');
+    // Schedule initialization
+    setTimeout(attachEditorEvents, 0);
+
     return `
         <div class="h-screen flex flex-col bg-gray-900 text-white font-sans select-none overflow-hidden">
             <!-- Header / Preview Area -->
@@ -54,12 +45,9 @@ export function render(songId) {
                 
                  <!-- Global Playback Bar -->
                  <div class="h-14 border-t border-gray-800 bg-gray-800/50 flex items-center px-4 relative justify-center">
-                    <!-- Left Info -->
                     <div class="absolute left-4 text-xs text-gray-500 hidden md:block">
                         Espacio: Play/Pause | Click: Seleccionar | Arrastrar: Ajustar
                     </div>
-
-                    <!-- Center Controls -->
                     <div class="flex items-center space-x-4">
                         <button id="btn-play-pause" class="w-10 h-10 flex items-center justify-center bg-white text-gray-900 rounded-full hover:scale-110 transition shadow-lg">
                              <svg id="icon-play" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -91,31 +79,18 @@ export function render(songId) {
                     <!-- Scrollable Tracks Content -->
                     <div class="flex-1 overflow-x-auto overflow-y-hidden relative scrollbar-hide" id="timeline-scroll-area">
                         <div id="timeline-content" class="h-full relative">
-                            
-                             <!-- Tracks Container used by rendering.js to sync heights -->
                              <div id="tracks-container">
                                  <!-- Lyrics Track -->
                                  <div class="bg-gray-900/30 border-b border-gray-800 relative group transition-all duration-200" id="track-lyrics">
-                                    <div id="track-verses" class="w-full h-full relative">
-                                        <!-- Clips injected here -->
-                                    </div>
+                                    <div id="track-verses" class="w-full h-full relative"></div>
                                  </div>
-
-                                 <!-- Strumming Track -->
                                  <div class="bg-gray-900/20 border-b border-gray-800 relative group transition-all duration-200" id="track-strumming">
-                                    <div class="absolute inset-0 flex items-center justify-center text-gray-700 text-sm select-none">
-                                        Pista de Strumming
-                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center text-gray-700 text-sm select-none">Pista de Strumming</div>
                                  </div>
-
-                                 <!-- Chords Track -->
                                  <div class="bg-gray-900/20 border-b border-gray-800 relative group transition-all duration-200" id="track-chords">
-                                     <div class="absolute inset-0 flex items-center justify-center text-gray-700 text-sm select-none">
-                                        Pista de Acordes
-                                    </div>
+                                     <div class="absolute inset-0 flex items-center justify-center text-gray-700 text-sm select-none">Pista de Acordes</div>
                                  </div>
                              </div>
-
                              <!-- Playhead -->
                              <div id="playhead" class="absolute top-0 bottom-0 w-px bg-red-500 z-10 pointer-events-none transform translate-x-0" style="left: 0px">
                                 <div class="w-3 h-3 -ml-1.5 bg-red-500 transform rotate-45 -mt-1.5 shadow-sm"></div>
@@ -123,129 +98,8 @@ export function render(songId) {
                              </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     `;
-}
-
-export function attachEditorEvents() {
-    const songId = location.hash.split('/').pop();
-    if (songId) {
-        init(songId);
-    }
-}
-
-async function init(songId) {
-    try {
-        const [song, estrofas] = await Promise.all([getCancion(songId), getEstrofas(songId)]);
-        state.song = song;
-
-        // Prepare verses
-        state.estrofas = estrofas.map((e, index) => {
-            let start = parseFloat(e.tiempo_inicio);
-            let end = parseFloat(e.tiempo_fin);
-            return {
-                ...e,
-                id: index, // Use index as ID for visual mapping
-                tiempo_inicio: start,
-                tiempo_fin: end
-            };
-        });
-
-        // Distribution Logic if all zero
-        const allZero = state.estrofas.every(e => e.tiempo_inicio === 0 && e.tiempo_fin === 0);
-        if (allZero && state.estrofas.length > 0) {
-            let currentTime = 0;
-            state.estrofas.forEach(e => {
-                e.tiempo_inicio = currentTime;
-                e.tiempo_fin = currentTime + 4;
-                currentTime += 4.5;
-            });
-        }
-
-        // Audio
-        const audio = audioService.getInstance();
-        const path = song.ruta_mp3.startsWith('http') ? song.ruta_mp3 : `${CONTENT_BASE_URL}/${song.ruta_mp3}`;
-        if (audioService.currentUrl !== path) {
-            audio.src = path;
-        }
-
-
-        const finishSetup = () => {
-            setupZoom(audio.duration || song.duracion || 180);
-            renderHeaders();
-            renderTimeline();
-            attachListeners();
-            startRenderLoopInContext();
-        };
-
-        if (audio.readyState >= 1) {
-            finishSetup();
-        } else {
-            audio.onloadedmetadata = () => finishSetup();
-        }
-
-        state.isPlaying = !audio.paused;
-        updatePlayIcon();
-
-    } catch (e) {
-        console.error(e);
-        showErrorToast('Error cargando el editor: ' + e.message);
-    }
-}
-
-function setupZoom(duration) {
-    if (!duration) duration = 180;
-    // Calculate Min Zoom: Tracks area width / Duration
-    const trackArea = document.getElementById('timeline-scroll-area');
-    const availableWidth = trackArea ? trackArea.clientWidth : window.innerWidth - 200;
-
-    // Minimum zoom is such that the song fills the screen exactly
-    state.minZoom = availableWidth / duration;
-
-    // Set initial zoom a bit higher than min to allow scrolling, or just min?
-    state.zoom = Math.max(state.minZoom, 10); // Start reasonably zoomed
-
-    renderTimeline();
-}
-
-function startRenderLoopInContext() {
-    const audio = audioService.getInstance();
-    const loop = () => {
-        if (!document.getElementById('timeline-container')) {
-            // Unmounted
-            window.removeEventListener('mousemove', handleGlobalMouseMove);
-            window.removeEventListener('mouseup', handleGlobalMouseUp);
-            return;
-        }
-
-        // Update Global Time
-        const currentTime = audio.currentTime;
-        const timeDisplay = document.getElementById('global-time');
-        if (timeDisplay) timeDisplay.textContent = formatMMSS(currentTime, true);
-
-        // Update Playhead
-        const playhead = document.getElementById('playhead');
-        if (playhead) {
-            const px = currentTime * state.zoom;
-            playhead.style.left = `${px}px`;
-        }
-
-        // Active Verse Update
-        if (state.isPlaying) {
-            // Dynamic import to avoid module issues if any, or just assume it's available via window?
-            // No, we should import it at top.
-            updateActiveVerse(currentTime);
-        } else {
-            // If paused, we rely on selection.
-            // But we might need to ensure one frame update to clear active if we just paused?
-            // updatePreview is called on refresh.
-            // If we just paused, refresh calls updatePreview.
-        }
-
-        requestAnimationFrame(loop);
-    };
-    loop();
 }

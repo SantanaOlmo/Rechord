@@ -11,7 +11,6 @@ let showChords = false;
 
 export async function initPlayer(songId) {
     try {
-        showChords = false; // Reset chords visibility
         const song = await getCancion(songId);
         const estrofas = await getEstrofas(songId);
         currentSong = { ...song, estrofas };
@@ -58,7 +57,7 @@ function handleSongEnd() {
             const queue = JSON.parse(queueStr);
             const idx = queue.findIndex(s => s.id == currentSong.id_cancion);
             if (idx >= 0 && idx < queue.length - 1) {
-                window.navigate('/song/' + queue[idx + 1].id);
+                window.navigate('/player/' + queue[idx + 1].id);
                 return;
             }
         } catch (e) { console.error(e); }

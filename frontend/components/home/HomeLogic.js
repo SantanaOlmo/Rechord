@@ -1,5 +1,5 @@
 import { authService } from '../../services/authService.js';
-import { getHomeData } from '../../services/homeService.js';
+import { getHomeData } from '../../services/cancionService.js';
 import { likeService } from '../../services/likeService.js';
 import { renderSection } from '../logic/HomeRenderer.js';
 import { initNewSongLogic } from '../logic/NewSongLogic.js';

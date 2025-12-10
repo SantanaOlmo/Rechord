@@ -1,4 +1,4 @@
-import { setupAdminLogic } from '../../logic/adminHomeConfig.js';
+import { setupAdminLogic } from '../logic/adminHomeLogic.js';
 
 export function renderHomeConfigTab(container) {
     container.innerHTML = `
