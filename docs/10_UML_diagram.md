@@ -1,5 +1,3 @@
-[ Volver al �ndice](index.md)
-
 [![back](assets/icons/back.png)](00_project_overview.md)
 
 # Diagramas UML
@@ -105,41 +103,40 @@ classDiagram
 
 ## 2. Diagrama de Base de Datos (ER)
 
-Esquema relacional completo de la base de datos `rechord`, excluyendo tablas de diccionario de acordes.
+Esquema relacional de la base de datos `rechord`, incluyendo tablas principales y de relación.
 
 ```mermaid
 erDiagram
-    USUARIO ||--o{ CANCION : "Sube"
-    USUARIO ||--o{ CARPETA : "Crea"
-    USUARIO ||--o{ LIKE_CANCION : "Da Like"
-    USUARIO ||--o{ LIKE_CARPETA : "Da Like"
-    USUARIO ||--o{ SEGUIR_USUARIO : "Sigue (seguidor)"
-    USUARIO ||--o{ SEGUIR_USUARIO : "Es seguido"
-    USUARIO ||--o{ NOTIFICACIONES : "Recibe"
-    USUARIO ||--o{ CHAT_PARTICIPANTES : "Participa"
-    USUARIO ||--o{ CHAT_MENSAJES : "Envía"
-    USUARIO ||--o{ SALAS : "Crea/Maestro"
-    USUARIO ||--o{ PATRON_RASGUEO : "Crea"
+    USUARIO ||--o{ CANCION : sube
+    USUARIO ||--o{ CARPETA : crea
+    USUARIO ||--o{ LIKE_CANCION : "da like"
+    USUARIO ||--o{ SEGUIR_USUARIO : "sigue a"
+    USUARIO ||--o{ NOTIFICACIONES : recibe
+    USUARIO ||--o{ CHAT_PARTICIPANTES : participa
+    
+    CANCION ||--o{ ESTROFA : tiene
+    CANCION ||--o{ LIKE_CANCION : recibe
+    CANCION ||--o{ CANCION_CARPETA : "esta en"
+    CANCION ||--o{ CONFIGURACION_TEMPORAL : tiene
+    CANCION ||--o{ ACORDE_SINCRONIZADO : tiene
 
-    CANCION ||--o{ ESTROFA : "Contiene"
-    CANCION ||--o{ LIKE_CANCION : "Recibe Like"
-    CANCION ||--o{ CANCION_CARPETA : "Incluida en"
-    CANCION ||--o| CONFIGURACION_TEMPORAL : "Tiene"
-    CANCION ||--o{ RASGUEO_SINCRONIZADO : "Tiene"
+    CARPETA ||--o{ CANCION_CARPETA : contiene
+    CARPETA ||--o{ LIKE_CARPETA : recibe
 
-    CARPETA ||--o{ CANCION_CARPETA : "Contiene"
-    CARPETA ||--o{ LIKE_CARPETA : "Recibe Like"
+    ACORDE ||--o{ ACORDE_CEJILLA : tiene
+    ACORDE ||--o{ ACORDE_DIGITACION : tiene
+    ACORDE ||--o{ ACORDE_SINCRONIZADO : se_usa_en
 
-    CHAT_CONVERSACIONES ||--o{ CHAT_MENSAJES : "Contiene"
-    CHAT_CONVERSACIONES ||--o{ CHAT_PARTICIPANTES : "Tiene"
+    CHAT_CONVERSACIONES ||--o{ CHAT_MENSAJES : contiene
+    CHAT_CONVERSACIONES ||--o{ CHAT_PARTICIPANTES : tiene
 
-    %% Definición de Tablas
     USUARIO {
         int id_usuario PK
         string nombre
         string email
         string password_hash
         string rol
+        string foto_perfil
     }
 
     CANCION {
@@ -148,13 +145,29 @@ erDiagram
         string titulo
         string artista
         string ruta_mp3
+        string nivel
     }
 
     ESTROFA {
         int id_estrofa PK
         int id_cancion FK
-        text texto
+        text contenido
         float tiempo_inicio
+        float tiempo_fin
+    }
+
+    ACORDE {
+        int id_acorde PK
+        string nombre
+        string color_hex
+    }
+
+    ACORDE_SINCRONIZADO {
+        int id_sincronia_acorde PK
+        int id_cancion FK
+        int id_acorde FK
+        float tiempo_inicio
+        float tiempo_fin
     }
 
     CARPETA {
@@ -163,92 +176,10 @@ erDiagram
         string nombre
     }
 
-    CANCION_CARPETA {
-        int id_cancion_carpeta PK
-        int id_carpeta FK
-        int id_cancion FK
-    }
-
-    LIKE_CANCION {
-        int id_like PK
-        int id_usuario FK
-        int id_cancion FK
-    }
-    
-    LIKE_CARPETA {
-        int id_like_carpeta PK
-        int id_usuario FK
-        int id_carpeta FK
-    }
-
-    SEGUIR_USUARIO {
-        int id_seguir PK
-        int id_usuario_seguidor FK
-        int id_usuario_seguido FK
-    }
-
-    NOTIFICACIONES {
-        int id_notificacion PK
-        int id_usuario FK
-        text mensaje
-    }
-
-    CHAT_CONVERSACIONES {
-        int id_conversacion PK
-        timestamp fecha_ultima_actividad
-    }
-
-    CHAT_MENSAJES {
-        int id_mensaje PK
-        int id_conversacion FK
-        int id_usuario_emisor FK
-        text contenido
-    }
-
-    CHAT_PARTICIPANTES {
-        int id_participante PK
-        int id_conversacion FK
-        int id_usuario FK
-    }
-
     SALAS {
         int id_sala PK
         string codigo_sala
         int id_maestro FK
         enum estado
-    }
-
-    HERO_VIDEOS {
-        int id_hero PK
-        string titulo
-        string ruta_video
-        boolean activo
-    }
-
-    HOME_CONFIG {
-        int id_config PK
-        string tipo
-        string valor
-        string titulo_mostrar
-    }
-
-    CONFIGURACION_TEMPORAL {
-        int id_cancion PK, FK
-        int tempo_bpm
-        int metrica_numerador
-    }
-
-    PATRON_RASGUEO {
-        int id_patron PK
-        int id_usuario FK
-        string nombre
-        json patron_data
-    }
-
-    RASGUEO_SINCRONIZADO {
-        int id_sincronia_rasgueo PK
-        int id_cancion FK
-        int id_patron FK
-        float tiempo_inicio
     }
 ```
