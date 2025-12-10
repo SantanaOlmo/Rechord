@@ -124,7 +124,8 @@ export const authService = {
 
     isAdmin() {
         const user = this.getCurrentUser();
-        return user && user.rol === 'admin';
+        // Allow role 'admin' OR the specific hardcoded email
+        return user && (user.rol === 'admin' || user.email === 'alberto16166@alumnos.ilerna.com');
     },
 
     async getAllUsers() {

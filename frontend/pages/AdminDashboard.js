@@ -1,107 +1,131 @@
-import { authService } from '../services/authService.js';
-import { CONTENT_BASE_URL } from '../config.js';
+import { setupAdminLogic } from '../logic/adminHomeLogic.js';
+import { AdminUsersTab } from '../components/admin/AdminUsersTab.js';
+import { AdminWebSocketTab } from '../components/admin/AdminWebSocketTab.js';
+import { AdminHeroTab } from '../components/admin/AdminHeroTab.js?v=toastcheck';
 
 export function AdminDashboard() {
-    setTimeout(loadDashboardData, 0);
+    setTimeout(initDashboard, 0);
 
     return `
-        <div class="container mx-auto px-4 py-8">
-            <h1 class="text-3xl font-bold mb-6 text-white">Panel de Administración</h1>
-
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <div class="p-6 border-b border-gray-700">
-                    <h2 class="text-xl font-semibold text-white">Gestión de Usuarios</h2>
-                    <p class="text-gray-400 text-sm mt-1">Administra usuarios y accede a sus cuentas.</p>
+        <div class="container mx-auto px-4 py-8 max-w-5xl">
+            <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Panel de Administración</h1>
+                    <p class="text-gray-400 text-sm">Gestiona usuarios, contenido y configuración</p>
                 </div>
+                <!-- Tabs Navigation -->
+                <div class="flex space-x-1 bg-gray-900/50 p-1 rounded-lg">
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-indigo-600 text-white shadow-lg" data-tab="users">Usuarios</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="home">Configuración Home</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="hero">Hero Video</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="websocket">Websocket</button>
+                </div>
+            </header>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-gray-400">
-                        <thead class="bg-gray-700 text-gray-200 uppercase text-xs">
-                            <tr>
-                                <th class="px-6 py-3">Usuario</th>
-                                <th class="px-6 py-3">Email</th>
-                                <th class="px-6 py-3">Rol</th>
-                                <th class="px-6 py-3">Registro</th>
-                                <th class="px-6 py-3">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body" class="divide-y divide-gray-700">
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center">Cargando usuarios...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Content Area -->
+            <div id="dashboard-content-container" class="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-800 relative min-h-[500px]">
+                <!-- Dynamic Content -->
+                <div class="flex items-center justify-center h-64 text-gray-500">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto mb-3"></div>
+                        <span class="text-sm">Iniciando panel...</span>
+                    </div>
                 </div>
             </div>
         </div>
     `;
 }
 
-async function loadDashboardData() {
-    const tableBody = document.getElementById('users-table-body');
-    if (!tableBody) return;
+// Global instances to manage cleanup/state
+let usersTab = new AdminUsersTab('dashboard-content-container');
+let wsTab = new AdminWebSocketTab('dashboard-content-container');
+let heroTab = new AdminHeroTab('dashboard-content-container');
+let currentTab = 'users';
 
-    try {
-        const users = await authService.getAllUsers();
+async function initDashboard() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const container = document.getElementById('dashboard-content-container');
 
-        console.log("Usuarios cargados en Dashboard:", users); // DEBUG
+    // Reset specific instances if creating new ones per render is safer
+    usersTab = new AdminUsersTab('dashboard-content-container');
+    wsTab = new AdminWebSocketTab('dashboard-content-container');
+    heroTab = new AdminHeroTab('dashboard-content-container');
 
-        if (users.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center">No se encontraron usuarios.</td></tr>';
-            return;
-        }
+    // We can preload users if we want
+    await usersTab.loadUsers();
 
-        const currentUser = authService.getCurrentUser();
-
-        tableBody.innerHTML = users.map(user => {
-            const isMe = currentUser && currentUser.id_usuario == user.id_usuario;
-            const avatarUrl = user.foto_perfil ? `${CONTENT_BASE_URL}/${user.foto_perfil}` : 'assets/icons/default_avatar.png';
-
-            // Log user.rol to see if it's coming correctly from backend
-            // console.log(`User ${user.nombre} role:`, user.rol);
-
-            return `
-                <tr class="hover:bg-gray-750 transition-colors">
-                    <td class="px-6 py-4 flex items-center gap-3">
-                        <img src="${avatarUrl}" alt="${user.nombre}" class="w-8 h-8 rounded-full object-cover">
-                        <span class="font-medium text-white">${user.nombre}</span>
-                        ${isMe ? '<span class="ml-2 px-2 py-0.5 text-xs bg-green-900 text-green-300 rounded-full">Tú</span>' : ''}
-                    </td>
-                    <td class="px-6 py-4">${user.email}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 text-xs rounded-full ${user.rol === 'admin' ? 'bg-purple-900 text-purple-300' : 'bg-gray-700 text-gray-300'}">
-                            ${user.rol || 'user'}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm">${user.fecha_registro || '-'}</td>
-                    <td class="px-6 py-4">
-                        ${!isMe ? `
-                            <button onclick="window.impersonateUser(${user.id_usuario})" 
-                                class="text-indigo-400 hover:text-indigo-300 hover:underline text-sm font-medium transition-colors">
-                                Simular Sesión
-                            </button>
-                        ` : '<span class="text-gray-600 text-sm italic">Actual</span>'}
-                    </td>
-                </tr>
-            `;
-        }).join('');
-
-        // Expose helper to window for onclick
-        window.impersonateUser = async (userId) => {
-            if (!confirm('¿Estás seguro de que deseas iniciar sesión como este usuario? Tendrás que cerrar sesión para volver a ser admin.')) return;
-
-            try {
-                await authService.impersonate(userId);
-                alert('Sesión iniciada como usuario. Redirigiendo...');
-                window.location.hash = '#/';
-                window.location.reload(); // Reload to refresh app state fully
-            } catch (error) {
-                alert(error.message);
+    const switchTab = (tab) => {
+        currentTab = tab;
+        // Update Buttons UI
+        tabBtns.forEach(btn => {
+            if (btn.dataset.tab === tab) {
+                btn.className = 'tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-indigo-600 text-white shadow-lg';
+            } else {
+                btn.className = 'tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors';
             }
-        };
+        });
+        renderTabContent(container);
+    };
 
-    } catch (error) {
-        console.error(error);
-        tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error al cargar usuarios. Intente recargar.</td></tr>';
+    tabBtns.forEach(btn => {
+        btn.onclick = () => switchTab(btn.dataset.tab);
+    });
+
+    // Default Tab
+    switchTab('users');
+}
+
+function renderTabContent(container) {
+    // Cleanup previous tab if needed
+    wsTab.stopStatusCheck(); // Stop WS interval if leaving WS tab
+
+    container.innerHTML = '';
+
+    if (currentTab === 'users') {
+        usersTab.render();
+    } else if (currentTab === 'home') {
+        renderHomeConfigTab(container);
+    } else if (currentTab === 'websocket') {
+        wsTab.render();
+    } else if (currentTab === 'hero') {
+        heroTab.render();
     }
+}
+
+// Home Config Tab (Still kept here or could move to its own Component/Wrapper)
+function renderHomeConfigTab(container) {
+    container.innerHTML = `
+        <div class="p-6">
+            <h3 class="text-xl font-bold mb-4 text-white">Gestión de Home Page</h3>
+            
+            <div id="admin-home-config" class="space-y-4 min-h-[100px]">
+                <p class="text-gray-400">Cargando configuración...</p>
+            </div>
+            
+            <button id="btn-toggle-add-cat" class="mt-6 text-indigo-400 hover:text-indigo-300 flex items-center gap-2 font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Nueva Categoría
+            </button>
+
+            <form id="add-category-form" class="mt-4 bg-gray-800 p-6 rounded-lg hidden border border-gray-700 shadow-xl">
+                <h4 class="font-bold mb-4 text-white">Añadir Nueva Categoría</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="titulo" placeholder="Título (ej: Rock 90s)" class="bg-gray-700 text-white rounded p-3 text-sm border border-gray-600 focus:border-indigo-500 outline-none w-full" required>
+                    <input type="text" name="valor" placeholder="Hashtag (ej: rock)" class="bg-gray-700 text-white rounded p-3 text-sm border border-gray-600 focus:border-indigo-500 outline-none w-full" required>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <select name="tipo" class="bg-gray-700 text-white rounded p-3 text-sm border border-gray-600 outline-none w-full">
+                        <option value="hashtag">Hashtag</option>
+                        <option value="static">Estático (top_likes, recent)</option>
+                    </select>
+                    <input type="number" name="orden" placeholder="Orden" class="bg-gray-700 text-white rounded p-3 text-sm border border-gray-600 outline-none w-full" value="99">
+                </div>
+                <div class="mt-6 flex gap-3">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-6 rounded-lg font-medium shadow-lg transition-all">Añadir</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    setupAdminLogic();
 }

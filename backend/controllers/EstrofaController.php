@@ -43,6 +43,24 @@ class EstrofaController {
 
     public function actualizarEstrofa($data) {
         setApiHeaders();
+        
+        // Check for Bulk Update (Array)
+        if (isset($data[0]) && is_array($data[0])) {
+            $success = true;
+            foreach ($data as $item) {
+                if (isset($item['id_estrofa'])) {
+                    if (!$this->estrofaModel->actualizar($item['id_estrofa'], $item['contenido'], $item['tiempo_inicio'], $item['tiempo_fin'])) {
+                        $success = false;
+                    }
+                }
+            }
+            
+            if ($success) sendResponse(["message" => "Estrofas actualizadas correctamente"]);
+            else sendResponse(["message" => "Error al actualizar algunas estrofas"], 500);
+            return;
+        }
+
+        // Single Update
         if (!isset($data['id_estrofa'])) {
             sendResponse(["message" => "Falta id_estrofa"], 400);
         }

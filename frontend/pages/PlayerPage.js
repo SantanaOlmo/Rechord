@@ -1,17 +1,18 @@
 import { getCancion } from '../services/cancionService.js';
 import { getEstrofas } from '../services/estrofaService.js';
 import { CONTENT_BASE_URL } from '../config.js';
-import { PlayerHeader } from '../components/PlayerHeader.js';
-import { PlayerControls, attachPlayerControlsEvents } from '../components/PlayerControls.js';
-import { LyricsPanel } from '../components/LyricsPanel.js';
-import { ChordsPanel } from '../components/ChordsPanel.js';
-import { StrummingPanel } from '../components/StrummingPanel.js';
+import { PlayerHeader } from '../components/player/PlayerHeader.js';
+import { PlayerControls, attachPlayerControlsEvents } from '../components/player/PlayerControls.js';
+import { LyricsPanel } from '../components/editor/LyricsPanel.js';
+import { ChordsPanel } from '../components/editor/ChordsPanel.js';
+import { StrummingPanel } from '../components/editor/StrummingPanel.js';
 
 import { audioService } from '../services/audioService.js';
 
 let isPlaying = false;
 let currentSong = null;
-let showChords = true; // Piano toggle state
+let showChords = false; // Piano toggle state
+window.isDraggingProgress = false;
 
 export function PlayerPage(id) {
     // Reset state on new load
@@ -25,17 +26,22 @@ export function PlayerPage(id) {
 
     // Initial Skeleton/Loading UI
     const html = `
-        <div class="player-page-container h-screen flex flex-col bg-gray-900 text-white overflow-hidden relative">
+        <div class="player-page-container h-[calc(100vh-64px)] flex flex-col overflow-hidden relative">
             ${PlayerHeader()}
 
-            <!-- Main Content Area -->
-            <main class="flex-1 flex relative">
-                ${ChordsPanel(showChords)}
-                ${LyricsPanel()}
-                ${StrummingPanel()}
-            </main>
+            <!-- Main Content Area: Flex Column to hold Panels + Controls -->
+            <main class="flex-1 flex flex-col relative overflow-hidden min-h-0">
+                <!-- Content Panels (Lyrics, Chords, etc) - Flex 1 to take available space -->
+                <div class="flex-1 flex relative overflow-hidden min-h-0">
+                    ${ChordsPanel(showChords)}
+                    ${LyricsPanel()}
+                </div>
 
-            ${PlayerControls(id, showChords)}
+                <!-- Controls fixed at bottom of Main -->
+                <div class="shrink-0 z-20 w-full">
+                    ${PlayerControls(id, showChords)}
+                </div>
+            </main>
         </div>
     `;
 
@@ -69,6 +75,9 @@ function initAudio(song) {
         audio.src = path;
         audioService.currentUrl = path;
     }
+
+    // Auto-play on load
+    audio.play().catch(e => console.log('Autoplay blocked:', e));
 
     // Update isPlaying state based on actual audio state
     isPlaying = !audio.paused;
@@ -112,12 +121,37 @@ function initAudio(song) {
     // Attach Unified Controls Events (Local + Socket)
     attachPlayerControlsEvents(song);
 
+    // Unified Progress Bar Interaction (Click + Drag)
     const progressBar = document.getElementById('progress-bar');
+    let isDragging = false;
+
     if (progressBar) {
-        progressBar.onclick = (e) => {
+        const updateDrag = (e) => {
             const rect = progressBar.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
+            const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+
+            // Update Visuals immediately
+            const progressFill = document.getElementById('progress-fill');
+            const progressHandle = document.getElementById('progress-handle');
+            if (progressFill) progressFill.style.width = `${pos * 100}%`;
+            if (progressHandle) progressHandle.style.left = `${pos * 100}%`;
+
+            return pos;
+        };
+
+        const onDragEnd = (e) => {
+            isDragging = false;
+            const pos = updateDrag(e);
             audio.currentTime = pos * audio.duration;
+            document.removeEventListener('mousemove', updateDrag);
+            document.removeEventListener('mouseup', onDragEnd);
+        };
+
+        progressBar.onmousedown = (e) => {
+            isDragging = true;
+            updateDrag(e); // Allow click-to-seek start
+            document.addEventListener('mousemove', updateDrag);
+            document.addEventListener('mouseup', onDragEnd);
         };
     }
 
@@ -128,12 +162,12 @@ function initAudio(song) {
             showChords = !showChords;
             const panel = document.getElementById('chords-panel');
             if (showChords) {
-                panel.classList.remove('opacity-0');
+                panel.classList.remove('hidden', 'opacity-0');
                 panel.classList.add('opacity-100');
                 btnChords.classList.add('text-green-400');
             } else {
                 panel.classList.remove('opacity-100');
-                panel.classList.add('opacity-0');
+                panel.classList.add('hidden', 'opacity-0');
                 btnChords.classList.remove('text-green-400');
             }
         };
@@ -154,9 +188,10 @@ function updateUI(song) {
         `;
     } else {
         // Render lyrics from estrofas
-        const lyricsHtml = song.estrofas.map(estrofa => `
-            <div class="mb-8 transition-opacity duration-500 hover:opacity-100 opacity-80">
-                <p class="text-white text-2xl font-bold leading-relaxed whitespace-pre-line">${estrofa.contenido}</p>
+        const lyricsHtml = song.estrofas.map((estrofa, index) => `
+            <div id="stanza-${index}" class="lyric-stanza mb-12 transition-all duration-500 ease-out opacity-30 transform scale-100 origin-center cursor-pointer hover:opacity-60"
+                 onclick="const audio = audioService.getInstance(); audio.currentTime = ${estrofa.tiempo_inicio};">
+                <p class="leading-relaxed whitespace-pre-line transition-all duration-200 font-bold" style="font-size: var(--lyrics-font-size, 24px);">${estrofa.contenido}</p>
             </div>
         `).join('');
         container.innerHTML = lyricsHtml;
@@ -198,6 +233,11 @@ function updateProgress() {
 
     if (!progressFill || !progressHandle || !currentTimeEl) return;
 
+    // Don't update visual bar while user is dragging
+    // Need to access isDragging from scope or make it global/module level
+    // Implementing module-level isDragging variable at top
+    if (window.isDraggingProgress) return;
+
     const current = audio.currentTime;
     const duration = audio.duration || 1;
     const percent = (current / duration) * 100;
@@ -205,6 +245,74 @@ function updateProgress() {
     progressFill.style.width = `${percent}%`;
     progressHandle.style.left = `${percent}%`;
     currentTimeEl.textContent = formatTime(current);
+
+    highlightLyrics(current);
+}
+
+function highlightLyrics(currentTime) {
+    if (!currentSong || !currentSong.estrofas) return;
+
+    const lyricsContainer = document.getElementById('lyrics-container');
+    const stanzas = lyricsContainer.querySelectorAll('.lyric-stanza');
+    let activeIndex = -1;
+
+    // Find active stanza
+    currentSong.estrofas.forEach((estrofa, index) => {
+        const start = parseFloat(estrofa.tiempo_inicio);
+        const end = parseFloat(estrofa.tiempo_fin);
+
+        if (currentTime >= start && currentTime < end) {
+            activeIndex = index;
+        }
+    });
+
+    // Update Styles & Scroll
+    stanzas.forEach((stanza, index) => {
+        if (index === activeIndex) {
+            // Active Style
+            stanza.classList.remove('opacity-30', 'scale-100');
+            stanza.classList.add('opacity-100', 'scale-105', 'text-white', 'font-bold');
+
+            // Scroll to Center
+            // Only scroll if we changed active index to avoid jitter, requires tracking previous index
+            // But simple implementation: check if it's already centered?
+            // Let's use behavior smooth
+            const containerCenter = lyricsContainer.clientHeight / 2;
+            const stanzaCenter = stanza.offsetTop + (stanza.clientHeight / 2);
+
+            // We want to scroll container so that stanzaCenter is at containerCenter
+            // container.scrollTop = stanza.offsetTop - (container.clientHeight / 2) + (stanza.clientHeight / 2)
+            // But stanza.offsetTop is relative to parent if positioned? 
+            // Better: stanza.getBoundingClientRect().top relative to container
+
+            // Simple approach:
+            // lyricsContainer.scrollTo({
+            //     top: stanza.offsetTop - lyricsContainer.clientHeight / 2 + stanza.clientHeight / 2,
+            //     behavior: 'smooth'
+            // });
+
+            // To avoid constant scrolling calls, we can check if it's already near center?
+            // Or just call it, smooth behavior handles it well usually.
+
+            // BUT: scrollIntoView with block: center is easiest
+            // stanza.scrollIntoView({ behavior: 'smooth', block: 'center' }); // This moves the whole page sometimes if not careful
+
+            // Manual calculation is safer for nested overflow
+            const targetScrollToken = stanza.offsetTop - (lyricsContainer.clientHeight / 2) + (stanza.clientHeight / 2);
+            // Check distance to avoid micro-scrolls
+            if (Math.abs(lyricsContainer.scrollTop - targetScrollToken) > 10) {
+                lyricsContainer.scrollTo({
+                    top: targetScrollToken,
+                    behavior: 'smooth'
+                });
+            }
+
+        } else {
+            // Inactive Style
+            stanza.classList.remove('opacity-100', 'scale-105', 'text-white', 'font-bold');
+            stanza.classList.add('opacity-30', 'scale-100');
+        }
+    });
 }
 
 function formatTime(seconds) {

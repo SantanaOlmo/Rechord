@@ -13,8 +13,6 @@ Rechord es una aplicación web para músicos y amantes de la guitarra que permit
 2. **Canciones**
    - Subida de archivos MP3.
    - Subida o creación de letras.
-   - Creación y vinculación de acordes a estrofas.
-   - Sincronización letra-acorde con audio (lector interactivo tipo karaoke).
    - Clasificación por artista y nivel (fácil/intermedio/difícil).
    - Organización en carpetas.
 
@@ -22,6 +20,9 @@ Rechord es una aplicación web para músicos y amantes de la guitarra que permit
    - Creación de acordes propios o importación de existentes.
    - Vinculación de acordes a canciones y estrofas.
    - Posibilidad futura de crear tablaturas.
+   - Creación y vinculación de acordes a estrofas.
+   - Sincronización letra-acorde con audio (lector interactivo tipo karaoke).
+
 
 ## Base de datos
 

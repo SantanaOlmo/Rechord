@@ -22,3 +22,17 @@ export async function crearEstrofa(estrofa) {
     }
     return await response.json();
 }
+
+export async function updateEstrofas(estrofas) {
+    const response = await fetch(`${API_BASE_URL}/estrofas.php`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(estrofas)
+    });
+    if (!response.ok) {
+        throw new Error('Error al actualizar estrofas');
+    }
+    return await response.json();
+}

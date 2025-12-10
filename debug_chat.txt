@@ -1,0 +1,5 @@
+[2025-12-09 23:22:36] Send: 3 -> 4 | Content: mensaje de preuba
+Conv ID: 2
+[2025-12-09 23:23:04] Send: 3 -> 4 | Content: mensaje de prueba
+Conv ID: 2
+Fallback ID: 2
