@@ -3,6 +3,9 @@ import { ProfileHeader } from '../components/profile/ProfileHeader.js';
 import { authService } from '../services/authService.js';
 import { ProfileBio } from '../components/profile/ProfileBio.js';
 import { Footer } from '../components/layout/Footer.js';
+import { likeService } from '../services/likeService.js';
+import { SongCard } from '../components/cards/SongCard.js?v=profile';
+import { renderSection } from '../components/logic/HomeRenderer.js';
 
 export function User(params) {
     const { id_usuario } = params || {};
@@ -30,17 +33,29 @@ export function attachUserEvents() {
     (async () => {
         try {
             if (!targetId) throw new Error("ID de usuario no especificado");
-            const user = await usuarioService.getProfile(targetId, currentUser ? currentUser.id_usuario : null);
-            renderUserContent(user);
+
+            const promises = [
+                usuarioService.getProfile(targetId, currentUser ? currentUser.id_usuario : null),
+                likeService.getUserLikedSongs(targetId)
+            ];
+
+            if (currentUser) {
+                promises.push(likeService.getUserLikes(currentUser.id_usuario));
+            }
+
+            const results = await Promise.all(promises);
+            const user = results[0];
+            const likedSongs = results[1];
+            const myLikedIds = results[2] || [];
+
+            renderUserContent(user, likedSongs, myLikedIds);
         } catch (error) {
             container.innerHTML = `<p class="text-red-500 text-center p-10">Error: ${error.message}</p>`;
         }
     })();
 
-    function renderUserContent(user) {
+    function renderUserContent(user, likedSongs = [], myLikedIds = []) {
         const isAdmin = authService.isAdmin();
-        // For User page, isOwner is generally false unless visiting own ID url, but even then we might want "User View"
-        // But logic dictates: if id === me, it IS me.
         const isOwner = currentUser && currentUser.id_usuario == user.id_usuario;
 
         const loader = document.getElementById('user-loader');
@@ -49,12 +64,37 @@ export function attachUserEvents() {
         if (loader) loader.classList.add('hidden');
         if (content) {
             content.classList.remove('hidden');
-            // We pass isOwner/isAdmin to header for consistency (e.g. admin editing)
+
+            // Render Songs Carousel
+            let songsHtml = '';
+            if (likedSongs.length > 0) {
+                const likedSection = {
+                    title: 'Canciones que le gustan',
+                    type: 'liked',
+                    id: 'user-profile',
+                    songs: likedSongs
+                };
+                songsHtml = renderSection(likedSection, myLikedIds);
+            } else {
+                songsHtml = `<div class="p-6 border-t border-gray-800">
+                    <h3 class="text-2xl font-bold text-white mb-6">Canciones que le gustan</h3>
+                    <div class="text-center py-10 bg-gray-900/50 rounded-lg border border-gray-800 border-dashed">
+                        <p class="text-gray-400">Este usuario no tiene canciones favoritas públicas.</p>
+                   </div>
+                   </div>`;
+            }
+
             content.innerHTML = `
                 ${ProfileHeader(user, isOwner, isAdmin)}
                 ${ProfileBio(user)}
+                
+                <div class="p-6 border-t border-gray-800">
+                    ${songsHtml}
+                </div>
+
                 ${Footer()}
             `;
+
 
             // Follow Logic
             // Note: ProfileHeader adds the button HTML if !isOwner.

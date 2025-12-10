@@ -52,7 +52,8 @@ export function Home() {
                             <p class="mt-4 text-gray-500">Cargando música...</p>
                         </div>
                         
-                        <div id="home-content" class="space-y-12 min-h-[500px]">
+                        <!-- Added scroll-mt-20 for tighter spacing as requested -->
+                        <div id="home-content" class="space-y-12 min-h-[500px] scroll-mt-5">
                              <!-- Sections will be injected here -->
                         </div>
                         
@@ -88,7 +89,15 @@ function setupHeroScroll() {
     // Handler
     const handleScroll = () => {
         const scrollTop = main.scrollTop;
-        if (scrollTop > (heroHeight * 0.4)) { // Trigger at 40% scroll
+        const content = document.getElementById('home-content');
+
+        // Calculate threshold: When content reaches top (minus header/margin)
+        // If content exists, use its offsetTop minus a buffer (e.g. 100px or the scroll-mt)
+        // The user wants sidebar strictly when reaching the content.
+        // Let's us the hero height as the primary marker since home-content follows it.
+        const threshold = hero.offsetHeight - 80; // aprox 20px (mt-5) + header offset
+
+        if (scrollTop >= threshold) {
             sidebar.classList.add('sidebar-visible');
         } else {
             sidebar.classList.remove('sidebar-visible');
@@ -259,6 +268,18 @@ async function loadHomeContent() {
                     container.insertAdjacentHTML('beforeend', html);
                 }
             });
+
+            // Handle Persistence Scroll (Skip Hero)
+            const hasSeenHero = sessionStorage.getItem('rechord_hero_seen');
+            if (hasSeenHero) {
+                // Use setTimeout to ensure DOM is ready and layout is stable
+                setTimeout(() => {
+                    const el = document.getElementById('home-content');
+                    if (el) el.scrollIntoView({ behavior: 'auto' }); // 'auto' for instant jump
+                }, 100);
+            } else {
+                sessionStorage.setItem('rechord_hero_seen', 'true');
+            }
         }
     } catch (error) {
         console.error('Error loading home:', error);
@@ -271,53 +292,4 @@ function setupEventListeners() {
     // Initialize Logic Modules
     initNewSongLogic(loadHomeContent);
     initEditSongLogic(loadHomeContent);
-
-    // Global Player Navigation (could also be moved to a GlobalEventHandler)
-    window.playSong = (id) => {
-        const state = Store.getState();
-        if (state.room && state.room.id) {
-            socketService.send('UPDATE_PLAYBACK', {
-                roomId: state.room.id,
-                songId: id,
-                stateAction: 'PLAY',
-                position: 0
-            });
-            window.navigate('/player/' + id);
-        } else {
-            window.navigate('/player/' + id);
-        }
-    };
-
-    // Global Like
-    window.toggleLike = async (id, btn) => {
-        const user = authService.getCurrentUser();
-        if (!user) return window.location.hash = '#/auth/login';
-
-        const svg = btn.querySelector('svg');
-        const wasLiked = svg.classList.contains('text-red-500');
-
-        if (wasLiked) {
-            svg.classList.remove('text-red-500', 'opacity-100');
-            svg.classList.add('text-black', 'opacity-50');
-            svg.setAttribute('fill', 'none');
-        } else {
-            svg.classList.remove('text-black', 'opacity-50');
-            svg.classList.add('text-red-500', 'opacity-100');
-            svg.setAttribute('fill', 'currentColor');
-        }
-
-        try {
-            await likeService.toggleLike(user.id_usuario, id);
-        } catch (error) {
-            if (wasLiked) {
-                svg.classList.add('text-red-500', 'opacity-100');
-                svg.classList.remove('text-black', 'opacity-50');
-                svg.setAttribute('fill', 'currentColor');
-            } else {
-                svg.classList.add('text-black', 'opacity-50');
-                svg.classList.remove('text-red-500', 'opacity-100');
-                svg.setAttribute('fill', 'none');
-            }
-        }
-    };
 }

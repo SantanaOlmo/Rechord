@@ -5,6 +5,10 @@ import { ProfileBio } from '../components/profile/ProfileBio.js';
 import { EditProfileModal } from '../components/modals/EditProfileModal.js';
 import { Footer } from '../components/layout/Footer.js';
 import { setupStandardEvents } from '../logic/profileLogic.js';
+import { likeService } from '../services/likeService.js';
+import { SongCard } from '../components/cards/SongCard.js?v=profile';
+import { renderSection } from '../components/logic/HomeRenderer.js';
+
 
 /**
  * Renderiza la página de perfil del usuario.
@@ -81,14 +85,17 @@ export function attachProfileEvents() {
     (async () => {
         try {
             // Re-fetch fresh data
-            const user = await usuarioService.getProfile(currentUser.id_usuario, currentUser.id_usuario);
-            renderProfileContent(user);
+            const [user, likedSongs] = await Promise.all([
+                usuarioService.getProfile(currentUser.id_usuario, currentUser.id_usuario),
+                likeService.getUserLikedSongs(currentUser.id_usuario)
+            ]);
+            renderProfileContent(user, likedSongs);
         } catch (error) {
             container.innerHTML = `<p class="text-red-500 text-center p-10">Error cargando perfil: ${error.message}</p>`;
         }
     })();
 
-    function renderProfileContent(user) {
+    function renderProfileContent(user, likedSongs = []) {
         const isOwner = true;
         const isAdmin = authService.isAdmin();
 
@@ -98,13 +105,41 @@ export function attachProfileEvents() {
         if (loader) loader.classList.add('hidden');
         if (content) {
             content.classList.remove('hidden');
+
+            // Render Songs Carousel
+            let songsHtml = '';
+            if (likedSongs.length > 0) {
+                const likedSection = {
+                    title: 'Canciones que me gustan',
+                    type: 'liked',
+                    id: 'profile-user',
+                    songs: likedSongs
+                };
+                const likedIds = likedSongs.map(s => s.id_cancion);
+                songsHtml = renderSection(likedSection, likedIds);
+            } else {
+                songsHtml = `<div class="p-6 border-t border-gray-800">
+                    <h3 class="text-2xl font-bold text-white mb-6">Canciones que me gustan</h3>
+                    <div class="text-center py-10 bg-gray-900/50 rounded-lg border border-gray-800 border-dashed">
+                        <p class="text-gray-400">Aún no tienes canciones favoritas.</p>
+                        <button onclick="window.navigate('/')" class="mt-2 text-indigo-400 hover:text-indigo-300 text-sm font-medium">Explorar música</button>
+                   </div>
+                   </div>`;
+            }
+
             content.innerHTML = `
                 ${ProfileHeader(user, isOwner, isAdmin)}
                 ${ProfileBio(user)}
+                
+                <div class="p-6 border-t border-gray-800">
+                    ${songsHtml}
+                </div>
+
                 ${EditProfileModal(user)}
             `;
 
             setupStandardEvents(user, isOwner);
         }
     }
+
 }

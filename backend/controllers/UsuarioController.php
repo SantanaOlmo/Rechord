@@ -107,6 +107,35 @@ class UsuarioController {
         sendResponse(["message" => "Perfil actualizado.", "user" => $usuarioActualizado]);
     }
 
+    public function actualizarConfiguracion($data) {
+        setApiHeaders();
+        if (!isset($data['id_usuario'], $data['configuracion'])) {
+            sendResponse(["message" => "Datos incompletos."], 400);
+        }
+
+        // Validate JSON
+        $configJson = $data['configuracion'];
+        if (is_array($configJson)) {
+            $configJson = json_encode($configJson);
+        }
+        
+        // Simple merge logic if needed, but for now overwrite or simple update
+        // Better: Fetch existing, merge, save.
+        $usuario = $this->usuarioModel->obtenerPorId($data['id_usuario']);
+        if (!$usuario) {
+            sendResponse(["message" => "Usuario no encontrado."], 404);
+        }
+
+        $currentConfig = json_decode($usuario['configuracion'] ?? '{}', true);
+        $newConfig = array_merge($currentConfig, is_string($data['configuracion']) ? json_decode($data['configuracion'], true) : $data['configuracion']);
+        
+        if ($this->usuarioModel->actualizarConfiguracion($data['id_usuario'], json_encode($newConfig))) {
+             sendResponse(["message" => "Configuración actualizada.", "configuracion" => $newConfig]);
+        } else {
+             sendResponse(["message" => "Error al actualizar configuración."], 500);
+        }
+    }
+
     private function procesarSubidaImagen($file, $subDir, $oldPathRelative = null) {
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
