@@ -1,25 +1,22 @@
-# Rechord 🎸
+# [Rechord](frontend/assets/branding/logo_large.png)
 
 **Rechord** es una plataforma web integral diseñada para músicos y entusiastas de la guitarra. Permite subir canciones, sincronizar letras y acordes de manera interactiva estilo karaoke/Musixmatch, y socializar con otros usuarios.
 
-![Rechord Banner](frontend/assets/branding/logo_large.png) <!-- Si existe, si no, se puede quitar o poner un placeholder -->
-
 ---
 
-## 🚀 Funcionalidades Principales
+##  Funcionalidades Principales
 
-### 👤 Gestión de Usuarios
+###  Gestión de Usuarios
 - **Sistema de Cuentas**: Registro y login seguro con hash de contraseñas.
 - **Perfil Social**: Personalización de perfil (banner, avatar, biografía).
 - **Red Social**: Seguir a otros usuarios y ver sus estadísticas.
 
-### 🎵 Canciones y Biblioteca
+###  Canciones y Biblioteca
 - **Subida de Música**: Soporte para archivos MP3 con gestión de portadas.
 - **Sincronización Interactiva**: Editor avanzado para sincronizar letras y acordes con el audio en tiempo real.
 - **Organización**: Creación de carpetas personalizadas y sistema de "Me Gusta".
 
-### 🎸 Herramientas Musicales
-- **Acordes Dinámicos**: Visualización de diagramas de acordes.
+###  Herramientas Musicales
 - **Lector Interactivo**: Reproductor que resalta la letra y el acorde actual.
 - **Salas Compartidas**: (Beta) Escucha conjunta y sesiones en tiempo real.
 
@@ -41,7 +38,7 @@ Navega por la documentación detallada del proyecto en la carpeta `/docs`:
 - [🔌 Referencia API](docs/03_api_reference.md) - Endpoints y consumo de datos.
 
 ### 📊 Modelado de Datos
-- [📊 Diagramas UML y DB](docs/10_UML_diagram.md) - **NUEVO**: Diagrama de clases y Entidad-Relación de la Base de Datos.
+- [📊 Diagramas UML y DB](docs/10_UML_diagram.md) 
 - [💾 Desarrollo de Base de Datos](docs/11_DB_development.md) - Notas sobre persistencia y gestión de archivos.
 
 ### 🚀 Otros
@@ -58,7 +55,7 @@ Navega por la documentación detallada del proyecto en la carpeta `/docs`:
 |------------|-------------|
 | **Frontend** | JavaScript (SPA), HTML5, CSS3, FontAwesome |
 | **Backend** | PHP 8.2 (MVC, REST API) |
-| **Base de Datos** | MySQL / MariaDB |
+| **Base de Datos** | MySQL |
 | **Servidor Web** | Apache (XAMPP) |
 | **Realtime** | PHP WebSockets (Ratchet) |
 
