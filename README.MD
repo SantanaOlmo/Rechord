@@ -1,75 +1,55 @@
-# [Rechord](http://localhost/rechordb/frontend/index.html)
+# 🎸 Rechord
 
-**Rechord** es una plataforma web integral diseñada para músicos y entusiastas de la guitarra. Permite subir canciones, sincronizar letras y acordes de manera interactiva estilo karaoke/Musixmatch, y socializar con otros usuarios.
+**La plataforma definitiva para músicos.**
 
----
+Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
-##  Funcionalidades Principales
+![Rechord Banner](frontend/assets/img/hero/default-hero.jpg)
 
-###  Gestión de Usuarios
-- **Sistema de Cuentas**: Registro y login seguro con hash de contraseñas.
-- **Perfil Social**: Personalización de perfil (banner, avatar, biografía).
-- **Red Social**: Seguir a otros usuarios y ver sus estadísticas.
+## ✨ ¿Qué ofrece Rechord?
 
-###  Canciones y Biblioteca
-- **Subida de Música**: Soporte para archivos MP3 con gestión de portadas.
-- **Sincronización Interactiva**: Editor avanzado para sincronizar letras y acordes con el audio en tiempo real.
-- **Organización**: Creación de carpetas personalizadas y sistema de "Me Gusta".
-
-###  Herramientas Musicales
-- **Lector Interactivo**: Reproductor que resalta la letra y el acorde actual.
-- **Salas Compartidas**: (Beta) Escucha conjunta y sesiones en tiempo real.
+*   **Sincronización Perfecta:** Nuestro editor te permite alinear letras y acordes milimétricamente con el audio. ¡Como un karaoke profesional, pero mejor!
+*   **Tu Biblioteca en la Nube:** Sube tus MP3, organiza tus carpetas y ten tus canciones siempre a mano.
+*   **Comunidad Vibrante:** Sigue a otros músicos, descubre nuevas canciones y comparte tus creaciones.
+*   **Reproductor Inmersivo:** Disfruta de una experiencia visual única mientras practicas con tu instrumento.
 
 ---
 
-## 📚 Documentación e Índice
+## 🚀 Cómo Empezar (Instalación)
 
-Navega por la documentación detallada del proyecto en la carpeta `/docs`:
+Si eres desarrollador y quieres correr Rechord en tu máquina local, sigue estos sencillos pasos:
 
-### 📌 Visión General
-- [📜 Visión del Proyecto](docs/00_project_overview.md) - Objetivos y alcance.
-- [🏗️ Estructura del Proyecto](docs/01_project_structure.md) - Organización de carpetas y archivos.
-- [🛠️ Configuración de Desarrollo](docs/07_development_setup.md) - Guía para instalar y ejecutar el entorno.
+### Prerrequisitos
+*   **XAMPP** (o cualquier servidor LAMP/WAMP con PHP 8.2+ y MySQL).
+*   **Git**.
 
-### 📐 Arquitectura y Diseño
-- [🎨 Diseño UI/UX](docs/06_ui_ux_design.md) - Guías de estilo y diseño visual.
-- [🖥️ Arquitectura Frontend](docs/05_frontend_architecture.md) - Estructura de la SPA y componentes.
-- [⚙️ Arquitectura Backend](docs/04_backend_architecture.md) - Lógica del servidor y controladores.
-- [🔌 Referencia API](docs/03_api_reference.md) - Endpoints y consumo de datos.
+### Pasos
+1.  **Clonar el repositorio:**
+    Descarga el código en tu carpeta `htdocs` (normalmente `C:\xampp\htdocs`).
+    ```bash
+    git clone https://github.com/SantanaOlmo/Rechord.git rechordb
+    ```
 
-### 📊 Modelado de Datos
-- [📊 Diagramas UML y DB](docs/10_UML_diagram.md) 
-- [💾 Desarrollo de Base de Datos](docs/11_DB_development.md) - Notas sobre persistencia y gestión de archivos.
-- [🛠️ Guía Configuración DB](docs/14_database_setup_guide.md) - Explicación de conexión y config.php.
+2.  **Preparar la Base de Datos:**
+    *   Abre **phpMyAdmin** (`http://localhost/phpmyadmin`).
+    *   Crea una base de datos llamada `rechord`.
+    *   Importa el archivo `rechord.sql` que encontrarás en la raíz del proyecto.
 
-### 🚀 Otros
-- [🧪 Testing y Validación](docs/08_testing_and_validation.md) - Estrategias de prueba.
-- [🔮 Futuras Funcionalidades](docs/09_future_features.md) - Roadmap del proyecto.
-- [📝 Dev Log](docs/12_dev_log_nov_2025.md) - Bitácora de desarrollo.
-- [👥 Salas Compartidas](docs/13_shared_sessions.md) - Detalles técnicos de la funcionalidad de WebSocket.
+3.  **Configurar conexión:**
+    Edita el archivo `backend/db/config.php` (si es necesario) para ajustar tu usuario y contraseña de MySQL.
 
----
-
-## 💻 Stack Tecnológico
-
-| Componente | Tecnologías |
-|------------|-------------|
-| **Frontend** | JavaScript (SPA), HTML5, CSS3, FontAwesome |
-| **Backend** | PHP 8.2 (MVC, REST API) |
-| **Base de Datos** | MySQL |
-| **Servidor Web** | Apache (XAMPP) |
-| **Realtime** | PHP WebSockets (Ratchet) |
+4.  **¡A rockear!**
+    Abre tu navegador y entra en:
+    `http://localhost/rechordb/frontend/index.html`
 
 ---
 
-## 🔧 Instalación y Despliegue
+## 📖 Documentación Técnica
 
-1. Clonar el repositorio en `htdocs` (XAMPP).
-2. Importar `rechord.sql` en phpMyAdmin.
-3. Configurar la conexión en `backend/db/conexion.php`.
-4. Abrir en el navegador: `http://localhost/rechordb/frontend/index.html`.
+¿Quieres saber cómo funciona Rechord por dentro?
+Tenemos una documentación detallada explicando la arquitectura, la base de datos y cada componente del sistema.
 
-Para más detalles, consulta la [Guía de Configuración](docs/07_development_setup.md).
+👉 **[Ir a la Documentación Técnica](docs/index.md)** 👈
 
 ---
 

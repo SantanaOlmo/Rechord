@@ -1,3 +1,5 @@
+[ Volver al Índice](index.md)
+
 # Development Log - November 2025
 ## Refactoring & Stabilization Sprint
 
@@ -41,3 +43,4 @@
     *   Store files in the filesystem.
     *   Store relative paths in the Database (`ruta_mp3`, `ruta_imagen`).
     *   Clean up physical files on deletion or error.
+

@@ -1,37 +1,36 @@
-# Documentación de Rechordb
+[🏠 Volver al Inicio (README)](../README.MD)
 
-Bienvenido a la documentación técnica de **Rechordb**. Esta guía cubre todos los aspectos del desarrollo, arquitectura, funcionalidades y mantenimiento de la aplicación.
+# 📚 Documentación de Rechordb
 
-## 📚 Índice de Navegación
+Bienvenido al centro de documentación técnica. Aquí encontrarás todo lo necesario para entender, mantener y extender el proyecto.
 
-### 🌐 Visión General
-1. [Visión General del Proyecto](00_project_overview.md) - Introducción, objetivos y alcance.
-2. [Estructura del Proyecto](01_project_structure.md) - Organización de carpetas y archivos.
-3. [Guía de Desarrollo y Setup](07_development_setup.md) - Cómo instalar y ejecutar el entorno local.
+## 🗂️ Índice de Contenidos
 
-### 🏗️ Arquitectura Técnica
-4. [Arquitectura Backend](04_backend_architecture.md) - PHP, MySQL, Controladores y WebSockets.
-5. [Arquitectura Frontend](05_frontend_architecture.md) - Single Page Application (SPA), Vanilla JS, Componentes.
-6. [Diseño de Base de Datos](02_database_design.md) - Esquema ER y tablas.
-7. [Referencia de la API](03_api_reference.md) - Endpoints RESTful y modelos de datos.
-8. [Desarrollo de BD](11_DB_development.md) - Scripts y migraciones.
+### 🌍 Visión General
+*   [**00. Visión del Proyecto**](00_project_overview.md) - Qué es y qué queremos lograr.
+*   [**01. Estructura General**](01_project_structure.md) - Mapa de carpetas y archivos.
+*   [**07. Configuración de Desarrollo**](07_development_setup.md) - Guía profunda de instalación.
 
-### 🎨 Funcionalidades y Diseño
-9. [UI/UX y Diseño](06_ui_ux_design.md) - Sistema de diseño, Tailwind CSS y componentes visuales.
-10. [Sesiones Compartidas (Modo Fiesta)](13_shared_sessions.md) - **(Nuevo)** Detalles sobre la escucha sincronizada en tiempo real.
-11. [Registro de Desarrollo](12_dev_log_nov_2025.md) - Historial de cambios y decisiones.
+### 🏗️ Arquitectura
+*   [**16. Estructura Backend**](16_structure_backend.md) - API, Controladores y Servicios PHP.
+*   [**17. Estructura Frontend**](17_structure_frontend.md) - SPA, Componentes y Lógica JS.
+*   [**18. Estructura Base de Datos**](18_structure_db.md) - Tablas y esquema SQL.
+*   [**03. Referencia API**](03_api_reference.md) - Endpoints y consumo.
+*   [**04. Arquitectura Backend (Detalle)**](04_backend_architecture.md) - Conceptos MVC.
+*   [**05. Arquitectura Frontend (Detalle)**](05_frontend_architecture.md) - Sistema de Componentes.
 
-### 🔮 Futuro y Mantenimiento
-12. [Testing y Validación](08_testing_and_validation.md) - Estrategias de prueba.
-13. [Características Futuras](09_future_features.md) - Roadmap y mejoras planeadas.
-14. [Diagramas UML](10_UML_diagram.md) - Diagramas de clases y secuencia.
+### 🎨 Diseño y Funcionalidades
+*   [**06. Diseño UI/UX**](06_ui_ux_design.md) - Estilos y guías visuales.
+*   [**13. Salas Compartidas**](13_shared_sessions.md) - Sistema WebSockets.
+*   [**11. Desarrollo DB**](11_DB_development.md) - Notas de persistencia.
 
-## 🚀 Inicio Rápido
-
-Para empezar a desarrollar:
-1. Asegúrate de tener **XAMPP** o similar.
-2. Configura la base de datos `rechord`.
-3. Navega a `http://localhost/rechordb`.
+### 🛠️ Mantenimiento y Otros
+*   [**08. Testing**](08_testing_and_validation.md) - Validación de código.
+*   [**09. Futuras Mejoras**](09_future_features.md) - Roadmap.
+*   [**10. Diagramas UML**](10_UML_diagram.md) - Modelos visuales.
+*   [**12. Dev Log**](12_dev_log_nov_2025.md) - Historial.
+*   [**14. Guía DB Setup**](14_database_setup_guide.md) - Detalles de conexión.
+*   [**15. Ranking de Archivos**](15_longest_files_ranking.md) - Métricas de código.
 
 ---
-*Documentación generada automáticamente y mantenida por el equipo de desarrollo de Rechordb.*
+*Documentación generada automáticamente.*

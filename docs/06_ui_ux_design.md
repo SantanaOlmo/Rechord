@@ -1,3 +1,5 @@
+[ Volver al �ndice](index.md)
+
 # UI/UX y Diseño
 
 El diseño de Rechordb busca una estética moderna, oscura y enfocada en el contenido musical, inspirada en plataformas líderes como Spotify.
@@ -38,3 +40,4 @@ Utilizamos Tailwind CSS via CDN (para desarrollo rápido) o compilado. Esto perm
 *   Animaciones de entrada (fade-in, scale-up) para una sensación premium.
 
 [⬅️ Volver al Índice](index.md)
+

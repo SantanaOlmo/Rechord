@@ -1,3 +1,5 @@
+[ Volver al Índice](index.md)
+
 # Database Implementation Tasks
 
 This document outlines the steps required to align the actual database schema with the desired design and ensure proper functionality.
@@ -52,3 +54,4 @@ CREATE TABLE IF NOT EXISTS CONFIGURACION_TEMPORAL (
 ## 3. Backend Controller Updates
 *   **Completed**: Created missing controllers (`CancionController`, `CarpetaController`, `LikeController`, `SeguirController`, `PatronRasgueoController`).
 *   **Next Steps**: Implement full logic for file uploads in `CancionController`.
+

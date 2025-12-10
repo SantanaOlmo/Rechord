@@ -288,6 +288,12 @@ export function attachListeners() {
     }
 
     window.addEventListener('keydown', (e) => {
+        // Prevent if typing
+        if (['INPUT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable) return;
+
+        // Prevent if not on Sync Page
+        if (!document.getElementById('timeline-container')) return;
+
         if (e.code === 'Space') {
             e.preventDefault();
             togglePlay();
