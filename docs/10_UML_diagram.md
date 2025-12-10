@@ -1,94 +1,185 @@
 [![back](assets/icons/back.png)](00_project_overview.md)
 
-# UML
-## Class diagrams
+# Diagramas UML
 
-````mermaid
+## 1. Diagrama de Clases (Backend)
+
+Representación de la arquitectura MVC del backend, mostrando la relación entre Controladores y Modelos.
+
+```mermaid
 classDiagram
-    class Cancion {
-        +int id_cancion
-        +int id_usuario
-        +string titulo
-        +string artista
-        +string nivel
-        +string archivo_mp3
-        +datetime fecha_creacion
-        +agregarEstrofa()
-        +sincronizar()
+    %% Controllers
+    class UsuarioController {
+        +crearUsuario(data)
+        +login(data)
+        +getUsuarios()
+        +eliminarUsuario(id)
+        +actualizarPerfil(postData, files)
+        +actualizarConfiguracion(data)
+        +getUsuario(id)
+        +impersonate(data)
+        +search(term)
     }
 
+    class CancionController {
+        +subirCancion(data, files)
+        +getCanciones()
+        +getCancion(id)
+        +eliminarCancion(id)
+        +actualizarCancion(id, data)
+    }
+
+    class EstrofaController {
+        +agregarEstrofa(data)
+        +getEstrofas(idCancion)
+        +actualizarEstrofa(id, data)
+        +eliminarEstrofa(id)
+    }
+    
+    class CarpetaController {
+        +crearCarpeta(data)
+        +getCarpetasUser(idUsuario)
+        +agregarCancion(idCarpeta, idCancion)
+    }
+
+    class ChatController {
+        +getConversaciones(idUsuario)
+        +getMensajes(idConversacion)
+        +enviarMensaje(data)
+    }
+
+    %% Models
     class Usuario {
-        +int id_usuario
-        +string nombre
-        +string email
-        +string contraseña
-        +datetime fecha_registro
-        +string bio
-        +crearCancion()
-        +seguirUsuario()
-        +likeCancion()
-        +crearCarpeta()
+        -pdo
+        +registrar(nombre, email, password)
+        +login(email, password)
+        +obtenerTodos()
+        +obtenerPorId(id)
+        +actualizarFoto(id, ruta)
+        +actualizarDatos(id, nombre, email, bio)
+        +eliminar(id)
+        +buscarUsuario(term)
+        +contarSeguidores(id)
+    }
+
+    class Cancion {
+        -pdo
+        +crear(data)
+        +obtenerTodas()
+        +obtenerPorId(id)
+        +eliminar(id)
     }
 
     class Estrofa {
-        +int id_estrofa
-        +int id_cancion
-        +string texto
-        +int orden
-        +agregarAcorde()
-    }
-
-    class Acorde {
-        +int id_acorde
-        +string nombre
-        +string imagen_svg
-        +string descripcion
-    }
-
-    class EstrofaAcorde {
-        +int id_estrofa_acorde
-        +int id_estrofa
-        +int id_acorde
-        +int posicion_en_texto
+        -pdo
+        +crear(data)
+        +obtenerPorCancion(idCancion)
     }
 
     class Carpeta {
-        +int id_carpeta
-        +int id_usuario
-        +string nombre
+        -pdo
+        +crear(data)
+        +obtenerPorUsuario(idUsuario)
     }
 
-    class CancionCarpeta {
-        +int id_cancion_carpeta
-        +int id_carpeta
-        +int id_cancion
+    class Chat {
+        -pdo
+        +obtenerConversaciones(idUsuario)
+        +guardarMensaje(data)
     }
 
-    class LikeCancion {
-        +int id_like
-        +int id_usuario
-        +int id_cancion
+    %% Relationships
+    UsuarioController ..> Usuario : usa
+    CancionController ..> Cancion : usa
+    EstrofaController ..> Estrofa : usa
+    CarpetaController ..> Carpeta : usa
+    ChatController ..> Chat : usa
+
+    Usuario "1" --> "*" Cancion : tiene
+    Usuario "1" --> "*" Carpeta : tiene
+    Cancion "1" -- "*" Estrofa : contiene
+    Carpeta "1" -- "*" Cancion : agrupa
+```
+
+## 2. Diagrama de Base de Datos (ER)
+
+Esquema relacional de la base de datos `rechord`, incluyendo tablas principales y de relación.
+
+```mermaid
+erDiagram
+    USUARIO ||--o{ CANCION : sube
+    USUARIO ||--o{ CARPETA : crea
+    USUARIO ||--o{ LIKE_CANCION : "da like"
+    USUARIO ||--o{ SEGUIR_USUARIO : "sigue a"
+    USUARIO ||--o{ NOTIFICACIONES : recibe
+    USUARIO ||--o{ CHAT_PARTICIPANTES : participa
+    
+    CANCION ||--o{ ESTROFA : tiene
+    CANCION ||--o{ LIKE_CANCION : recibe
+    CANCION ||--o{ CANCION_CARPETA : "esta en"
+    CANCION ||--o{ CONFIGURACION_TEMPORAL : tiene
+    CANCION ||--o{ ACORDE_SINCRONIZADO : tiene
+
+    CARPETA ||--o{ CANCION_CARPETA : contiene
+    CARPETA ||--o{ LIKE_CARPETA : recibe
+
+    ACORDE ||--o{ ACORDE_CEJILLA : tiene
+    ACORDE ||--o{ ACORDE_DIGITACION : tiene
+    ACORDE ||--o{ ACORDE_SINCRONIZADO : se_usa_en
+
+    CHAT_CONVERSACIONES ||--o{ CHAT_MENSAJES : contiene
+    CHAT_CONVERSACIONES ||--o{ CHAT_PARTICIPANTES : tiene
+
+    USUARIO {
+        int id_usuario PK
+        string nombre
+        string email
+        string password_hash
+        string rol
+        string foto_perfil
     }
 
-    class SeguirUsuario {
-        +int id_seguir
-        +int id_usuario_seguidor
-        +int id_usuario_seguido
+    CANCION {
+        int id_cancion PK
+        int id_usuario FK
+        string titulo
+        string artista
+        string ruta_mp3
+        string nivel
     }
 
-    %% Relaciones
-    Usuario "1" --> "*" Cancion : "crea"
-    Usuario "1" --> "*" Carpeta : "tiene"
-    Usuario "1" --> "*" LikeCancion : "da like"
-    Usuario "1" --> "*" SeguirUsuario : "sigue"
+    ESTROFA {
+        int id_estrofa PK
+        int id_cancion FK
+        text contenido
+        float tiempo_inicio
+        float tiempo_fin
+    }
 
-    Cancion "1" --> "*" Estrofa : "tiene"
-    Cancion "1" --> "*" LikeCancion : "recibe"
-    Cancion "1" --> "*" CancionCarpeta : "pertenece a"
+    ACORDE {
+        int id_acorde PK
+        string nombre
+        string color_hex
+    }
 
-    Estrofa "1" --> "*" EstrofaAcorde : "tiene"
-    Acorde "1" --> "*" EstrofaAcorde : "es usado en"
+    ACORDE_SINCRONIZADO {
+        int id_sincronia_acorde PK
+        int id_cancion FK
+        int id_acorde FK
+        float tiempo_inicio
+        float tiempo_fin
+    }
 
-    Carpeta "1" --> "*" CancionCarpeta : "contiene"
+    CARPETA {
+        int id_carpeta PK
+        int id_usuario FK
+        string nombre
+    }
 
-````
+    SALAS {
+        int id_sala PK
+        string codigo_sala
+        int id_maestro FK
+        enum estado
+    }
+```
