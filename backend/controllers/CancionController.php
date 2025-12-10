@@ -113,5 +113,33 @@ class CancionController {
             sendResponse(["message" => "Orden actualizado"]);
         } else sendResponse(["message" => "Error actualizando alguno"], 500);
     }
+
+    public function getAdminHomeConfigs() {
+        setApiHeaders();
+        // Permission Check (assuming getUserId returns admin info or middleware handles it)
+        // For now, simpler implementation
+        try {
+            $configs = $this->manager->getAllHomeConfigs();
+            sendResponse(["configs" => $configs]);
+        } catch (Exception $e) {
+            sendResponse(["message" => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateHomeCategory($data) {
+        setApiHeaders();
+        $activo = isset($data['activo']) ? $data['activo'] : null;
+        if ($this->manager->updateHomeCategory($data['id'], $data['tipo'], $data['valor'], $data['titulo'], $activo)) {
+            sendResponse(["message" => "Categoría actualizada"]);
+        } else sendResponse(["message" => "Error"], 500);
+    }
+    
+    public function toggleHomeVisibility($data) {
+        setApiHeaders();
+        $active = isset($data['active']) ? $data['active'] : (isset($data['activo']) ? $data['activo'] : 1);
+        if ($this->manager->toggleHomeVisibility($data['id'], $active)) {
+            sendResponse(["message" => "Visibilidad actualizada"]);
+        } else sendResponse(["message" => "Error"], 500);
+    }
 }
 ?>

@@ -32,7 +32,10 @@ export function initNewSongLogic(onSuccessCallback) {
         }, 300);
     };
 
-    btnNew?.addEventListener('click', openModal);
+    btnNew?.addEventListener('click', () => {
+        if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
+        openModal();
+    });
     btnCancel?.addEventListener('click', closeModal);
 
     // Audio Duration Logic

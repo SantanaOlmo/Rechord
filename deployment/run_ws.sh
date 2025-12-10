@@ -5,5 +5,5 @@
 # Usage: ./deployment/run_ws.sh
 
 echo "Starting WebSocket Server..."
-nohup php backend/server/WebSocketServer.php > ws_output.log 2>&1 &
+nohup /c/xampp/php/php.exe backend/server/WebSocketServer.php > ws_output.log 2>&1 &
 echo "WebSocket Server started in background. Check ws_output.log for details."

@@ -1,5 +1,5 @@
 import { authService } from '../services/authService.js';
-import { LoginForm } from '../components/LoginForm.js';
+import { LoginForm } from '../components/auth/LoginForm.js';
 
 export function Login() {
     setTimeout(() => {

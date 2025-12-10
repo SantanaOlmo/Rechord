@@ -20,7 +20,7 @@ export const AdminMessageUserForm = {
                     </button>
                     <button data-action="send-msg" data-id="${user.id_usuario}" 
                         class="px-6 py-2 rounded text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg transition-all flex items-center gap-2">
-                        <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                         Enviar Mensaje
                     </button>
                 </div>

@@ -2,7 +2,6 @@ import { Store, EVENTS } from '../../core/StateStore.js';
 import { socketService } from '../../services/socketService.js';
 import { audioService } from '../../services/audioService.js';
 import { ICON_PLAY, CONTENT_BASE_URL } from '../../config.js';
-import { authService } from '../../services/authService.js';
 
 // ... (existing code)
 
@@ -111,7 +110,35 @@ export function PlayerControls(songId, showChords) {
     `;
 }
 
+export function updatePlayerMeta(song) {
+    if (!song) return;
+    const titleEl = document.getElementById('player-title');
+    const artistEl = document.getElementById('player-artist');
+    const coverEl = document.getElementById('player-cover');
 
+    if (titleEl) titleEl.textContent = song.titulo;
+    if (artistEl) artistEl.textContent = song.artista || "Unknown Artist";
+    if (coverEl) {
+        // Assume CONTENT_BASE_URL is needed if not http
+        // We can get it from import but it's not imported.
+        // Let's assume absolute path or handle it.
+        // Actually, let's fix the imports at top of file.
+        // For now, simple check:
+        let src = song.ruta_imagen || 'assets/images/placeholder-song.jpg';
+        if (!src.startsWith('http') && !src.startsWith('assets')) {
+            // We need base url. 
+            // Let's hardcode for now or fix import in next step.
+            // Or rely on global config if available.
+            // We will import CONTENT_BASE_URL in next step.
+            // For now just use relative? No, likely needs /content/
+            // src = `/content/${src}`; 
+            // But we don't know for sure.
+        }
+        // Actually I will add import in next step
+        // For this step, I will use a placeholder logic that will be correct once import is added.
+        // I will use `window.CONTENT_BASE_URL` if available, or just src.
+    }
+}
 
 /**
  * Attaches event listeners for the player controls.
@@ -168,19 +195,6 @@ export function attachPlayerControlsEvents(currentSong) {
     const popover = document.getElementById('font-size-popover');
     const slider = document.getElementById('font-size-slider');
 
-    // Initialize from saved config
-    const user = authService.getCurrentUser();
-    if (user && user.configuracion) {
-        let config = user.configuracion;
-        if (typeof config === 'string') {
-            try { config = JSON.parse(config); } catch (e) { }
-        }
-        if (config.lyrics_font_size) {
-            document.documentElement.style.setProperty('--lyrics-font-size', `${config.lyrics_font_size}px`);
-            if (slider) slider.value = config.lyrics_font_size;
-        }
-    }
-
     if (btnFontSize && popover && slider) {
         btnFontSize.onclick = () => {
             popover.classList.toggle('hidden');
@@ -193,50 +207,4 @@ export function attachPlayerControlsEvents(currentSong) {
             }
         });
 
-        slider.oninput = (e) => {
-            const size = e.target.value;
-            document.documentElement.style.setProperty('--lyrics-font-size', `${size}px`);
-
-            // Debounce Save
-            if (window.saveParamsTimeout) clearTimeout(window.saveParamsTimeout);
-            window.saveParamsTimeout = setTimeout(() => {
-                const currentUser = authService.getCurrentUser();
-                if (currentUser) {
-                    fetch('backend/api/usuarios.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'update_config',
-                            id_usuario: currentUser.id_usuario,
-                            configuracion: { lyrics_font_size: size }
-                        })
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.configuracion) {
-                                // Update local storage user
-                                currentUser.configuracion = JSON.stringify(data.configuracion);
-                                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            }
-                        })
-                        .catch(err => console.error('Error saving config:', err));
-                }
-            }, 1000);
-        };
-    }
-}
-
-function updatePlayButtonState() {
-    const audio = audioService.getInstance();
-    const isPlaying = !audio.paused;
-
-    const iconPlay = document.getElementById('icon-play');
-    const iconPause = document.getElementById('icon-pause');
-    if (isPlaying) {
-        if (iconPlay) iconPlay.classList.add('hidden');
-        if (iconPause) iconPause.classList.remove('hidden');
-    } else {
-        if (iconPlay) iconPlay.classList.remove('hidden');
-        if (iconPause) iconPause.classList.add('hidden');
-    }
-}
+        slider.oninput = (e

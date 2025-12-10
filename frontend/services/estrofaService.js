@@ -22,7 +22,6 @@ export async function crearEstrofa(estrofa) {
     }
     return await response.json();
 }
-<<<<<<< HEAD
 
 export async function updateEstrofas(estrofas) {
     const response = await fetch(`${API_BASE_URL}/estrofas.php`, {
@@ -37,5 +36,3 @@ export async function updateEstrofas(estrofas) {
     }
     return await response.json();
 }
-=======
->>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)

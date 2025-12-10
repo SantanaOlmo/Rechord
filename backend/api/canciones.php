@@ -50,6 +50,9 @@ switch($method) {
         } elseif ($action === 'update_config_order') {
              $data = json_decode(file_get_contents('php://input'), true);
              $controller->updateConfigOrder($data['items']);
+        } elseif ($action === 'update_category') {
+             $data = json_decode(file_get_contents('php://input'), true);
+             $controller->updateHomeCategory($data);
         } else {
             // Default POST = Create Song (FormData)
             $controller->crearCancion($_POST, $_FILES);

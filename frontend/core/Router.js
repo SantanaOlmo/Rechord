@@ -9,7 +9,7 @@ import { NotificationsPage } from '../pages/NotificationsPage.js';
 import { Header } from '../components/layout/Header.js';
 import { AdminDashboard } from '../pages/AdminDashboard.js'; // Already added in previous step effectively (context), but ensuring order.
 import { authService } from '../services/authService.js';
-import { render as Sincronizador } from '../pages/Sincronizador.js';
+import { render as Sincronizador, attachEditorEvents } from '../pages/Sincronizador.js';
 import { PlayerPage } from '../pages/PlayerPage.js';
 
 
@@ -62,11 +62,11 @@ const router = () => {
     }
 
     // EXCLUSIVE PLAYBACK LOGIC:
-    // If we are NOT on the player page OR the song page, stop audio.
-    // We check if the path starts with /player or /song
-    if (!path.startsWith('/player') && !path.startsWith('/song')) {
+    // If we are NOT on the player page, stop audio.
+    // We check if the path starts with /player
+    if (!path.startsWith('/player')) {
         if (audioService.isPlaying()) {
-            console.log('Navigated away from player context, stopping audio.');
+            console.log('Navigated away from player, stopping audio.');
             audioService.stop();
         }
     }
@@ -95,7 +95,7 @@ const router = () => {
     if (sincronizadorMatch) {
         const songId = sincronizadorMatch[1] ? parseInt(sincronizadorMatch[1]) : null;
         appRoot.innerHTML = Sincronizador(songId);
-        // Sincronizador handles its own initialization
+        attachEditorEvents();
         return;
     }
 
@@ -104,24 +104,15 @@ const router = () => {
     if (editorMatch) {
         const songId = editorMatch[1] ? parseInt(editorMatch[1]) : null;
         appRoot.innerHTML = Sincronizador(songId);
+        attachEditorEvents();
         return;
     }
 
-    // Player (Legacy Full Player Route)
+    // Player
     const playerMatch = path.match(/^\/player\/(\d+)/);
     if (playerMatch) {
         const songId = parseInt(playerMatch[1]);
         appRoot.innerHTML = PlayerPage(songId);
-        return;
-    }
-
-    // NEW: Song Page (Intermediate Page)
-    const songPageMatch = path.match(/^\/song\/(\d+)/);
-    if (songPageMatch) {
-        const songId = parseInt(songPageMatch[1]);
-        import('../pages/SongPage.js').then(({ SongPage }) => {
-            appRoot.innerHTML = SongPage(songId);
-        });
         return;
     }
 

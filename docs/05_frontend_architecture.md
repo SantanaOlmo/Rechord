@@ -1,5 +1,3 @@
-[ Volver al �ndice](index.md)
-
 # Arquitectura Frontend
 
 Rechordb utiliza una arquitectura de **Single Page Application (SPA)** construida con **Vanilla JavaScript** (ES6+), sin depender de frameworks pesados como React o Vue. Esto garantiza un rendimiento máximo y un control total sobre el DOM.
@@ -44,4 +42,3 @@ Piezas reutilizables de interfaz.
 3.  **Hidratación**: Después de inyectar el HTML, se llama a una función de "attach events" (ej: `attachProfileEvents`) para añadir listeners y funcionalidad dinámica.
 
 [⬅️ Volver al Índice](index.md)
-

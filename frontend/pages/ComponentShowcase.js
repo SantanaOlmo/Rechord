@@ -1,16 +1,16 @@
-import { SongGrid } from '../components/SongGrid.js';
-import { SongCard } from '../components/SongCard.js';
-import { NewSongModal } from '../components/NewSongModal.js';
-import { LoginForm } from '../components/LoginForm.js';
-import { RegisterForm } from '../components/RegisterForm.js';
-import { ProfileHeader } from '../components/ProfileHeader.js';
-import { ProfileBio } from '../components/ProfileBio.js';
-import { EditProfileModal } from '../components/EditProfileModal.js';
-import { PlayerHeader } from '../components/PlayerHeader.js';
-import { PlayerControls } from '../components/PlayerControls.js';
-import { LyricsPanel } from '../components/LyricsPanel.js';
-import { ChordsPanel } from '../components/ChordsPanel.js';
-import { StrummingPanel } from '../components/StrummingPanel.js';
+import { SongGrid } from '../components/cards/SongGrid.js';
+import { SongCard } from '../components/cards/SongCard.js';
+import { NewSongModal } from '../components/modals/NewSongModal.js';
+import { LoginForm } from '../components/auth/LoginForm.js';
+import { RegisterForm } from '../components/auth/RegisterForm.js';
+import { ProfileHeader } from '../components/profile/ProfileHeader.js';
+import { ProfileBio } from '../components/profile/ProfileBio.js';
+import { EditProfileModal } from '../components/modals/EditProfileModal.js';
+import { PlayerHeader } from '../components/player/PlayerHeader.js';
+import { PlayerControls } from '../components/player/PlayerControls.js';
+import { LyricsPanel } from '../components/editor/LyricsPanel.js';
+import { ChordsPanel } from '../components/editor/ChordsPanel.js';
+import { StrummingPanel } from '../components/editor/StrummingPanel.js';
 
 export function ComponentShowcase() {
     setTimeout(() => {

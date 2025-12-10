@@ -1,5 +1,5 @@
 import { authService } from '../services/authService.js';
-import { RegisterForm } from '../components/RegisterForm.js';
+import { RegisterForm } from '../components/auth/RegisterForm.js';
 
 export function Register() {
     setTimeout(() => {

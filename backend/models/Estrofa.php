@@ -34,12 +34,9 @@ class Estrofa {
         $stmt = $this->pdo->prepare("DELETE FROM ESTROFA WHERE id_estrofa = ?");
         return $stmt->execute([$id]);
     }
-<<<<<<< HEAD
 
     public function eliminarPorCancion($idCancion) {
         $stmt = $this->pdo->prepare("DELETE FROM ESTROFA WHERE id_cancion = ?");
         return $stmt->execute([$idCancion]);
     }
-=======
->>>>>>> c82b7bf (feat(likes): Implementada funcionalidad de likes y rediseño de tarjetas. Actualizado project_structure.json)
 }

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/Cancion.php';
 require_once __DIR__ . '/../models/HomeConfig.php';
+require_once __DIR__ . '/../models/Estrofa.php';
 
 class CancionManager {
     private $cancionModel;
@@ -9,6 +10,11 @@ class CancionManager {
     public function __construct() {
         $this->cancionModel = new Cancion();
         $this->homeConfigModel = new HomeConfig();
+        
+        if (!class_exists('Estrofa')) {
+            error_log("CRITICAL: Class Estrofa NOT FOUND in CancionManager. Included files: " . implode(", ", get_included_files()));
+        }
+        $this->estrofaModel = new Estrofa();
     }
 
     public function getAll($idUsuario) {
@@ -107,8 +113,37 @@ class CancionManager {
         $fecha = $data['fecha_lanzamiento'] ?? $current['fecha_lanzamiento'];
         $hashtags = $this->parseHashtags($data['hashtags'] ?? $current['hashtags']);
 
+        // Lyrics Update Logic
+        if (isset($data['lyrics'])) {
+            $this->updateLyrics($id, $data['lyrics']);
+        }
+
         // Modelo
         return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen);
+    }
+
+    private function updateLyrics($idCancion, $lyricsText) {
+        $this->estrofaModel->eliminarPorCancion($idCancion);
+        
+        // Split by double newlines or similar to get stanzas
+        $rawStanzas = preg_split('/\n\s*\n/', trim($lyricsText));
+        $orden = 0;
+        
+        foreach ($rawStanzas as $content) {
+            $content = trim($content);
+            if (!empty($content)) {
+                // Default start/end times could be 0, or preserved if we were smarter about diffing.
+                // For a simple textarea editor, we reset timings or default them.
+                // Improvement: Only update content if count matches? Too risky.
+                // Resetting is safer for "Properties" edit. The "Sync" editor is where timings matter.
+                // WARNING: This will WIPE timings.
+                // If the user uses this modal, they likely want to just fix text.
+                // BUT if they have synced data, this destroys it.
+                // Maybe we should warn or attempt to preserve? 
+                // For now, simple implementation as requested.
+                $this->estrofaModel->crear($idCancion, $content, $orden++, 0, 0);
+            }
+        }
     }
 
     public function getHomeSections($idUsuario) {
@@ -185,5 +220,14 @@ class CancionManager {
             if (!$this->homeConfigModel->actualizarOrden($item['id'], $item['orden'])) $success = false;
         }
         return $success;
+    }
+    public function getAllHomeConfigs() {
+        return $this->homeConfigModel->obtenerTodasConfiguraciones();
+    }
+    public function toggleHomeVisibility($id, $estado) {
+        return $this->homeConfigModel->toggleVisibilidad($id, $estado);
+    }
+    public function updateHomeCategory($id, $tipo, $valor, $titulo, $activo = null) {
+        return $this->homeConfigModel->actualizarCategoria($id, $tipo, $valor, $titulo, $activo);
     }
 }

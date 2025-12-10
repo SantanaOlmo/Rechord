@@ -46,21 +46,13 @@ export function NewSongModal() {
                         <label class="form-label">Archivo de Audio (MP3, WAV, OGG)</label>
                         <div id="drop-zone" class="drop-zone border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200">
                             <input type="file" name="audio_file" id="audio-input" accept=".mp3,.wav,.ogg" required class="hidden">
-                            <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <p class="text-sm text-gray-500">Arrastra tu audio aquí o haz clic</p>
+                            <p class="text-gray-400">Arrastra tu archivo de audio aquí o haz clic para seleccionar</p>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Portada (Opcional)</label>
-                        <div id="drop-zone-image" class="drop-zone border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all duration-200 relative overflow-hidden">
-                            <input type="file" name="image_file" id="image-input" accept="image/*" class="hidden">
-                            <div id="image-upload-content" class="pointer-events-none">
-                                <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                <p class="text-sm text-gray-500">Arrastra tu portada aquí o haz clic</p>
-                            </div>
-                            <img id="image-preview-element" class="absolute inset-0 w-full h-full object-cover hidden" />
-                        </div>
+                        <input type="file" name="image_file" accept="image/*" class="form-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
                     </div>
 
                     <div class="modal-actions">

@@ -1,5 +1,3 @@
-[ Volver al �ndice](index.md)
-
 # Project Overview
 
 Bienvenido a **Rechordb**, una plataforma de streaming de música autohospedada y social. 
@@ -18,4 +16,3 @@ Por favor, utiliza el [Índice Principal](index.md) para navegar por toda la doc
 
 ---
 [Ir al Índice](index.md)
-

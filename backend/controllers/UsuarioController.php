@@ -144,8 +144,8 @@ class UsuarioController {
         
         if ($usuario) {
             // Stats
-            $usuario['seguidores'] = $this->usuarioModel->contarSeguidores($id);
-            $usuario['seguidos'] = $this->usuarioModel->contarSeguidos($id);
+            $usuario['seguidores'] = (int)$this->usuarioModel->contarSeguidores($id);
+            $usuario['seguidos'] = (int)$this->usuarioModel->contarSeguidos($id);
             
             // Context (Is Following?)
             $viewerId = isset($_GET['viewer_id']) ? $_GET['viewer_id'] : null;
