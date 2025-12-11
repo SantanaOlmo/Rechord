@@ -136,6 +136,7 @@ export function attachProfileEvents() {
                 </div>
 
                 ${EditProfileModal(user)}
+                ${Footer()}
             `;
 
             setupStandardEvents(user, isOwner);

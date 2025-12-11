@@ -1,0 +1,64 @@
+/* Components for SongPage */
+.btn-animated-expand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.5rem;
+    /* Restored height */
+    min-width: 3.5rem;
+    width: auto;
+    /* w-14 -> start small if icon only, or padding if text */
+    /* background-color: #4f46e5;  indigo-600 */
+    background-color: #22c55e;
+    /* green-500 matching the current theme */
+    color: white;
+    border-radius: 9999px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    padding: 0;
+    /* Replicate the group behavior of the home button */
+}
+
+.btn-animated-expand:hover {
+    background-color: #16a34a;
+    /* green-600 */
+    /* width: auto; Removed to prevent jump */
+    padding-right: 1.5rem;
+    padding-left: 0.5rem;
+}
+
+.btn-animated-expand .icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+}
+
+.btn-animated-expand:hover .icon {
+    transform: rotate(90deg);
+}
+
+.btn-animated-expand .text {
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    max-width: 0;
+    margin-left: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+.btn-animated-expand:hover .text {
+    opacity: 1;
+    max-width: 200px;
+    margin-left: 0.5rem;
+}
+
+/* Floating Action Button Position for Song Page */
+.song-page-fab {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+    /* Ensure it floats above content */
+}

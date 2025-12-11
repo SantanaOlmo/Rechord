@@ -16,9 +16,9 @@ export function setupGlobalEvents() {
                 stateAction: 'PLAY',
                 position: 0
             });
-            window.navigate('/player/' + id);
+            window.navigate('/song/' + id);
         } else {
-            window.navigate('/player/' + id);
+            window.navigate('/song/' + id);
         }
     };
 

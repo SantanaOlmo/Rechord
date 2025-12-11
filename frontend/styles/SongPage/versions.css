@@ -1,0 +1,60 @@
+/* Versions Lists Styles */
+.versions-section {
+    padding: 2rem;
+    padding-bottom: 8rem;
+    max-width: 72rem;
+    /* max-w-6xl */
+    margin: 0 auto;
+    width: 100%;
+}
+
+.versions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.versions-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-left: 4px solid #22c55e;
+    /* green-500 */
+    padding-left: 1rem;
+}
+
+.versions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .versions-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .versions-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+.version-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.version-card:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}

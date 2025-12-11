@@ -50,7 +50,7 @@ export const SidebarRenderer = {
         return songs.map((s, idx) => `
             <div class="group flex items-center pl-4 pr-2 py-1 hover:bg-gray-800 cursor-pointer text-gray-400 hover:text-white"
                  title="${s.titulo} - ${s.artista}"
-                 onclick="window.navigate('/player/${s.id_cancion}')"
+                 onclick="window.navigate('/song/${s.id_cancion}')"
                  oncontextmenu="window.onSongContextMenu(event, ${folderId}, ${s.id_cancion})">
                  
                  <span class="w-4 text-center mr-2 text-xs opacity-0 group-hover:opacity-100 flex-shrink-0">▶</span>

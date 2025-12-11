@@ -1,6 +1,6 @@
 # ![Rechord Banner](docs/assets/images/RECHORD_HEADER.png) 
 
-**La plataforma definitiva para músicos.**
+# **La plataforma definitiva para músicos.**
 
 Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
