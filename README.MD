@@ -4,7 +4,7 @@
 
 Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
-![gif](docs/assets/gif/rechord.gif)
+![gif](docs/assets/gif/2025-12-10%2017-05-02.gif)
 
 ##  ¿Qué ofrece Rechord?
 
