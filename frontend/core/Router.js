@@ -62,11 +62,11 @@ const router = () => {
     }
 
     // EXCLUSIVE PLAYBACK LOGIC:
-    // If we are NOT on the player page, stop audio.
-    // We check if the path starts with /player
-    if (!path.startsWith('/player')) {
+    // If we are NOT on the player page OR the song page, stop audio.
+    // We check if the path starts with /player or /song
+    if (!path.startsWith('/player') && !path.startsWith('/song')) {
         if (audioService.isPlaying()) {
-            console.log('Navigated away from player, stopping audio.');
+            console.log('Navigated away from player context, stopping audio.');
             audioService.stop();
         }
     }
@@ -107,11 +107,21 @@ const router = () => {
         return;
     }
 
-    // Player
+    // Player (Legacy Full Player Route)
     const playerMatch = path.match(/^\/player\/(\d+)/);
     if (playerMatch) {
         const songId = parseInt(playerMatch[1]);
         appRoot.innerHTML = PlayerPage(songId);
+        return;
+    }
+
+    // NEW: Song Page (Intermediate Page)
+    const songPageMatch = path.match(/^\/song\/(\d+)/);
+    if (songPageMatch) {
+        const songId = parseInt(songPageMatch[1]);
+        import('../pages/SongPage.js').then(({ SongPage }) => {
+            appRoot.innerHTML = SongPage(songId);
+        });
         return;
     }
 

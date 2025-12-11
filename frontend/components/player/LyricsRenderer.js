@@ -1,6 +1,29 @@
+// State to track if user has manually scrolled away
+let isUserScrolling = false;
+let scrollTimeout = null;
+let lastActiveIndex = -1;
+
 export function renderLyrics(song) {
     const container = document.getElementById('lyrics-container');
     if (!container) return;
+
+    // Reset state on new render
+    isUserScrolling = false;
+    lastActiveIndex = -1;
+
+    // Setup scroll listener to detect manual interaction
+    container.onscroll = () => {
+        if (!scrollTimeout) {
+            isUserScrolling = true;
+        } else {
+            clearTimeout(scrollTimeout);
+        }
+        // Debounce keeping the flag true, but we actually want it to remain true until sync
+        // actually, we just set it true. The re-sync button logic will handle when to "detach".
+        // simple logic: scroll event = user interaction.
+        // We will check visibility in highlightLyrics to decide if we show button.
+        checkSyncStatus();
+    };
 
     if (!song.estrofas || song.estrofas.length === 0) {
         container.innerHTML = `
@@ -22,6 +45,37 @@ export function renderLyrics(song) {
     }
 }
 
+function checkSyncStatus() {
+    // Check if active stanza is out of view
+    const container = document.getElementById('lyrics-container');
+    const activeStanza = document.querySelector('.lyric-stanza.text-white'); // Active class identifier
+    const btnSync = document.getElementById('btn-sync-lyrics');
+
+    if (container && activeStanza && btnSync) {
+        const containerRect = container.getBoundingClientRect();
+        const stanzaRect = activeStanza.getBoundingClientRect();
+
+        // Calculate overlap
+        const isVisible = (
+            stanzaRect.top >= containerRect.top + 50 &&
+            stanzaRect.bottom <= containerRect.bottom - 50
+        );
+
+        console.log('Sync Check:', { isUserScrolling, isVisible, stanzaTop: stanzaRect.top, containerTop: containerRect.top }); // Debug
+
+        if (!isVisible && isUserScrolling) {
+            console.log('SHOWING SYNC BUTTON');
+            btnSync.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+        } else if (isVisible) {
+            console.log('HIDING SYNC BUTTON');
+            btnSync.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            if (isVisible) isUserScrolling = false; // Re-attach if user scrolls back to it
+        }
+    } else {
+        // console.log('Elements missing for sync check', { container: !!container, activeStanza: !!activeStanza, btnSync: !!btnSync });
+    }
+}
+
 export function highlightLyrics(currentTime, song) {
     if (!song || !song.estrofas) return;
 
@@ -39,21 +93,52 @@ export function highlightLyrics(currentTime, song) {
         }
     });
 
-    stanzas.forEach((stanza, index) => {
-        if (index === activeIndex) {
-            stanza.classList.remove('opacity-30', 'scale-100');
-            stanza.classList.add('opacity-100', 'scale-105', 'text-white', 'font-bold');
+    if (activeIndex !== -1 && activeIndex !== lastActiveIndex) {
+        lastActiveIndex = activeIndex;
 
-            const targetScrollToken = stanza.offsetTop - (lyricsContainer.clientHeight / 2) + (stanza.clientHeight / 2);
-            if (Math.abs(lyricsContainer.scrollTop - targetScrollToken) > 10) {
-                lyricsContainer.scrollTo({
-                    top: targetScrollToken,
-                    behavior: 'smooth'
-                });
+        stanzas.forEach((stanza, index) => {
+            if (index === activeIndex) {
+                stanza.classList.remove('opacity-30', 'scale-100');
+                stanza.classList.add('opacity-100', 'scale-105', 'text-white', 'font-bold');
+
+                // Only auto-scroll if user is NOT scrolling manually / detached
+                if (!isUserScrolling) {
+                    scrollToStanza(stanza, lyricsContainer);
+                }
+            } else {
+                stanza.classList.remove('opacity-100', 'scale-105', 'text-white', 'font-bold');
+                stanza.classList.add('opacity-30', 'scale-100');
             }
-        } else {
-            stanza.classList.remove('opacity-100', 'scale-105', 'text-white', 'font-bold');
-            stanza.classList.add('opacity-30', 'scale-100');
-        }
+        });
+    }
+
+    // Continuously check status to update button if playing moves active element out of view
+    // (Though normally checks run on scroll, if user stays still while song advances, eventually active element changes)
+    checkSyncStatus();
+}
+
+function scrollToStanza(stanza, container) {
+    // Create a timeout to ignore scroll events triggered by this auto-scroll
+    scrollTimeout = setTimeout(() => {
+        scrollTimeout = null;
+    }, 600); // slightly longer than smooth scroll duration
+
+    const targetScrollToken = stanza.offsetTop - (container.clientHeight / 2) + (stanza.clientHeight / 2);
+    container.scrollTo({
+        top: targetScrollToken,
+        behavior: 'smooth'
     });
 }
+
+// Global function exposed for the button
+window.resyncLyrics = function () {
+    isUserScrolling = false; // Reset flag
+    const container = document.getElementById('lyrics-container');
+    const activeStanza = document.querySelector('.lyric-stanza.text-white');
+
+    if (container && activeStanza) {
+        scrollToStanza(activeStanza, container);
+        const btnSync = document.getElementById('btn-sync-lyrics');
+        if (btnSync) btnSync.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    }
+};

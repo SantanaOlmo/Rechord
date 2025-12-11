@@ -59,7 +59,7 @@ export function SongCard(song, isLiked) {
             ` : ''}
 
             <!-- Play Overlay -->
-            <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer backdrop-blur-[2px]" onclick="window.navigate('/player/${song.id_cancion}')">
+            <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer backdrop-blur-[2px]" onclick="window.navigate('/song/${song.id_cancion}')">
                 <div class="bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
                     <img src="${ICON_PLAY}" class="w-5 h-5 ml-1" alt="Play">
                 </div>
