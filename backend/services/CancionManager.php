@@ -113,36 +113,68 @@ class CancionManager {
         $fecha = $data['fecha_lanzamiento'] ?? $current['fecha_lanzamiento'];
         $hashtags = $this->parseHashtags($data['hashtags'] ?? $current['hashtags']);
 
+        // Synchronizer Fields
+        $bpm = $data['bpm'] ?? $current['bpm'] ?? 120;
+        $metrica_numerador = $data['metrica_numerador'] ?? $current['metrica_numerador'] ?? 4;
+        $metrica_denominador = $data['metrica_denominador'] ?? $current['metrica_denominador'] ?? 4;
+        $beat_marker = $data['beat_marker'] ?? $current['beat_marker'] ?? 0;
+        $subdivision = $data['subdivision'] ?? $current['subdivision'] ?? '1/4';
+        $velocity = $data['velocity'] ?? $current['velocity'] ?? 100;
+
         // Lyrics Update Logic
         if (isset($data['lyrics'])) {
             $this->updateLyrics($id, $data['lyrics']);
         }
 
         // Modelo
-        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen);
+        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen, $bpm, $metrica_numerador, $metrica_denominador, $beat_marker, $subdivision, $velocity);
     }
 
     private function updateLyrics($idCancion, $lyricsText) {
-        $this->estrofaModel->eliminarPorCancion($idCancion);
-        
-        // Split by double newlines or similar to get stanzas
+        // Fetch existing logic to PRESERVE TIMINGS
+        $existing = $this->estrofaModel->obtenerPorCancion($idCancion); 
+        $existingMap = [];
+        foreach ($existing as $e) {
+            $existingMap[$e['orden']] = $e;
+        }
+
+        // Split new lyrics
         $rawStanzas = preg_split('/\n\s*\n/', trim($lyricsText));
-        $orden = 0;
+        $newVerses = [];
+        foreach ($rawStanzas as $txt) {
+            if (trim($txt) !== '') $newVerses[] = trim($txt);
+        }
+
+        // Strategy: 
+        // 1. Update existing orders with new content (Preserves ID and Timing)
+        // 2. Insert new orders if any
+        // 3. Delete excess orders if any
         
-        foreach ($rawStanzas as $content) {
-            $content = trim($content);
-            if (!empty($content)) {
-                // Default start/end times could be 0, or preserved if we were smarter about diffing.
-                // For a simple textarea editor, we reset timings or default them.
-                // Improvement: Only update content if count matches? Too risky.
-                // Resetting is safer for "Properties" edit. The "Sync" editor is where timings matter.
-                // WARNING: This will WIPE timings.
-                // If the user uses this modal, they likely want to just fix text.
-                // BUT if they have synced data, this destroys it.
-                // Maybe we should warn or attempt to preserve? 
-                // For now, simple implementation as requested.
-                $this->estrofaModel->crear($idCancion, $content, $orden++, 0, 0);
+        // This is imperfect for "Insert at middle" (shift), but better than wiping all.
+        // For distinct "Split" (1->2), the second part becomes a NEW verse (0:00), first keeps timing.
+        // This prevents "Ghost" duplicate IDs becoming invalid.
+
+        $countNew = count($newVerses);
+        $countOld = count($existing);
+
+        for ($i = 0; $i < $countNew; $i++) {
+            $content = $newVerses[$i];
+            
+            if (isset($existingMap[$i])) {
+                // Update Existing (Preserve ID and Times)
+                $old = $existingMap[$i];
+                $this->estrofaModel->actualizar($old['id_estrofa'], $content, $old['tiempo_inicio'], $old['tiempo_fin']);
+                // Remove from map to track what's left
+                unset($existingMap[$i]);
+            } else {
+                // Create New (Time 0)
+                $this->estrofaModel->crear($idCancion, $content, $i, 0, 0);
             }
+        }
+
+        // Delete remaining (truncated verses)
+        foreach ($existingMap as $rem) {
+            $this->estrofaModel->eliminar($rem['id_estrofa']);
         }
     }
 

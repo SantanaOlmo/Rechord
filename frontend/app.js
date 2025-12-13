@@ -9,11 +9,15 @@ import { Store, EVENTS } from './core/StateStore.js';
 import { Header } from './components/layout/Header.js';
 import { RoomModal } from './components/modals/RoomModal.js';
 import { setupGlobalEvents } from './logic/globalEvents.js';
+import { TooltipSystem } from './components/common/TooltipSystem.js';
 
 console.log('%c RECHORD FRONTEND - VERSION: 2025-12-08 17:40 (Refactored) ', 'background: #222; color: #bada55; font-size: 16px; padding: 10px;');
 
 // Initialize Global Logic (Play, Like, etc.)
 setupGlobalEvents();
+
+// Initialize Custom Tooltips (Global)
+TooltipSystem.init();
 
 // Initialize Socket if User is Logged In
 // Initialize Socket if User is Logged In

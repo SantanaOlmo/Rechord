@@ -24,14 +24,23 @@ class Cancion {
         return false;
     }
 
-    public function actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha_lanzamiento, $rutaImagen = null) {
+    public function actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha_lanzamiento, $rutaImagen = null, $bpm = null, $metrica_numerador = null, $metrica_denominador = null, $beat_marker = null, $subdivision = null, $velocity = null) {
         $sql = "UPDATE CANCION SET titulo = ?, artista = ?, nivel = ?, album = ?, duracion = ?, hashtags = ?, fecha_lanzamiento = ?";
-        $params = [$titulo, $artista, $nivel, $album, $duracion, $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags, $fecha_lanzamiento];
+        $hashtagsJson = is_array($hashtags) ? json_encode($hashtags) : $hashtags;
+        $params = [$titulo, $artista, $nivel, $album, $duracion, $hashtagsJson, $fecha_lanzamiento];
         
         if ($rutaImagen) {
             $sql .= ", ruta_imagen = ?";
             $params[] = $rutaImagen;
         }
+
+        // Synchronizer Fields
+        if ($bpm !== null) { $sql .= ", bpm = ?"; $params[] = $bpm; }
+        if ($metrica_numerador !== null) { $sql .= ", metrica_numerador = ?"; $params[] = $metrica_numerador; }
+        if ($metrica_denominador !== null) { $sql .= ", metrica_denominador = ?"; $params[] = $metrica_denominador; }
+        if ($beat_marker !== null) { $sql .= ", beat_marker = ?"; $params[] = $beat_marker; }
+        if ($subdivision !== null) { $sql .= ", subdivision = ?"; $params[] = $subdivision; }
+        if ($velocity !== null) { $sql .= ", velocity = ?"; $params[] = $velocity; }
 
         $sql .= " WHERE id_cancion = ?";
         $params[] = $id;

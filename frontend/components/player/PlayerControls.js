@@ -25,7 +25,7 @@ export function updatePlayerMeta(song) {
 
 export function PlayerControls(songId, showChords) {
     return `
-        <div class="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 px-4 h-24 flex items-center justify-between z-50 relative">
+        <div class="bg-gray-900/95 backdrop-blur-md border-t border-gray-800 px-4 h-20 flex items-center justify-between z-50 relative">
             
             <!-- LEFT: Track Info -->
             <div class="flex items-center w-1/4 min-w-[200px] pr-4">
@@ -90,7 +90,7 @@ export function PlayerControls(songId, showChords) {
                         <label class="block text-sm text-gray-300 mb-3 text-center font-bold">Tamaño de Letra</label>
                         <div class="flex items-center space-x-2">
                              <span class="text-xs text-gray-500">A</span>
-                             <input type="range" id="font-size-slider" min="16" max="48" value="24" class="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+                             <input type="range" id="font-size-slider" min="24" max="88" value="48" class="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500">
                              <span class="text-lg text-gray-300">A</span>
                         </div>
                     </div>
@@ -178,6 +178,10 @@ export function attachPlayerControlsEvents(currentSong) {
         if (config.lyrics_font_size) {
             document.documentElement.style.setProperty('--lyrics-font-size', `${config.lyrics_font_size}px`);
             if (slider) slider.value = config.lyrics_font_size;
+        } else {
+            // Default Max (48px)
+            document.documentElement.style.setProperty('--lyrics-font-size', '48px');
+            if (slider) slider.value = 48;
         }
     }
 

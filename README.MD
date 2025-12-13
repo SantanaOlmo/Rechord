@@ -2,7 +2,7 @@
 
 # **La plataforma definitiva para músicos.**
 
-Rechord es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
+[Rechord](http://localhost/rechordb/frontend/index.html) es mucho más que un reproductor. Es tu estudio de ensayo, tu biblioteca personal y tu escenario virtual. Sincroniza letras y acordes con tus canciones favoritas, personaliza tu experiencia y comparte tu música con el mundo.
 
 ![gif](docs/assets/gif/2025-12-10%2017-05-02.gif)
 

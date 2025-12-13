@@ -79,6 +79,12 @@ export function attachProfileEvents() {
     const container = document.getElementById('profile-container');
     if (!container) return;
 
+    // Force Header to be Relative for this page
+    const header = document.querySelector('header');
+    if (header) {
+        header.style.position = 'relative';
+    }
+
     const currentUser = authService.getCurrentUser();
     if (!currentUser) return;
 

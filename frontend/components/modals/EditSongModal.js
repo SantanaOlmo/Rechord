@@ -12,6 +12,7 @@ export function EditSongModal() {
                         <button type="button" class="px-4 py-2 text-white border-b-2 border-indigo-500 font-medium transition-colors" data-tab="props">Propiedades</button>
                         <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="lyrics">Letra</button>
                         <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="verses">Versos</button>
+                        <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="backgrounds">Fondos</button>
                     </div>
 
                     <!-- Tab Content: Properties -->
@@ -90,6 +91,26 @@ export function EditSongModal() {
                         <div id="verses-container" class="space-y-4 overflow-y-auto flex-1 p-2 bg-gray-900/50 rounded border border-gray-700 scrollbar-hide">
                             <!-- Helper Text if empty -->
                             <p class="text-gray-500 text-center mt-10">No hay versos. Escribe la letra en la pestaña 'Letra' o aquí.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Backgrounds -->
+                    <div id="tab-backgrounds" class="tab-content hidden flex-1 flex flex-col min-h-0 relative">
+                        <div class="flex flex-col h-full">
+                            <!-- Helper Text -->
+                            <p class="text-xs text-gray-400 mb-2">Arrastra imágenes o GIFs al recuadro para añadir fondos.</p>
+
+                            <!-- List Area (includes Drop Zone) -->
+                            <div class="flex-1 overflow-y-auto min-h-0">
+                                <div id="backgrounds-grid" class="grid grid-cols-2 gap-4 p-1">
+                                    <!-- Dynamic Content -->
+                                    <p class="col-span-full text-center text-gray-500 mt-10">Cargando fondos...</p>
+                                </div>
+                            </div>
+                            
+                            <p class="shrink-0 text-xs text-gray-500 mt-2 text-center">
+                                * Los fondos rotarán cada 15 segundos en el reproductor.
+                            </p>
                         </div>
                     </div>
 

@@ -13,7 +13,7 @@ export function SessionSidebar() {
             <div class="flex items-center p-4 border-b border-gray-800 bg-gray-950 flex-shrink-0">
                  <!-- Room Image (Click to Edit) -->
                 <div class="relative group mr-3 cursor-pointer" onclick="window.editRoomImage()">
-                    <img id="session-room-img" src="assets/images/default-album.png" class="w-12 h-12 rounded bg-gray-800 object-cover">
+                    <img id="session-room-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='20' height='20' rx='2' ry='2' fill='%231f2937' stroke='none'/%3E%3Cpath d='M9 18V5l12-2v13'/%3E%3Carea/%3E%3C/svg%3E" class="w-12 h-12 rounded bg-gray-800 object-cover">
                     <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                     </div>

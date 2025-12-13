@@ -133,6 +133,21 @@ function setupUIEvents() {
             }
         };
     }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Only if Player Page is active
+        if (!document.getElementById('player-page-container')) return;
+
+        // Ignore inputs
+        if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+        if (e.code === 'Space') {
+            e.preventDefault(); // Prevent scroll
+            const btnPlay = document.getElementById('btn-play');
+            if (btnPlay) btnPlay.click();
+        }
+    });
 }
 
 function updatePlayButton() {

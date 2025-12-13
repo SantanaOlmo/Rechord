@@ -1,4 +1,4 @@
-[ Volver al �ndice](index.md)
+[ Volver al �ndice](index.md)
 
 # 📊 Ranking de Archivos más Largos
 
@@ -10,10 +10,9 @@ La modularización ha sido muy efectiva. Los archivos monolíticos han desaparec
 | # | Líneas | Archivo | Tipo |
 |---|-------:|:--------|:-----|
 | 1 | 739 | `rechord.sql` | SQL |
-| 2 | 285 | `frontend\components\synchronizer\events.js` | JS (Logic) |
-| 3 | 278 | `frontend\components\layout\FolderSidebar.js` | JS (Component) |
-| 4 | 264 | `frontend\components\logic\EditSongLogic.js` | JS (Logic) |
-| 5 | 244 | `frontend\styles\EditorPage.css` | CSS |
+| 2 | 278 | `frontend\components\layout\FolderSidebar.js` | JS (Component) |
+| 3 | 264 | `frontend\components\logic\EditSongLogic.js` | JS (Logic) |
+| 4 | 244 | `frontend\styles\EditorPage.css` | CSS |
 | 6 | 226 | `frontend\components\synchronizer\rendering.js` | JS (Logic) |
 | 7 | 211 | `frontend\components\player\PlayerControls.js` | JS (Component) |
 | 8 | 204 | `backend\services\CancionManager.php` | PHP (Service) |

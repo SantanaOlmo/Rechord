@@ -4,10 +4,10 @@ import { Store, EVENTS } from '../../core/StateStore.js';
 
 export function SidebarContainer() {
     setTimeout(initLogic, 0);
-    const savedWidth = localStorage.getItem('sidebarWidth') || '256px';
+
 
     return `
-        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden border-r border-gray-800 bg-gray-950 transition-all duration-300 relative" style="width: ${savedWidth}; min-width: 150px; max-width: 600px;">
+        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden border-r border-gray-800 bg-gray-950 transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
             
             <!-- Library Section (Top) -->
             <div id="sidebar-library-section" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
@@ -21,9 +21,6 @@ export function SidebarContainer() {
             <div id="sidebar-session-section" class="hidden flex-col bg-gray-900 border-t border-gray-700 overflow-hidden transition-all duration-300 h-1/2">
                 ${SessionSidebar()}
             </div>
-
-            <!-- Horizontal Resizer (Right Edge) -->
-            <div id="sidebar-resizer-horiz" class="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-indigo-500 transition-colors z-50"></div>
         </div>
     `;
 }
@@ -33,7 +30,6 @@ function initLogic() {
     const libSection = document.getElementById('sidebar-library-section');
     const sessionSection = document.getElementById('sidebar-session-section');
     const splitHandle = document.getElementById('session-split-handle');
-    const horizResizer = document.getElementById('sidebar-resizer-horiz');
 
     if (!container || !sessionSection) return;
 
@@ -64,20 +60,11 @@ function initLogic() {
         e.preventDefault();
     });
 
-    // 3. Horizontal Resizing (Sidebar Width)
-    let isResizingWidth = false;
-    horizResizer.addEventListener('mousedown', (e) => {
-        isResizingWidth = true;
-        document.body.style.cursor = 'col-resize';
-        horizResizer.classList.add('bg-indigo-600');
-        e.preventDefault();
-    });
-
     // Global Mouse Move
     let rAF = null;
 
     document.addEventListener('mousemove', (e) => {
-        if (!isResizingSplit && !isResizingWidth) return;
+        if (!isResizingSplit) return;
 
         if (rAF) return; // Skip if frame pending
 
@@ -89,12 +76,6 @@ function initLogic() {
                 if (percentage > 20 && percentage < 80) {
                     libSection.style.height = `${percentage}%`;
                     sessionSection.style.height = `${100 - percentage}%`;
-                }
-            }
-            if (isResizingWidth) {
-                const newWidth = e.clientX;
-                if (newWidth >= 150 && newWidth <= 600) {
-                    container.style.width = `${newWidth}px`;
                 }
             }
             rAF = null;
@@ -111,12 +92,6 @@ function initLogic() {
         if (isResizingSplit) {
             isResizingSplit = false;
             document.body.style.cursor = 'default';
-        }
-        if (isResizingWidth) {
-            isResizingWidth = false;
-            document.body.style.cursor = 'default';
-            horizResizer.classList.remove('bg-indigo-600');
-            localStorage.setItem('sidebarWidth', container.style.width);
         }
     });
 }

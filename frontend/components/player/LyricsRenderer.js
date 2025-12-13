@@ -36,9 +36,9 @@ export function renderLyrics(song) {
         `;
     } else {
         const lyricsHtml = song.estrofas.map((estrofa, index) => `
-            <div id="stanza-${index}" class="lyric-stanza mb-12 transition-all duration-500 ease-out opacity-30 transform scale-100 origin-center cursor-pointer hover:opacity-60"
+            <div id="stanza-${index}" class="lyric-stanza mb-6 transition-all duration-500 ease-out opacity-30 transform scale-100 origin-center cursor-pointer hover:opacity-60"
                  onclick="const audio = audioService.getInstance(); audio.currentTime = ${estrofa.tiempo_inicio};">
-                <p class="leading-relaxed whitespace-pre-line transition-all duration-200 font-bold" style="font-size: var(--lyrics-font-size, 24px);">${estrofa.contenido}</p>
+                <p class="leading-tight whitespace-pre-line transition-all duration-200 font-bold" style="font-size: var(--lyrics-font-size, 48px);">${estrofa.contenido}</p>
             </div>
         `).join('');
         container.innerHTML = lyricsHtml;

@@ -1,5 +1,6 @@
 
 let carouselInterval = null;
+let animationFrame = null;
 
 export async function initHeroCarousel() {
     try {
@@ -20,7 +21,7 @@ export async function initHeroCarousel() {
             if (!section) return;
 
             // Clear previous
-            section.querySelectorAll('.hero-carousel, .carousel-nav').forEach(el => el.remove());
+            section.querySelectorAll('.hero-carousel, .carousel-nav, .hero-progress-container').forEach(el => el.remove());
 
             // Build Carousel HTML
             let slidesHtml = '';
@@ -51,23 +52,64 @@ export async function initHeroCarousel() {
             // Insert as first child
             section.insertBefore(carouselContainer, section.firstChild);
 
-            // Controls
+            // Controls & Logic
             if (data.length > 1) {
+                // HIDE ON MOBILE (md:block)
                 const prevBtn = document.createElement('button');
-                prevBtn.className = 'carousel-nav absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 bg-black/30 hover:bg-black/60 text-white rounded-full transition-all';
-                prevBtn.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>';
+                prevBtn.className = 'carousel-nav hidden md:block absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 text-white/80 hover:text-white hover:scale-110 transition-all drop-shadow-md';
+                prevBtn.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>';
 
                 const nextBtn = document.createElement('button');
-                nextBtn.className = 'carousel-nav absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 bg-black/30 hover:bg-black/60 text-white rounded-full transition-all';
-                nextBtn.innerHTML = '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+                nextBtn.className = 'carousel-nav hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 text-white/80 hover:text-white hover:scale-110 transition-all drop-shadow-md';
+                nextBtn.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
 
                 section.appendChild(prevBtn);
                 section.appendChild(nextBtn);
+
+                // Progress Indicators (Lines)
+                const progressContainer = document.createElement('div');
+                progressContainer.className = 'hero-progress-container absolute bottom-8 md:bottom-12 left-6 right-6 z-30 flex gap-2';
+                // Note: User said "just where footer ends", assuming Hero Content footer inside hero. 
+                // Bottom-8 is safe.
+
+                const progressHtml = data.map((_, idx) => `
+                    <div class="progress-track flex-1 h-1 bg-gray-600/50 rounded-full overflow-hidden backdrop-blur-sm">
+                        <div class="progress-fill h-full bg-white w-0" id="progress-fill-${idx}"></div>
+                    </div>
+                `).join('');
+                progressContainer.innerHTML = progressHtml;
+                section.appendChild(progressContainer);
 
                 // Logic
                 let currentIndex = 0;
                 const total = data.length;
                 const slides = carouselContainer.querySelectorAll('.hero-slide');
+                const DURATION = 15000; // 15s per slide
+
+                const updateProgress = (index) => {
+                    // Update all bars
+                    data.forEach((_, idx) => {
+                        const bar = document.getElementById(`progress-fill-${idx}`);
+                        if (!bar) return;
+
+                        // Clear animation
+                        bar.style.transition = 'none';
+
+                        if (idx < index) {
+                            bar.style.width = '100%';
+                        } else if (idx > index) {
+                            bar.style.width = '0%';
+                        } else {
+                            // Active
+                            bar.style.width = '0%';
+                            // Force reflow
+                            void bar.offsetWidth;
+                            // Animate
+                            bar.style.transition = `width ${DURATION}ms linear`;
+                            bar.style.width = '100%';
+                        }
+                    });
+                };
 
                 const showSlide = (index) => {
                     slides.forEach(s => {
@@ -77,12 +119,14 @@ export async function initHeroCarousel() {
                     slides[index].style.opacity = '1';
                     slides[index].style.zIndex = '1';
 
-                    // Reset video play to ensure it plays
+                    // Reset video play
                     const vid = slides[index].querySelector('video');
                     if (vid) {
                         vid.currentTime = 0;
                         vid.play().catch(e => console.log('Autoplay prevented', e));
                     }
+
+                    updateProgress(index);
                 };
 
                 const next = () => {
@@ -95,19 +139,33 @@ export async function initHeroCarousel() {
                     showSlide(currentIndex);
                 };
 
-                nextBtn.onclick = () => {
-                    next();
+                nextBtn.onclick = () => { next(); resetTimer(); };
+                prevBtn.onclick = () => { prev(); resetTimer(); };
+
+                // Swipe Logic
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                section.addEventListener('touchstart', e => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                section.addEventListener('touchend', e => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
                     resetTimer();
-                };
-                prevBtn.onclick = () => {
-                    prev();
-                    resetTimer();
+                }, { passive: true });
+
+                const handleSwipe = () => {
+                    const threshold = 50;
+                    if (touchEndX < touchStartX - threshold) next(); // Swipe Left -> Next
+                    if (touchEndX > touchStartX + threshold) prev(); // Swipe Right -> Prev
                 };
 
                 // Auto rotate
                 const startTimer = () => {
                     if (carouselInterval) clearInterval(carouselInterval);
-                    carouselInterval = setInterval(next, 15000); // 15s per video
+                    carouselInterval = setInterval(next, DURATION);
                 };
 
                 const resetTimer = () => {
@@ -115,6 +173,8 @@ export async function initHeroCarousel() {
                 };
 
                 startTimer();
+                // Init first progress
+                updateProgress(0);
             }
         }
     } catch (e) {

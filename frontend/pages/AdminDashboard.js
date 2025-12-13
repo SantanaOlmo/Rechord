@@ -4,7 +4,7 @@ export function AdminDashboard() {
     setTimeout(initDashboardLogic, 0);
 
     return `
-        <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <div class="container mx-auto px-4 pt-24 pb-8 max-w-5xl">
             <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Panel de Administración</h1>

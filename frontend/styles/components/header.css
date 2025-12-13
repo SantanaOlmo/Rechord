@@ -7,15 +7,61 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;
     z-index: 50;
+    transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
+.header-transparent {
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* White text and icons when transparent, with glow */
+.header-transparent .nav-icon-btn,
+.header-transparent .header-right button,
+.header-transparent .header-right span {
+    color: #ffffff !important;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8));
+}
+
+.header-transparent .user-avatar-img {
+    border-color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Layout for Centered Search */
 .header-left {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    flex: 1;
+    /* Take available space */
+}
+
+.header-center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    justify-content: flex-end;
+    /* Align to right */
 }
 
 .nav-icon-btn {
@@ -33,46 +79,62 @@
     background-color: var(--bg-tertiary);
 }
 
-/* Search Bar Animation */
+/* Search Bar Static */
 .search-container {
     display: flex;
     align-items: center;
     position: relative;
+    width: 100%;
+    max-width: 500px;
+    /* Limit width of centered search */
 }
 
 .search-input-wrapper {
-    width: 0;
+    width: 100%;
+    /* Always full width of container */
     overflow: hidden;
-    transition: width 0.3s ease-in-out;
-    opacity: 0;
-}
-
-.search-input-wrapper.expanded {
-    width: 200px;
     opacity: 1;
-    margin-left: 0.5rem;
 }
 
+/* Removed expaded/collapsed logic classes as it will be static now */
+/* .search-input-wrapper.expanded { ... } */
+
+/* Default Search Input Style (White) */
 .search-input {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-secondary);
-    color: var(--text-primary);
-    padding: 0.25rem 0.75rem;
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    color: #4B5563;
+    /* Gray-600 */
+    padding: 0.5rem 1.5rem;
+    padding-left: 2.5rem;
+    /* Space for icon */
     border-radius: 9999px;
     width: 100%;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
     outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+    color: #9CA3AF;
+    /* Gray-400 */
+}
+
+/* Default Gray Search Icon */
+.search-container svg {
+    color: #9CA3AF;
+    /* Gray-400 */
 }
 
 .search-input:focus {
-    border-color: var(--accent-primary);
+    background-color: #ffffff;
+    border-color: #4f46e5 !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3) !important;
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
+/* Specific Header Mode Overrides - NONE needed for search now */
+
+/* Rest of file... */
 
 .user-avatar-btn {
     position: relative;

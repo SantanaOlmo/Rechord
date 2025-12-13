@@ -1,319 +1,189 @@
-
 import { getCancion, updateCancion } from '../../services/cancionService.js';
 import { getEstrofas } from '../../services/estrofaService.js';
 import { CONTENT_BASE_URL } from '../../config.js';
+import { VerseEditor } from './editor/VerseEditor.js';
+import { loadBackgrounds, setBackgroundSongId } from './editor/BackgroundManager.js';
 
-/**
- * Encapsulates Logic for Edit Song Modal
- * @param {Function} onSuccessCallback - Function to call after successful update
- */
 export function initEditSongLogic(onSuccessCallback) {
-    const editModal = document.getElementById('edit-song-modal');
-    const btnCancelEdit = document.getElementById('btn-cancel-edit');
-    const editForm = document.getElementById('edit-song-form');
+    console.log('initEditSongLogic: Initializing...');
 
-    const closeEditModal = () => {
-        const editContent = document.getElementById('edit-modal-content');
-        editContent.classList.remove('scale-100', 'opacity-100');
-        editContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            editModal.classList.add('hidden');
-            editModal.classList.remove('flex');
-        }, 300);
-    };
-
-    btnCancelEdit?.addEventListener('click', closeEditModal);
-
-
-    // Tab Switching Logic
-    const tabs = editModal.querySelectorAll('[data-tab]');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Reset Active State
-            tabs.forEach(t => {
-                t.classList.remove('text-white', 'border-b-2', 'border-indigo-500');
-                t.classList.add('text-gray-400');
-            });
-            // Set Active
-            tab.classList.remove('text-gray-400');
-            tab.classList.add('text-white', 'border-b-2', 'border-indigo-500');
-
-            // Show Content
-            const target = tab.dataset.tab;
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            document.getElementById(`tab-${target}`).classList.remove('hidden');
-
-            // Specific Logic for Verses Tab
-            if (target === 'verses') {
-                renderVerses();
-            }
-        });
-    });
-
-    // --- Verse Editor Logic ---
-    function renderVerses() {
-        const container = document.getElementById('verses-container');
-        const prevScroll = container.scrollTop;
-
-        const rawLyrics = document.getElementById('edit-lyrics').value;
-        // Split by double newline to get stanzas
-        const verses = rawLyrics.split(/\n\s*\n/).filter(v => v.trim() !== '');
-
-        container.innerHTML = '';
-
-        if (verses.length === 0) {
-            // If empty, create one empty verse to start
-            verses.push('');
-        }
-
-        verses.forEach((verseText, index) => {
-            const verseWrapper = document.createElement('div');
-            verseWrapper.className = 'flex items-start space-x-2 group';
-
-            // Number
-            const num = document.createElement('span');
-            num.className = 'text-gray-600 text-xs mt-3 w-4 text-right shrink-0 select-none';
-            num.textContent = index + 1;
-
-            // Textarea
-            const verseEl = document.createElement('textarea');
-            verseEl.className = 'flex-1 bg-gray-800 text-white p-3 rounded border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm leading-relaxed resize-none overflow-hidden transition-colors';
-            verseEl.value = verseText;
-            verseEl.rows = 1;
-            verseEl.dataset.index = index;
-
-            // Events
-            verseEl.addEventListener('input', function () {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight + 2) + 'px';
-                syncLyricsFromVerses();
-            });
-
-            verseEl.addEventListener('keydown', (e) => handleVerseKeydown(e, index, verseEl));
-
-            // Focus style helper
-            verseEl.addEventListener('focus', () => verseWrapper.classList.add('verse-focused'));
-            verseEl.addEventListener('blur', () => verseWrapper.classList.remove('verse-focused'));
-
-            verseWrapper.appendChild(num);
-            verseWrapper.appendChild(verseEl);
-            container.appendChild(verseWrapper);
-
-            // Auto-resize on init (Synchronous to allow scroll restore)
-            verseEl.style.height = 'auto';
-            verseEl.style.height = (verseEl.scrollHeight + 2) + 'px';
-        });
-
-        // Restore Scroll Position
-        container.scrollTop = prevScroll;
-    }
-
-    function syncLyricsFromVerses() {
-        const container = document.getElementById('verses-container');
-        const textareas = container.querySelectorAll('textarea');
-        const verses = Array.from(textareas).map(el => el.value.trim()).filter(v => v !== '');
-        document.getElementById('edit-lyrics').value = verses.join('\n\n');
-    }
-
-    function handleVerseKeydown(e, index, element) {
-        // ENTER: Split Verse
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            const cursor = element.selectionStart;
-            const text = element.value;
-            const firstPart = text.substring(0, cursor).trim();
-            const secondPart = text.substring(cursor).trim();
-
-            // Update current verse text
-            element.value = firstPart;
-
-            // Insert new verse in DOM + Data logic by re-rendering? 
-            // Better to manipulate data array logic via sync first
-            syncLyricsFromVerses();
-
-            // Now we need to inject the new content. 
-            // Let's get the master value, splice it, and re-render.
-            // This is safer than DOM manipulation for index integrity.
-            const fullText = document.getElementById('edit-lyrics').value;
-            let allVerses = fullText.split(/\n\s*\n/).filter(v => v !== '');
-
-            // "syncLyricsFromVerses" effectively saved the *first part* in the current index (if we assume it updated the array correctly? No, sync reads from DOM)
-            // Wait, syncLyricsFromVerses read the incomplete state if we didn't inject the second part yet?
-            // Actually: we modified element.value to firstPart. So sync saved firstPart at index.
-            // But secondPart is lost unless we add it. 
-            // So: 
-
-            // 1. Get current list from DOM *before* render
-            const container = document.getElementById('verses-container');
-            const textareas = Array.from(container.querySelectorAll('textarea'));
-            const currentVerses = textareas.map(t => t.value); // element.value is already firstPart
-
-            // 2. Insert secondPart at index + 1
-            currentVerses.splice(index + 1, 0, secondPart);
-
-            // 3. Update Master
-            document.getElementById('edit-lyrics').value = currentVerses.join('\n\n');
-
-            // 4. Re-render and Focus next
-            renderVerses();
-
-            setTimeout(() => {
-                const newInputs = document.getElementById('verses-container').querySelectorAll('textarea');
-                if (newInputs[index + 1]) {
-                    newInputs[index + 1].focus();
-                    newInputs[index + 1].setSelectionRange(0, 0);
-                }
-            }, 0);
-        }
-
-        // BACKSPACE: Merge with Previous
-        if (e.key === 'Backspace' && element.selectionStart === 0 && element.selectionEnd === 0) {
-            if (index > 0) {
-                e.preventDefault();
-                const currentText = element.value;
-
-                // Get all verses
-                syncLyricsFromVerses(); // Sync current state
-                const fullText = document.getElementById('edit-lyrics').value;
-                let allVerses = fullText.split(/\n\s*\n/);
-
-                // Content of previous
-                const prevText = allVerses[index - 1];
-                const newPrevText = (prevText + ' ' + currentText).trim();
-
-                // Merge
-                allVerses[index - 1] = newPrevText;
-                allVerses.splice(index, 1);
-
-                document.getElementById('edit-lyrics').value = allVerses.join('\n\n');
-                renderVerses();
-
-                // Focus previous at join point
-                setTimeout(() => {
-                    const newInputs = document.getElementById('verses-container').querySelectorAll('textarea');
-                    if (newInputs[index - 1]) {
-                        newInputs[index - 1].focus();
-                        const len = prevText.length + (prevText ? 1 : 0); // +1 for space if not empty? We added space above.
-                        newInputs[index - 1].setSelectionRange(len, len);
-                    }
-                }, 0);
-            }
-        }
-
-        // DELETE: Merge with Next (at end of line) -> Optional but good UX
-        // Left out for now to keep strictly to user request unless intuitive?
-        // User asked "o delete (el borrar) deshacer un verso". "delete" usually means Del key, "borrar" means Backspace usually.
-        // But "deshacer un verso" implies deleting the break. Backspace at start does that.
-    }
-
-    // Expose openEditModal
+    // Define Global Function Immediately
     window.openEditModal = async (id) => {
+        console.log('openEditModal called with ID:', id);
+
+        const editModal = document.getElementById('edit-song-modal');
+        if (!editModal) {
+            console.error('Edit Modal not found in DOM');
+            alert('Error: Modal de edición no encontrado.');
+            return;
+        }
+
+        setBackgroundSongId(id);
+
         try {
-            // Reset Tabs to Props
-            tabs[0].click();
+            // Lazy DOM lookups
+            const tabs = editModal.querySelectorAll('[data-tab]');
+            if (tabs.length > 0) tabs[0].click();
 
-            const [song, estrofas] = await Promise.all([
-                getCancion(id),
-                getEstrofas(id)
-            ]);
+            const [song, estrofas] = await Promise.all([getCancion(id), getEstrofas(id)]);
+            if (!song) throw new Error('No se pudo cargar la canción la id ' + id);
 
-            if (!song) throw new Error('No se pudo cargar la canción');
+            // Helpers
+            const setVal = (eid, val) => {
+                const el = document.getElementById(eid);
+                if (el) el.value = val;
+            };
 
-            // Populate Props
-            document.getElementById('edit-id-cancion').value = song.id_cancion;
-            document.getElementById('edit-titulo').value = song.titulo;
-            document.getElementById('edit-artista').value = song.artista;
-            document.getElementById('edit-album').value = song.album || '';
-            document.getElementById('edit-nivel').value = song.nivel;
-            document.getElementById('edit-duracion').value = song.duracion || 0;
-            document.getElementById('edit-fecha').value = song.fecha_lanzamiento || '';
+            // Populate Fields
+            setVal('edit-id-cancion', song.id_cancion);
+            setVal('edit-titulo', song.titulo);
+            setVal('edit-artista', song.artista);
+            setVal('edit-album', song.album || '');
+            setVal('edit-nivel', song.nivel);
+            setVal('edit-duracion', song.duracion || 0);
+            setVal('edit-fecha', song.fecha_lanzamiento || '');
 
-            // Populate Lyrics
-            const lyricsText = estrofas ? estrofas.map(e => e.contenido).join('\n\n') : '';
-            document.getElementById('edit-lyrics').value = lyricsText;
+            setVal('edit-lyrics', estrofas ? estrofas.map(e => e.contenido).join('\n\n') : '');
 
-            // Image Preview Logic
-            const preview = document.getElementById('edit-image-preview');
-            const input = document.getElementById('edit-image-input');
-            if (preview) {
-                preview.src = song.ruta_imagen ? `${CONTENT_BASE_URL}/${song.ruta_imagen}` : 'assets/images/default-album.png';
+            // Image
+            const imgPreview = document.getElementById('edit-image-preview');
+            // SVG Placeholder (Dark gray with note)
+            const DEFAULT_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='20' height='20' rx='2' ry='2' fill='%231f2937' stroke='none'/%3E%3Cpath d='M9 18V5l12-2v13'/%3E%3Ccircle cx='6' cy='18' r='3'/%3E%3Ccircle cx='18' cy='16' r='3'/%3E%3C/svg%3E";
+
+            if (imgPreview) {
+                imgPreview.src = song.ruta_imagen ? `${CONTENT_BASE_URL}/${song.ruta_imagen}` : DEFAULT_IMG;
+                imgPreview.onerror = () => imgPreview.src = DEFAULT_IMG;
             }
-            if (input) input.value = ''; // Reset input
+            const imgInput = document.getElementById('edit-image-input');
+            if (imgInput) imgInput.value = '';
 
+            // Hashtags
+            let tags = song.hashtags;
+            try { tags = typeof tags === 'string' ? JSON.parse(tags) : []; } catch (e) { tags = []; }
+            setVal('edit-hashtags', Array.isArray(tags) ? tags.join(', ') : '');
+
+            // Audio Button
             const btnDetect = document.getElementById('btn-detect-duration');
             if (btnDetect) {
                 btnDetect.dataset.url = song.ruta_mp3 ? `${CONTENT_BASE_URL}/${song.ruta_mp3}` : '';
                 btnDetect.classList.toggle('hidden', !song.ruta_mp3);
             }
 
-            let tags = song.hashtags;
-            if (typeof tags === 'string') { try { tags = JSON.parse(tags); } catch (e) { tags = []; } }
-            if (!Array.isArray(tags)) tags = [];
-            document.getElementById('edit-hashtags').value = tags.join(', ');
-
+            // Show Modal
             editModal.classList.remove('hidden');
             editModal.classList.add('flex');
-
-            // Animate content
-            const editContent = document.getElementById('edit-modal-content');
+            // Animation
             setTimeout(() => {
-                editContent.classList.remove('scale-95', 'opacity-0');
-                editContent.classList.add('scale-100', 'opacity-100');
+                const content = document.getElementById('edit-modal-content');
+                if (content) {
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }
             }, 10);
+
         } catch (error) {
-            alert('Error: ' + error.message);
+            console.error(error);
+            alert('Error al abrir editor: ' + error.message);
         }
     };
 
-    // Detect Duration Handler
-    document.getElementById('btn-detect-duration')?.addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        const url = btn.dataset.url;
-        if (!url) return alert('No hay archivo de audio asociado');
-
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '...';
-        btn.disabled = true;
-
-        const audio = new Audio(url);
-        audio.onloadedmetadata = () => {
-            const duration = Math.round(audio.duration);
-            document.getElementById('edit-duracion').value = duration;
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        };
-        audio.onerror = () => {
-            alert('Error al cargar el audio para detectar duración');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        };
-    });
-
-    // Preview change listener
-    const imgInput = document.getElementById('edit-image-input');
-    if (imgInput) {
-        imgInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (evt) => document.getElementById('edit-image-preview').src = evt.target.result;
-                reader.readAsDataURL(file);
-            }
-        };
-    }
-
-    editForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        try {
-            const formData = new FormData(editForm);
-            formData.append('action', 'update');
-            await updateCancion(formData);
-            closeEditModal();
-            if (onSuccessCallback) onSuccessCallback();
-        } catch (error) {
-            alert(error.message);
+    // Setup Listeners (Lazy)
+    const setupListeners = () => {
+        const editModal = document.getElementById('edit-song-modal');
+        if (!editModal) {
+            // If checking immediately fails, wait a bit and try again (DOM race)
+            setTimeout(setupListeners, 500);
+            return;
         }
-    });
 
-    console.log('Edit Song Logic Initialized');
+        // Close Button
+        const btnCancel = document.getElementById('btn-cancel-edit');
+        if (btnCancel) {
+            btnCancel.onclick = () => {
+                const content = document.getElementById('edit-modal-content');
+                if (content) {
+                    content.classList.remove('scale-100', 'opacity-100');
+                    content.classList.add('scale-95', 'opacity-0');
+                }
+                setTimeout(() => {
+                    editModal.classList.add('hidden');
+                    editModal.classList.remove('flex');
+                }, 300);
+            };
+        }
+
+        // Tabs
+        editModal.querySelectorAll('[data-tab]').forEach(tab => {
+            tab.onclick = () => {
+                // UI Toggle
+                editModal.querySelectorAll('[data-tab]').forEach(t => {
+                    t.classList.replace('text-white', 'text-gray-400');
+                    t.classList.remove('border-b-2', 'border-indigo-500');
+                });
+                tab.classList.replace('text-gray-400', 'text-white');
+                tab.classList.add('border-b-2', 'border-indigo-500');
+
+                // Content Toggle
+                const target = tab.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                const targetContent = document.getElementById(`tab-${target}`);
+                if (targetContent) targetContent.classList.remove('hidden');
+
+                // Module Call
+                if (target === 'verses') VerseEditor.renderVerses();
+                else if (target === 'backgrounds') loadBackgrounds();
+            };
+        });
+
+        // Submit Form
+        const form = document.getElementById('edit-song-form');
+        if (form) {
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    const fd = new FormData(form);
+                    fd.append('action', 'update');
+                    await updateCancion(fd);
+                    if (btnCancel) btnCancel.click(); // Close
+                    if (onSuccessCallback) onSuccessCallback();
+                } catch (e) {
+                    alert('Error guardando: ' + e.message);
+                }
+            };
+        }
+
+        // Image Input
+        const imgIn = document.getElementById('edit-image-input');
+        if (imgIn) {
+            imgIn.onchange = (e) => {
+                if (e.target.files[0]) {
+                    const r = new FileReader();
+                    r.onload = (ev) => document.getElementById('edit-image-preview').src = ev.target.result;
+                    r.readAsDataURL(e.target.files[0]);
+                }
+            };
+        }
+
+        // Detect Duration
+        const btnDet = document.getElementById('btn-detect-duration');
+        if (btnDet) {
+            btnDet.onclick = () => {
+                if (!btnDet.dataset.url) return;
+                const oldTxt = btnDet.innerHTML;
+                btnDet.innerHTML = '...';
+                const a = new Audio(btnDet.dataset.url);
+                a.onloadedmetadata = () => {
+                    document.getElementById('edit-duracion').value = Math.round(a.duration);
+                    btnDet.innerHTML = oldTxt;
+                };
+                a.onerror = () => {
+                    btnDet.innerHTML = oldTxt;
+                    alert('Error cargando audio');
+                };
+            };
+        }
+    };
+
+    // Attempt setup
+    setupListeners();
 }

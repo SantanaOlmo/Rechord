@@ -6,12 +6,15 @@ import { CONTENT_BASE_URL } from '../config.js';
 
 
 
+import { attachKeyboardListeners } from '../components/synchronizer/events/keyboardEvents.js';
+
 export function SongPage(songId) {
     // We initiate the player logic (audio, lyrics sync) but in a "sidebar mode"
     // This allows reusing the same controller logic.
     setTimeout(() => {
         initPlayer(songId);
         loadVersions(songId);
+        attachKeyboardListeners();
     }, 0);
 
     return `

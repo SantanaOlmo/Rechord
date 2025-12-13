@@ -29,6 +29,23 @@ export function initNewSongLogic(onSuccessCallback) {
         setTimeout(() => {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+            // RESET FORM
+            const form = document.getElementById('new-song-form');
+            if (form) form.reset();
+
+            // RESET AUDIO TEXT
+            const audioP = document.querySelector('#drop-zone p');
+            if (audioP) audioP.innerText = 'Arrastra tu audio aquí o haz clic';
+
+            // RESET IMAGE PREVIEW
+            const imgPreview = document.getElementById('image-preview-element');
+            const imgContent = document.getElementById('image-upload-content');
+            if (imgPreview) {
+                imgPreview.src = '';
+                imgPreview.classList.add('hidden');
+            }
+            if (imgContent) imgContent.classList.remove('opacity-0');
+
         }, 300);
     };
 
@@ -38,15 +55,12 @@ export function initNewSongLogic(onSuccessCallback) {
     });
     btnCancel?.addEventListener('click', closeModal);
 
-    // Audio Duration Logic (Handled in loop below)
-
     // Drag & Drop
     [
         { zone: dropZone, input: audioInput, type: 'audio' },
         { zone: document.getElementById('drop-zone-image'), input: document.getElementById('image-input'), type: 'image' }
     ].forEach(({ zone, input, type }) => {
         if (zone && input) {
-
             // Click to open
             zone.addEventListener('click', () => input.click());
 
@@ -60,27 +74,38 @@ export function initNewSongLogic(onSuccessCallback) {
                 zone.classList.remove('bg-indigo-50', 'border-indigo-500');
                 if (e.dataTransfer.files.length) {
                     input.files = e.dataTransfer.files;
-                    // Trigger change manually
                     const event = new Event('change');
                     input.dispatchEvent(event);
                 }
             });
 
-            // Input Change Handler (display filename)
+            // Input Change Handler
             input.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const textP = zone.querySelector('p');
-                    if (textP) textP.innerHTML = `<span class="text-indigo-600 font-bold">${file.name}</span>`;
-
-                    // Specific logic for Audio Duration
                     if (type === 'audio') {
+                        const textP = zone.querySelector('p');
+                        if (textP) textP.innerHTML = `<span class="text-indigo-600 font-bold">${file.name}</span>`;
+                        // Audio Duration
                         const audio = new Audio(URL.createObjectURL(file));
                         audio.onloadedmetadata = function () {
                             const dur = Math.round(audio.duration);
                             document.getElementById('song-duration').value = dur;
-                            console.log('Duration detected:', dur);
                         };
+                    } else if (type === 'image') {
+                        // Image Preview
+                        const preview = document.getElementById('image-preview-element');
+                        const defaultContent = document.getElementById('image-upload-content');
+
+                        if (preview) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                preview.src = ev.target.result;
+                                preview.classList.remove('hidden');
+                                if (defaultContent) defaultContent.classList.add('opacity-0');
+                            };
+                            reader.readAsDataURL(file);
+                        }
                     }
                 }
             });
