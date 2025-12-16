@@ -101,10 +101,9 @@
 
 /* Default Search Input Style (White) */
 .search-input {
-    background-color: #ffffff;
-    border: 1px solid transparent;
-    color: #4B5563;
-    /* Gray-600 */
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
     padding: 0.5rem 1.5rem;
     padding-left: 2.5rem;
     /* Space for icon */
@@ -116,20 +115,18 @@
 }
 
 .search-input::placeholder {
-    color: #9CA3AF;
-    /* Gray-400 */
+    color: var(--text-muted);
 }
 
 /* Default Gray Search Icon */
 .search-container svg {
-    color: #9CA3AF;
-    /* Gray-400 */
+    color: var(--text-muted);
 }
 
 .search-input:focus {
-    background-color: #ffffff;
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3) !important;
+    background-color: var(--bg-primary);
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 3px var(--accent-light) !important;
 }
 
 /* Specific Header Mode Overrides - NONE needed for search now */

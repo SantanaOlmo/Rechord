@@ -2,14 +2,18 @@
 require_once __DIR__ . '/../models/Cancion.php';
 require_once __DIR__ . '/../models/HomeConfig.php';
 require_once __DIR__ . '/../models/Estrofa.php';
+require_once __DIR__ . '/../models/SongSection.php';
 
 class CancionManager {
     private $cancionModel;
     private $homeConfigModel;
+    private $estrofaModel;
+    private $songSectionModel;
 
     public function __construct() {
         $this->cancionModel = new Cancion();
         $this->homeConfigModel = new HomeConfig();
+        $this->songSectionModel = new SongSection();
         
         if (!class_exists('Estrofa')) {
             error_log("CRITICAL: Class Estrofa NOT FOUND in CancionManager. Included files: " . implode(", ", get_included_files()));
@@ -26,7 +30,34 @@ class CancionManager {
     }
 
     public function getById($id) {
-        return $this->cancionModel->obtenerPorId($id);
+        $cancion = $this->cancionModel->obtenerPorId($id);
+        if ($cancion) {
+            // Attach Song Sections
+            $sections = $this->songSectionModel->obtenerPorCancion($id);
+            // Parse Chords JSON for frontend convenience? 
+            // Or let frontend parse it. Frontend expects JSON likely.
+            // Model returns associative array from DB. `chords` is JSON string column?
+            // `fetch(PDO::FETCH_ASSOC)` returns `chords` as string if it's JSON type in MySQL but retrieved via PDO normally.
+            
+            // Let's decode it here to be clean, or leave as is.
+            // Frontend logic in SyncController: 
+            // `state.settings.songSections` is array of objects.
+            // If I return `song_sections` as array of DB rows, `chords` might be string.
+            // I should map it.
+            if ($sections) {
+                foreach ($sections as &$sec) {
+                    if (isset($sec['chords']) && is_string($sec['chords'])) {
+                        $sec['chords'] = json_decode($sec['chords'], true);
+                    }
+                    // Map start_time -> start, end_time -> end for frontend compat if needed
+                    // Frontend uses `start` and `end`. DB uses `start_time` and `end_time`.
+                    $sec['start'] = (float)$sec['start_time'];
+                    $sec['end'] = (float)$sec['end_time'];
+                }
+            }
+            $cancion['song_sections'] = $sections;
+        }
+        return $cancion;
     }
 
     public function toggleLike($idUsuario, $idCancion) {
@@ -120,14 +151,32 @@ class CancionManager {
         $beat_marker = $data['beat_marker'] ?? $current['beat_marker'] ?? 0;
         $subdivision = $data['subdivision'] ?? $current['subdivision'] ?? '1/4';
         $velocity = $data['velocity'] ?? $current['velocity'] ?? 100;
+        $acordes = $data['acordes'] ?? $current['acordes'] ?? null;
 
         // Lyrics Update Logic
         if (isset($data['lyrics'])) {
             $this->updateLyrics($id, $data['lyrics']);
         }
 
+        // Song Sections Logic
+        if (isset($data['song_sections'])) {
+            $sections = is_string($data['song_sections']) ? json_decode($data['song_sections'], true) : $data['song_sections'];
+            if (is_array($sections)) {
+                $this->songSectionModel->eliminarPorCancion($id);
+                foreach ($sections as $sec) {
+                    $this->songSectionModel->crear(
+                        $id, 
+                        $sec['label'] ?? 'Section', 
+                        $sec['start'] ?? 0, 
+                        $sec['end'] ?? 10, 
+                        json_encode($sec['chords'] ?? [])
+                    );
+                }
+            }
+        }
+
         // Modelo
-        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen, $bpm, $metrica_numerador, $metrica_denominador, $beat_marker, $subdivision, $velocity);
+        return $this->cancionModel->actualizar($id, $titulo, $artista, $nivel, $album, $duracion, $hashtags, $fecha, $rutaImagen, $bpm, $metrica_numerador, $metrica_denominador, $beat_marker, $subdivision, $velocity, $acordes);
     }
 
     private function updateLyrics($idCancion, $lyricsText) {

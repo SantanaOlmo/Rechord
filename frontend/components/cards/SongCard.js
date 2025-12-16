@@ -25,14 +25,14 @@ export function SongCard(song, isLiked) {
     const likeCount = song.total_likes || 0;
 
     return `
-    <div class="song-card group relative w-32 md:w-48 flex-shrink-0 bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition-all duration-300 cursor-move"
+    <div class="song-card group relative w-32 md:w-48 flex-shrink-0 bg-[var(--bg-secondary)] rounded-lg overflow-hidden hover:bg-[var(--bg-tertiary)] transition-all duration-300 cursor-move"
          draggable="true"
          ondragstart="event.dataTransfer.setData('text/plain', '${song.id_cancion}')">
         <div class="card-image h-32 md:h-48 w-full relative overflow-hidden">
             ${imageUrl
             ? `<img src="${imageUrl}" alt="${song.titulo}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">`
-            : `<div class="w-full h-full flex items-center justify-center bg-gray-700">
-                 <svg class="w-10 h-10 md:w-16 md:h-16 text-gray-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+            : `<div class="w-full h-full flex items-center justify-center bg-[var(--bg-tertiary)]">
+                 <svg class="w-10 h-10 md:w-16 md:h-16 text-[var(--text-muted)] opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                </div>`
         }
             
@@ -68,17 +68,17 @@ export function SongCard(song, isLiked) {
         
         <div class="p-3 md:p-4">
             <div class="mb-2 md:mb-3">
-                <h3 class="text-white font-bold text-xs md:text-base truncate" title="${song.titulo}">${song.titulo}</h3>
-                <p class="text-gray-400 text-[10px] md:text-sm truncate" title="${song.artista}">${song.artista || 'Artista desconocido'}</p>
+                <h3 class="text-[var(--text-primary)] font-bold text-xs md:text-base truncate" title="${song.titulo}">${song.titulo}</h3>
+                <p class="text-[var(--text-secondary)] text-[10px] md:text-sm truncate" title="${song.artista}">${song.artista || 'Artista desconocido'}</p>
             </div>
             
-            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-700">
+            <div class="flex items-center justify-between mt-2 pt-2 border-t border-[var(--border-primary)]">
                 <div class="flex flex-col">
-                    <span class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Duración</span>
-                    <span class="text-xs text-gray-300 font-mono">${durationStr}</span>
+                    <span class="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">Duración</span>
+                    <span class="text-xs text-[var(--text-secondary)] font-mono">${durationStr}</span>
                 </div>
                  <a href="#/sincronizador/${song.id_cancion}" onclick="window.navigate('/sincronizador/${song.id_cancion}'); return false;" 
-                   class="text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-2 py-1 rounded transition-colors">
+                   class="text-xs bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--accent-primary)] hover:text-white px-2 py-1 rounded transition-colors">
                     Sync
                 </a>
             </div>

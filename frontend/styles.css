@@ -1,4 +1,4 @@
-@import url('styles/colors.css');
+/* @import url('styles/colors.css'); Removed for dynamic theming */
 @import url('styles/layout.css');
 @import url('styles/base.css');
 @import url('styles/components/header.css');
@@ -158,7 +158,7 @@ input[type=range]::-webkit-slider-runnable-track {
     left: 0;
     width: 100%;
     height: 30%;
-    background: linear-gradient(to top, #111827, transparent);
+    background: linear-gradient(to top, var(--hero-gradient-start), transparent);
     z-index: 10;
 }
 

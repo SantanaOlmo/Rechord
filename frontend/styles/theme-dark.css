@@ -1,0 +1,73 @@
+/* frontend/styles/theme-dark.css */
+
+:root {
+    /* --- Base Palette (Tailwind-like) --- */
+
+    /* Gray Scale */
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+
+    /* Indigo Scale (Primary Brand) */
+    --indigo-50: #eef2ff;
+    --indigo-100: #e0e7ff;
+    --indigo-400: #818cf8;
+    --indigo-500: #6366f1;
+    --indigo-600: #4f46e5;
+    --indigo-700: #2d1ed4;
+
+    /* Green Scale (Success/Editor) */
+    --green-300: #86efac;
+    --green-400: #4ade80;
+    --green-500: #22c55e;
+    --green-900: #064e3b;
+
+    /* Blue Scale (Editor/Timeline) */
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+
+    /* Semantic Colors */
+    --bg-primary: var(--gray-900);
+    /* Main background */
+    --bg-secondary: var(--gray-800);
+    /* Cards, inputs, panels */
+    --bg-tertiary: var(--gray-700);
+    /* Hover states, active items */
+
+    --text-primary: #ffffff;
+    /* Headings, main text */
+    --text-secondary: var(--gray-400);
+    /* Subtitles, hints */
+    --text-muted: var(--gray-500);
+    /* Disabled text */
+
+    --border-primary: var(--gray-700);
+    --border-secondary: var(--gray-600);
+
+    --accent-primary: var(--indigo-500);
+    --accent-hover: var(--indigo-600);
+    --accent-light: var(--indigo-400);
+
+    --color-error: #ef4444;
+    /* red-500 */
+
+    /* Legacy / Specific Overrides */
+    --color-primary: var(--indigo-500);
+    --color-background: var(--bg-primary);
+    --color-text-light: var(--text-primary);
+
+    /* Gradients */
+    --hero-gradient-start: #111827;
+    --hero-gradient-mid: rgba(17, 24, 39, 0.4);
+    --hero-gradient-end: rgba(0, 0, 0, 0.2);
+    --hero-top-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    --sidebar-bg: var(--gray-900);
+}

@@ -4,7 +4,11 @@ export const ChordEditorRenderer = {
     render(state, renderCallback) {
         // Update Chord Name
         const nameEl = document.getElementById('chord-name');
-        if (nameEl) nameEl.textContent = state.chordName;
+        if (nameEl) {
+            nameEl.textContent = state.chordName || 'Nombre del Acorde...';
+            nameEl.style.opacity = state.chordName ? '1' : '0.5';
+            nameEl.style.fontStyle = state.chordName ? 'normal' : 'italic';
+        }
 
         this.renderFretSelector(state, renderCallback);
         this.renderGrid(state, renderCallback);
@@ -77,7 +81,8 @@ export const ChordEditorRenderer = {
         for (let s = 1; s <= 6; s++) {
             const stringLine = document.createElement('div');
             const leftPos = (s - 1) * 20;
-            stringLine.className = 'absolute top-0 bottom-0 bg-gray-400 z-0 pointer-events-none';
+            // BLACK LINES on WHITE BG
+            stringLine.className = 'absolute top-0 bottom-0 bg-gray-800 z-0 pointer-events-none';
             stringLine.style.left = `${leftPos}%`;
             stringLine.style.width = `${stringWidths[s - 1]}px`;
             stringLine.style.transform = 'translateX(-50%)';
@@ -88,7 +93,8 @@ export const ChordEditorRenderer = {
         for (let f = 0; f <= 5; f++) {
             const fretLine = document.createElement('div');
             const topPos = f * 20;
-            fretLine.className = 'absolute left-0 right-0 h-px bg-gray-500 z-0 pointer-events-none';
+            // BLACK LINES
+            fretLine.className = 'absolute left-0 right-0 h-px bg-gray-800 z-0 pointer-events-none';
             fretLine.style.top = `${topPos}%`;
             grid.appendChild(fretLine);
         }
@@ -101,8 +107,10 @@ export const ChordEditorRenderer = {
             const leftPerc = (from - 1) * 20;
             const widthPerc = (to - from) * 20;
 
-            // Unified style: No shadow, bg-indigo-600, smooth transition
-            bar.className = 'absolute h-4 bg-indigo-600 rounded-full z-10 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)]';
+            // Black barre? Or keep Indigo for accent? User didn't specify. 
+            // Usually barre is black arc. I'll stick to accent color 'bg-indigo-600' or maybe 'bg-black'.
+            // Let's use 'bg-gray-900' (Black) to match request for "negro".
+            bar.className = 'absolute h-4 bg-gray-900 rounded-full z-10 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)]';
 
             bar.style.left = `calc(${leftPerc}% - 12px)`;
             bar.style.width = `calc(${widthPerc}% + 24px)`;
@@ -127,14 +135,12 @@ export const ChordEditorRenderer = {
                 // Dot
                 const dot = document.createElement('div');
                 const isSelected = state.fingers[`${string}-${fret}`];
-                // Removed shadow-[...] from active state
-                dot.className = `w-5 h-5 rounded-full transition-all duration-200 border border-white/10 ${isSelected ? 'bg-indigo-600 scale-100' : 'bg-gray-700/50 opacity-0 group-hover:opacity-100 scale-75'}`;
+                // Active: Black (gray-900). Inactive: transparent hover gray-200.
+                dot.className = `w-5 h-5 rounded-full transition-all duration-200 border border-transparent ${isSelected ? 'bg-gray-900 scale-100 shadow-sm' : 'bg-gray-300/50 opacity-0 group-hover:opacity-100 scale-75'}`;
 
                 zone.appendChild(dot);
 
-                zone.onclick = () => {
-                    ChordEditorActions.toggleFinger(state, string, fret, renderCallback);
-                };
+                // zone.onclick removed - handled in events.js
                 grid.appendChild(zone);
             }
         }

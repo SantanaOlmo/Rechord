@@ -1,0 +1,56 @@
+/* frontend/styles/theme-light.css */
+
+:root {
+    /* --- Base Palette (Tailwind-like) --- */
+    /* Gray Scale (Inverted for logic, but keeping names for reference if needed, ideally we map semantic variables) */
+
+    /* Semantic Colors - LIGHT MODE MAPPING */
+    --bg-primary: #f9fafb;
+    /* gray-50 */
+    --bg-secondary: #ffffff;
+    /* white cards */
+    --bg-tertiary: #f3f4f6;
+    /* gray-100 hover/active */
+
+    --text-primary: #111827;
+    /* gray-900 */
+    --text-secondary: #4b5563;
+    /* gray-600 */
+    --text-muted: #9ca3af;
+    /* gray-400 */
+
+    --border-primary: #e5e7eb;
+    /* gray-200 */
+    --border-secondary: #d1d5db;
+    /* gray-300 */
+
+    --accent-primary: #4f46e5;
+    /* indigo-600 (Darker for contrast on light) */
+    --accent-hover: #4338ca;
+    /* indigo-700 */
+    --accent-light: #6366f1;
+    /* indigo-500 */
+
+    --color-error: #dc2626;
+    /* red-600 */
+
+    /* Keeping definitions for raw colors might be needed if they are used directly with var(), 
+       but ideally we switch to semantic variables. 
+       Defining them here as fallback/overrides if necessary. */
+
+    --gray-800: #e5e7eb;
+    /* Mapping specific hardcoded vars if they persist */
+    --gray-900: #f9fafb;
+
+    /* Legacy / Specific Overrides */
+    --color-primary: var(--accent-primary);
+    --color-background: var(--bg-primary);
+    --color-text-light: var(--text-primary);
+
+    /* Gradients */
+    --hero-gradient-start: #ffffff;
+    --hero-gradient-mid: rgba(255, 255, 255, 0.6);
+    --hero-gradient-end: rgba(255, 255, 255, 0.1);
+    --hero-top-gradient: linear-gradient(to bottom, white 0%, transparent 100%);
+    --sidebar-bg: #f3f4f6;
+}

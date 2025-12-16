@@ -2,7 +2,7 @@ import { usuarioService } from '../services/usuarioService.js';
 import { ProfileHeader } from '../components/profile/ProfileHeader.js';
 import { authService } from '../services/authService.js';
 import { ProfileBio } from '../components/profile/ProfileBio.js';
-import { Footer } from '../components/layout/Footer.js';
+import { Footer, setupFooterTheme } from '../components/layout/Footer.js';
 import { likeService } from '../services/likeService.js';
 import { SongCard } from '../components/cards/SongCard.js?v=profile';
 import { renderSection } from '../components/logic/HomeRenderer.js';
@@ -94,6 +94,9 @@ export function attachUserEvents() {
 
                 ${Footer()}
             `;
+
+            // Re-apply theme logic after re-render
+            setupFooterTheme();
 
 
             // Follow Logic

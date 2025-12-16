@@ -1,5 +1,6 @@
 import { state } from '../store.js';
 import { audioService } from '../../../services/audioService.js';
+import { EditorSidebarLogic } from '../../editor/EditorSidebarLogic.js';
 
 export function togglePlay() {
     const audio = audioService.getInstance();
@@ -25,6 +26,11 @@ export function togglePlay() {
         audio.pause();
     }
     state.isPlaying = !audio.paused;
+    if (state.isPlaying) {
+        EditorSidebarLogic.restoreLyricsView();
+    }
+
+
 
     // UI updates are handled by actions.refresh/renderTimeline or listeners in the main loop
     const play = document.getElementById('icon-play');

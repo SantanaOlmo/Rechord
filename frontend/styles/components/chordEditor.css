@@ -1,0 +1,220 @@
+/* Chord Editor Card - Miniature Fixed Size (Portrait) */
+.chord-card {
+    width: 180px;
+    /* Reduced from 220px to be "más chico" */
+    height: auto;
+    min-height: 230px;
+    /* Ratio ~1.27 (180 * 1.27 = 228) - Shorter */
+    background-color: #4f46e5;
+    border-radius: 1rem;
+    padding: 0.75rem;
+    /* Reduced padding */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Center content vertically, or use space-evenly */
+    position: relative;
+    user-select: none;
+}
+
+/* ... existing styles ... */
+
+.chord-title {
+    font-size: 0.9rem;
+    /* Smaller title */
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chord-title:hover {
+    color: #c7d2fe;
+}
+
+.editor-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+    position: relative;
+    /* Determine if we need to scale this to fit the 220px card?
+       Grid 120 + Tools 24 + Selector 24 + Gaps ~4 = ~172px width.
+       Fits within 220px comfortably. 
+    */
+    zoom: 0.9;
+    /* Slight zoom out for sidebar content too */
+}
+
+/* ... existing fret/grid styles ... */
+
+
+/* Add Chord Button (Ghost Card Style) - Micro Variant */
+.btn-add-chord {
+    width: 100px;
+    height: 125px;
+    /* Ratio 1.25 - Shorter */
+    border: 2px dashed rgba(79, 70, 229, 0.4);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(79, 70, 229, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #818cf8;
+    flex-shrink: 0;
+    gap: 4px;
+}
+
+.btn-add-chord:hover {
+    background-color: rgba(79, 70, 229, 0.1);
+    border-color: rgba(99, 102, 241, 0.8);
+    color: #c7d2fe;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-chord span {
+    font-size: 0.65rem;
+}
+
+.icon-add {
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
+}
+
+/* Base Chord Card - Micro Variant Support */
+.chord-card.small {
+    width: 100px;
+    height: 125px;
+    /* Matching 1.25 ratio */
+    padding: 0.5rem 0.25rem;
+    border-radius: 0.5rem;
+    min-height: 0;
+}
+
+.chord-card.small .chord-title {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+}
+
+.chord-card.small .editor-container {
+    transform: scale(0.45);
+    /* Keep small scale */
+    transform-origin: top center;
+    margin-top: 0px;
+    margin-bottom: -90px;
+    zoom: 1;
+    /* Reset zoom override */
+    /* Compensate for whitespace */
+}
+
+/* Fret Selector */
+.fret-selector {
+    width: 24px;
+    height: 180px;
+    /* Taller */
+    background-color: rgba(55, 48, 163, 0.5);
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: ns-resize;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.fret-selector-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+
+/* Guitar Grid */
+.guitar-grid-container {
+    width: 145px;
+    /* Wider to fill space */
+    height: 180px;
+    /* Taller */
+    /* 5 frets * ??px auto-scaled */
+    background-color: #ffffff;
+    /* White Background */
+    border: 1px solid #e2e8f0;
+    /* Light gray border */
+    border-radius: 6px;
+    padding: 0;
+    margin: 0;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.guitar-grid-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Barre Tools Removed */
+
+.instruction-text {
+    font-size: 0.6rem;
+    color: #cbd5e1;
+    text-align: center;
+    margin-top: 0.75rem;
+    font-weight: 500;
+    max-width: 200px;
+}
+
+/* Horizontal Chord List */
+.chord-list-container {
+    /* Tailwind handles flex-row/wrap now, but this reinforces */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+/* Delete Button on Hover */
+.btn-delete-chord {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    background-color: #ef4444;
+    /* Red-500 */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+    z-index: 50;
+    border: 2px solid white;
+}
+
+.chord-card.small:hover .btn-delete-chord {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.btn-delete-chord:hover {
+    background-color: #dc2626;
+    /* Red-600 */
+    transform: scale(1.1);
+}

@@ -2,19 +2,25 @@ import { state, actions } from '../store.js';
 import { handleClipMouseDown } from './dragLogic.js';
 
 export function attachTrackListeners() {
-    const track = document.getElementById('track-verses');
+    const versesTrack = document.getElementById('track-verses');
+    const sectionsTrack = document.getElementById('track-sections');
     const audioTrack = document.getElementById('waveform-container');
 
-    // --- LYRICS TRACK EVENTS ---
-    if (track) {
-        track.addEventListener('mousedown', (e) => {
+    // Helper for Track Events
+    const bindTrackEvents = (trackEl, itemType) => {
+        if (!trackEl) return;
+        trackEl.addEventListener('mousedown', (e) => {
+            // Update Active Track Context
+            if (itemType === 'section') state.activeTrack = 'chords';
+            else state.activeTrack = 'lyrics';
+
             // Check if clicking a resize handle (highest priority)
             if (e.target.classList.contains('resize-handle') || e.target.closest('.resize-handle')) {
                 const handleEl = e.target.classList.contains('resize-handle') ? e.target : e.target.closest('.resize-handle');
                 const clipEl = handleEl.closest('[data-index]');
                 if (clipEl) {
                     const index = parseInt(clipEl.dataset.index);
-                    handleClipMouseDown(e, index);
+                    handleClipMouseDown(e, index, itemType);
                     return;
                 }
             }
@@ -23,15 +29,17 @@ export function attachTrackListeners() {
             const clipEl = e.target.closest('[data-index]');
             if (clipEl) {
                 const index = parseInt(clipEl.dataset.index);
-                handleClipMouseDown(e, index);
+                handleClipMouseDown(e, index, itemType);
                 return;
             }
 
             // If we are here, we clicked on the background track
-            if (e.target === track) {
+            if (e.target === trackEl) {
                 state.isSelecting = true;
+                state.selectionType = itemType; // Set selection context
                 state.selectionStart = { x: e.clientX, y: e.clientY };
                 state.selectionCurrent = { x: e.clientX, y: e.clientY };
+
                 if (!e.shiftKey) {
                     state.selectedIndices.clear();
                     // Clear beat marker selection if clicking away
@@ -42,7 +50,12 @@ export function attachTrackListeners() {
                 }
             }
         });
-    }
+    };
+
+    // Bind Lyrics Track
+    bindTrackEvents(versesTrack, 'verse');
+    // Bind Sections Track
+    bindTrackEvents(sectionsTrack, 'section');
 
     // --- AUDIO TRACK / BEAT MARKER EVENTS ---
     if (audioTrack) {

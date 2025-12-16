@@ -63,6 +63,14 @@ async function init(songId) {
         state.settings.timeSignature.num = parseInt(song.metrica_numerador) || 4;
         state.settings.timeSignature.den = parseInt(song.metrica_denominador) || 4;
 
+        // Load Chords
+        try {
+            state.chords = song.acordes ? (typeof song.acordes === 'string' ? JSON.parse(song.acordes) : song.acordes) : [];
+        } catch (e) {
+            console.warn('Failed to parse chords:', e);
+            state.chords = [];
+        }
+
         // Multi-Section Grid Support
         let markers = [];
         if (song.beat_marker) {
@@ -81,6 +89,19 @@ async function init(songId) {
             }
         }
         state.settings.beatMarker = markers;
+
+        // Load Song Sections
+        if (song.song_sections && Array.isArray(song.song_sections)) {
+            state.settings.songSections = song.song_sections.map(s => ({
+                id: s.id, // Database ID
+                label: s.label,
+                start: parseFloat(s.start_time || s.start),
+                end: parseFloat(s.end_time || s.end),
+                chords: s.chords || []
+            }));
+        } else {
+            state.settings.songSections = [];
+        }
 
         state.settings.subdivision = song.subdivision || '1/4';
         state.settings.velocity = parseInt(song.velocity) || 100;

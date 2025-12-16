@@ -7,7 +7,7 @@ export function SidebarContainer() {
 
 
     return `
-        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden border-r border-gray-800 bg-gray-950 transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
+        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden border-r border-[var(--border-primary)] bg-[var(--sidebar-bg)] transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
             
             <!-- Library Section (Top) -->
             <div id="sidebar-library-section" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
@@ -15,10 +15,10 @@ export function SidebarContainer() {
             </div>
 
             <!-- Resize Handle (Middle) - Only visible when session active -->
-            <div id="session-split-handle" class="hidden h-2 bg-gray-800 hover:bg-indigo-600 cursor-row-resize w-full z-20 flex-shrink-0"></div>
+            <div id="session-split-handle" class="hidden h-2 bg-[var(--border-primary)] hover:bg-[var(--accent-primary)] cursor-row-resize w-full z-20 flex-shrink-0"></div>
 
             <!-- Session Section (Bottom) -->
-            <div id="sidebar-session-section" class="hidden flex-col bg-gray-900 border-t border-gray-700 overflow-hidden transition-all duration-300 h-1/2">
+            <div id="sidebar-session-section" class="hidden flex-col bg-[var(--bg-secondary)] border-t border-[var(--border-primary)] overflow-hidden transition-all duration-300 h-1/2">
                 ${SessionSidebar()}
             </div>
         </div>

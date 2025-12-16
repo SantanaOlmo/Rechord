@@ -11,6 +11,7 @@ import { AdminDashboard } from '../pages/AdminDashboard.js'; // Already added in
 import { authService } from '../services/authService.js';
 import { render as Sincronizador } from '../pages/Sincronizador.js';
 import { PlayerPage } from '../pages/PlayerPage.js';
+import { setupFooterTheme } from '../components/layout/Footer.js';
 
 
 import { SitemapPage } from '../pages/SitemapPage.js';
@@ -166,6 +167,10 @@ const router = () => {
 
     // Render
     appRoot.innerHTML = targetPage();
+
+    if (path === '/sitemap') {
+        setupFooterTheme();
+    }
 
     // Page Events (Profile already handled above, but double check if route matched /profile could happen if hash is #/profile explicitly)
     if (path === '/profile') {

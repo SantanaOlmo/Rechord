@@ -4,17 +4,26 @@ import { handleResize } from './resizeLogic.js';
 import { handleMove } from './moveLogic.js';
 import { history } from './historyLogic.js';
 
-export function handleClipMouseDown(e, index) {
+export function handleClipMouseDown(e, index, type = 'verse') {
     if (e.button !== 0) return; // Only Left Click
 
     const handleEl = e.target.closest('[data-handle]');
     const handle = handleEl ? handleEl.dataset.handle : null;
 
+    // Set Selection Context
+    state.selectionType = type;
+    state.activeTrack = type === 'section' ? 'chords' : 'lyrics'; // Mapping
+    const dataSource = type === 'section' ? state.settings.songSections : state.estrofas;
+
     // START DRAGGING (Resize or Move)
     // Push history before ANY modification
-    history.push(state.estrofas);
+    // TODO: Generalize History. For now, we push the relevant array? 
+    // Existing history logic might expect full state or just verses. 
+    // Let's assume history.push handles 'snapshot' of something. 
+    // Ideally we'd fix historyLogic.js too. For now, let's snapshot the source.
+    history.push(dataSource);
 
-    // Clear Beat Marker Selection (User Requirement: Verse selection priority)
+    // Clear Beat Marker Selection (User Requirement: Verse/Section selection priority)
     state.settings.selectedRegionIndex = -1;
     state.settings.selectedMarkerType = null;
     import('../../editor/settings/SettingsUI.js').then(m => m.SettingsUI.renderSectionsList()); // Refresh UI highlights
@@ -25,7 +34,7 @@ export function handleClipMouseDown(e, index) {
     state.dragTarget = handle ? handle : 'body';
 
     // Snapshot constraint
-    state.initialSnapshot = state.estrofas.map(v => ({ ...v }));
+    state.initialSnapshot = dataSource.map(v => ({ ...v }));
 
     e.stopPropagation();
 

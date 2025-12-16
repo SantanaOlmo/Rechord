@@ -106,8 +106,10 @@ export function attachUIListeners() {
                 metrica_denominador: state.settings.timeSignature.den,
                 beat_marker: JSON.stringify(state.settings.beatMarker), // Save as JSON string
                 subdivision: state.settings.subdivision,
-                subdivision: state.settings.subdivision,
                 velocity: state.settings.velocity,
+                velocity: state.settings.velocity,
+                acordes: JSON.stringify(state.chords || []), // Save Chords
+                song_sections: JSON.stringify(state.settings.songSections || []), // Save Sections
                 action: 'update'
             };
 

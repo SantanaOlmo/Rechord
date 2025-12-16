@@ -2,6 +2,15 @@ export let state = {
     song: null,
     estrofas: [],
     selectedIndices: new Set(),
+
+    // New Selection Context
+    activeTrack: 'lyrics', // 'lyrics', 'chords', etc.
+    selectionType: 'verse', // 'verse', 'section'
+
+    // History for Undo/Redo
+    history: [],
+    historyIndex: -1,
+    chords: [], // List of stored chords
     zoom: 50,
     minZoom: 10,
     // Dragging State
@@ -46,7 +55,10 @@ export let state = {
         timeSignature: { num: 4, den: 4 },
         timeSignature: { num: 4, den: 4 },
         beatMarker: [], // Array of {start, end} regions
-        selectedRegionIndex: -1, // Track selected grid region
+        songSections: [], // Array of {start, end, label} regions
+        selectedRegionIndex: -1, // Track selected grid region (Beat)
+        selectedSectionIndex: -1, // Track selected section region
+        activeViewMode: 'beat', // 'beat' or 'sections'
         selectedMarkerType: null, // 'start' or 'end'
         snapping: false,
         snapping: false,

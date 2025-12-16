@@ -63,7 +63,7 @@ export function SongPage(songId) {
                        class="lyrics-sidebar group"
                        onclick="expandPlayer(${songId})">
                     
-                    <div class="p-4 border-b border-white/5 flex justify-between items-center text-gray-400">
+                    <div class="p-4 border-b border-[var(--border-primary)] flex justify-between items-center text-[var(--text-muted)]">
                         <span class="text-xs uppercase tracking-widest">Letra</span>
                         <div class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-green-400 flex items-center gap-1">
                             Expandir <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
@@ -71,16 +71,16 @@ export function SongPage(songId) {
                     </div>
 
                     <!-- Lyrics Container -->
-                    <div id="lyrics-container" class="flex-1 overflow-y-auto p-6 text-left text-lg text-gray-400 select-none relative mask-linear-y grid justify-center content-start scrollbar-hide">
+                    <div id="lyrics-container" class="flex-1 overflow-y-auto p-6 text-left text-lg text-[var(--text-secondary)] select-none relative mask-linear-y grid justify-center content-start scrollbar-hide">
                         <p class="mt-40">Cargando letra...</p>
                     </div>
 
                     <!-- Gradient Bottom -->
-                    <div class="h-24 bg-gradient-to-t from-gray-900 to-transparent absolute bottom-0 inset-x-0 pointer-events-none"></div>
+                    <div class="h-24 bg-gradient-to-t from-[var(--bg-primary)] to-transparent absolute bottom-0 inset-x-0 pointer-events-none"></div>
 
                     <!-- Sync Button (Hidden by default) -->
                     <button id="btn-sync-lyrics" 
-                            class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-20 flex items-center gap-2 hover:bg-indigo-500"
+                            class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[var(--accent-primary)] text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-20 flex items-center gap-2 hover:bg-[var(--accent-hover)]"
                             onclick="event.stopPropagation(); window.resyncLyrics()">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                         Sincronizar
@@ -90,7 +90,7 @@ export function SongPage(songId) {
             </div>
 
              <!-- Bottom Player Controls (Sticky) -->
-            <div class="shrink-0 z-50 bg-gray-900/90 backdrop-blur-lg border-t border-white/5">
+            <div class="shrink-0 z-50 bg-[var(--bg-secondary)] backdrop-blur-lg border-t border-[var(--border-primary)]">
                 ${PlayerControls(songId, false)}
             </div>
 
@@ -132,16 +132,16 @@ async function loadVersions(songId) {
                 </div>
                 
                 <div class="flex items-center gap-3 mb-3">
-                    <img src="${v.usuario.foto_perfil || 'assets/icons/default_avatar.png'}" class="w-8 h-8 rounded-full border border-white/10" alt="${v.usuario.nombre}">
-                    <span class="text-sm text-gray-300">por <span class="text-white font-medium">${v.usuario.nombre}</span></span>
+                    <img src="${v.usuario.foto_perfil || 'assets/icons/default_avatar.png'}" class="w-8 h-8 rounded-full border border-[var(--border-primary)]" alt="${v.usuario.nombre}">
+                    <span class="text-sm text-[var(--text-secondary)]">por <span class="text-[var(--text-primary)] font-medium">${v.usuario.nombre}</span></span>
                 </div>
                 
-                <h3 class="text-xl font-bold mb-1 text-white group-hover:text-green-400 transition-colors">${v.titulo_version}</h3>
-                <p class="text-xs text-gray-500 mb-4">Creada el ${new Date(v.fecha_creacion).toLocaleDateString()}</p>
+                <h3 class="text-xl font-bold mb-1 text-[var(--text-primary)] group-hover:text-green-400 transition-colors">${v.titulo_version}</h3>
+                <p class="text-xs text-[var(--text-muted)] mb-4">Creada el ${new Date(v.fecha_creacion).toLocaleDateString()}</p>
                 
-                <div class="flex items-center justify-between text-xs text-gray-400">
+                <div class="flex items-center justify-between text-xs text-[var(--text-secondary)]">
                     <span class="flex items-center gap-1"><svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> ${v.likes}</span>
-                    <span class="bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-white">Ver Detalles</span>
+                    <span class="bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-[var(--text-primary)]">Ver Detalles</span>
                 </div>
             </div>
         `).join('');

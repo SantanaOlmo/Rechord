@@ -56,14 +56,14 @@
     font-size: 0.875rem;
     /* text-sm */
     font-weight: 500;
-    color: var(--gray-300);
+    color: var(--text-secondary);
     margin-bottom: 0.25rem;
 }
 
 .form-input {
     display: block;
     width: 100%;
-    background-color: var(--gray-700);
+    background-color: var(--bg-tertiary);
     border: 1px solid var(--border-secondary);
     border-radius: 0.5rem;
     /* rounded-lg */
@@ -95,13 +95,13 @@
     /* text-sm */
     font-weight: 500;
     color: var(--text-primary);
-    background-color: var(--indigo-600);
+    background-color: var(--accent-primary);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .btn-primary:hover {
-    background-color: var(--indigo-700);
+    background-color: var(--accent-hover);
     transform: scale(1.02);
 }
 
@@ -128,12 +128,12 @@
 
 .link-primary {
     font-weight: 500;
-    color: var(--indigo-400);
+    color: var(--accent-light);
     transition: color 0.2s;
 }
 
 .link-primary:hover {
-    color: var(--indigo-100);
+    color: var(--accent-hover);
 }
 
 .error-message {

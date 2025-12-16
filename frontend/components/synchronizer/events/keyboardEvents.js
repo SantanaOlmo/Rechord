@@ -6,6 +6,21 @@ import { history } from './historyLogic.js';
 
 let isAttached = false;
 
+// Helper to abstract property differences
+function getBounds(item, type) {
+    if (type === 'section') return { start: item.start, end: item.end };
+    return { start: item.tiempo_inicio, end: item.tiempo_fin };
+}
+function setBounds(item, start, end, type) {
+    if (type === 'section') {
+        item.start = start;
+        item.end = end;
+    } else {
+        item.tiempo_inicio = start;
+        item.tiempo_fin = end;
+    }
+}
+
 export function attachKeyboardListeners() {
     if (isAttached) return;
     isAttached = true;
@@ -27,12 +42,25 @@ export function attachKeyboardListeners() {
 
         if (!onSyncPage && !onSongPage) return;
 
+        // Context Setup
+        const type = state.selectionType || 'verse';
+        const dataSource = type === 'section' ? state.settings.songSections : state.estrofas;
+        const activeTrack = type === 'section' ? 'chords' : 'lyrics'; // Or use state.activeTrack
+
         // GLOBAL UNDO (Ctrl+Z)
         if (e.ctrlKey && e.code === 'KeyZ') {
             e.preventDefault();
-            const prev = history.undo(state.estrofas);
-            if (prev) {
-                state.estrofas = prev;
+
+            const getter = (t) => {
+                if (t === 'section') return state.settings.songSections;
+                return state.estrofas;
+            };
+
+            const result = history.undo(getter);
+            if (result) {
+                const { type: rType, data } = result;
+                if (rType === 'section') state.settings.songSections = data;
+                else state.estrofas = data;
                 actions.refresh();
             }
             return;
@@ -67,67 +95,63 @@ export function attachKeyboardListeners() {
             if (state.selectedIndices.size > 0) {
                 // If Shift is NOT held, we act on modifiers or move focused clip
                 if (state.isZDown || state.isXDown || state.isCDown || state.isJDown) {
-                    history.push(state.estrofas);
+                    history.push(dataSource, type);
                 }
             } else if (state.settings.selectedRegionIndex !== -1 && state.settings.selectedMarkerType) {
                 // MOVE SPECIFIC BEAT MARKER (Start or End)
+                // ... Existing Beat Marker Logic (Unchanged) ...
                 e.preventDefault();
-                let delta = 0.01; // 10ms default
-                if (e.shiftKey) delta = 0.1; // 100ms with shift
-
-                // Which direction?
+                let delta = 0.01;
+                if (e.shiftKey) delta = 0.1;
                 const change = (e.code === 'ArrowRight') ? delta : -delta;
-
                 const idx = state.settings.selectedRegionIndex;
-                const type = state.settings.selectedMarkerType;
+                const mType = state.settings.selectedMarkerType;
                 const region = state.settings.beatMarker[idx];
-
-                // Use Manager
                 import('../editor/settings/BeatMarkerManager.js').then(({ BeatMarkerManager }) => {
                     let s = region.start;
                     let end = region.end || 180;
-
-                    if (type === 'start') s += change;
+                    if (mType === 'start') s += change;
                     else end += change;
-
                     BeatMarkerManager.updateMarker(idx, s, end);
                 });
-
                 return;
             }
 
             // DIRECTIONAL JOIN (J + Arrow)
             if (state.isJDown && state.selectedIndices.size > 0) {
-                const sorted = Array.from(state.selectedIndices).sort((a, b) => a - b);
+                const sorted = Array.from(state.selectedIndices)
+                    .map(i => ({ index: i, item: dataSource[i] }))
+                    .sort((a, b) => getBounds(a.item, type).start - getBounds(b.item, type).start);
+
                 let changed = false;
 
                 if (e.code === 'ArrowLeft') {
                     for (let i = 1; i < sorted.length; i++) {
-                        const prevIdx = sorted[i - 1];
-                        const currIdx = sorted[i];
-                        const prev = state.estrofas[prevIdx];
-                        const curr = state.estrofas[currIdx];
-                        const duration = curr.tiempo_fin - curr.tiempo_inicio;
-                        const newStart = prev.tiempo_fin;
+                        const prevObj = sorted[i - 1];
+                        const currObj = sorted[i];
+                        const prev = prevObj.item;
+                        const curr = currObj.item;
+                        const { start: currStart, end: currEnd } = getBounds(curr, type);
+                        const prevEnd = getBounds(prev, type).end;
+                        const duration = currEnd - currStart;
 
-                        if (Math.abs(curr.tiempo_inicio - newStart) > 0.001) {
-                            curr.tiempo_inicio = newStart;
-                            curr.tiempo_fin = newStart + duration;
+                        if (Math.abs(currStart - prevEnd) > 0.001) {
+                            setBounds(curr, prevEnd, prevEnd + duration, type);
                             changed = true;
                         }
                     }
                 } else if (e.code === 'ArrowRight') {
                     for (let i = sorted.length - 2; i >= 0; i--) {
-                        const nextIdx = sorted[i + 1];
-                        const currIdx = sorted[i];
-                        const next = state.estrofas[nextIdx];
-                        const curr = state.estrofas[currIdx];
-                        const duration = curr.tiempo_fin - curr.tiempo_inicio;
-                        const newEnd = next.tiempo_inicio;
+                        const nextObj = sorted[i + 1];
+                        const currObj = sorted[i];
+                        const next = nextObj.item;
+                        const curr = currObj.item;
+                        const { start: currStart, end: currEnd } = getBounds(curr, type);
+                        const nextStart = getBounds(next, type).start;
+                        const duration = currEnd - currStart;
 
-                        if (Math.abs(curr.tiempo_fin - newEnd) > 0.001) {
-                            curr.tiempo_fin = newEnd;
-                            curr.tiempo_inicio = newEnd - duration;
+                        if (Math.abs(currEnd - nextStart) > 0.001) {
+                            setBounds(curr, nextStart - duration, nextStart, type);
                             changed = true;
                         }
                     }
@@ -147,18 +171,23 @@ export function attachKeyboardListeners() {
 
                 // 1. Resize START (X + Arrows)
                 if (state.isXDown) {
-                    history.push(state.estrofas);
+                    history.push(dataSource, type);
                     selected.forEach(idx => {
-                        const verse = state.estrofas[idx];
-                        let newVal = verse.tiempo_inicio + delta;
+                        const item = dataSource[idx];
+                        const { start, end } = getBounds(item, type);
+                        let newVal = start + delta;
                         let minLimit = 0;
+
+                        // Check previous item in dataSource
                         if (idx > 0 && !state.selectedIndices.has(idx - 1)) {
-                            minLimit = state.estrofas[idx - 1].tiempo_fin;
+                            minLimit = getBounds(dataSource[idx - 1], type).end;
                         }
-                        newVal = Math.max(minLimit, Math.min(newVal, verse.tiempo_fin - 0.1));
-                        verse.tiempo_inicio = newVal;
+
+                        newVal = Math.max(minLimit, Math.min(newVal, end - 0.1));
+                        setBounds(item, newVal, end, type);
                     });
-                    audio.currentTime = state.estrofas[selected[0]].tiempo_inicio;
+                    const first = getBounds(dataSource[selected[0]], type);
+                    audio.currentTime = first.start;
                     actions.refresh();
                     ensurePlayheadVisible(audio.currentTime);
                     return;
@@ -166,18 +195,23 @@ export function attachKeyboardListeners() {
 
                 // 2. Resize END (C + Arrows)
                 if (state.isCDown) {
-                    history.push(state.estrofas);
+                    history.push(dataSource, type);
                     selected.forEach(idx => {
-                        const verse = state.estrofas[idx];
-                        let newVal = verse.tiempo_fin + delta;
+                        const item = dataSource[idx];
+                        const { start, end } = getBounds(item, type);
+                        let newVal = end + delta;
                         let maxLimit = Infinity;
-                        if (idx < state.estrofas.length - 1 && !state.selectedIndices.has(idx + 1)) {
-                            maxLimit = state.estrofas[idx + 1].tiempo_inicio;
+
+                        // Check next item
+                        if (idx < dataSource.length - 1 && !state.selectedIndices.has(idx + 1)) {
+                            maxLimit = getBounds(dataSource[idx + 1], type).start;
                         }
-                        newVal = Math.max(verse.tiempo_inicio + 0.1, Math.min(newVal, maxLimit));
-                        verse.tiempo_fin = newVal;
+
+                        newVal = Math.max(start + 0.1, Math.min(newVal, maxLimit));
+                        setBounds(item, start, newVal, type);
                     });
-                    audio.currentTime = state.estrofas[selected[0]].tiempo_fin; // Visual feedback
+                    const first = getBounds(dataSource[selected[0]], type);
+                    audio.currentTime = first.end; // Visual feedback
                     actions.refresh();
                     ensurePlayheadVisible(audio.currentTime);
                     return;
@@ -185,31 +219,35 @@ export function attachKeyboardListeners() {
 
                 // 3. Move Clip (Z + Arrows)
                 if (state.isZDown) {
-                    history.push(state.estrofas);
+                    history.push(dataSource, type);
                     let allowedDelta = delta;
                     if (delta < 0) {
                         for (let idx of selected) {
                             if (!state.selectedIndices.has(idx - 1)) {
-                                const prevEnd = (idx > 0) ? state.estrofas[idx - 1].tiempo_fin : 0;
-                                const maxMove = prevEnd - state.estrofas[idx].tiempo_inicio;
+                                const { start } = getBounds(dataSource[idx], type);
+                                const prevEnd = (idx > 0) ? getBounds(dataSource[idx - 1], type).end : 0;
+                                const maxMove = prevEnd - start;
                                 if (allowedDelta < maxMove) allowedDelta = maxMove;
                             }
                         }
                     } else {
                         for (let idx of selected) {
                             if (!state.selectedIndices.has(idx + 1)) {
-                                const nextStart = (idx < state.estrofas.length - 1) ? state.estrofas[idx + 1].tiempo_inicio : Infinity;
-                                const maxMove = nextStart - state.estrofas[idx].tiempo_fin;
+                                const { end } = getBounds(dataSource[idx], type);
+                                const nextStart = (idx < dataSource.length - 1) ? getBounds(dataSource[idx + 1], type).start : Infinity;
+                                const maxMove = nextStart - end;
                                 if (allowedDelta > maxMove) allowedDelta = maxMove;
                             }
                         }
                     }
 
                     selected.forEach(idx => {
-                        state.estrofas[idx].tiempo_inicio += allowedDelta;
-                        state.estrofas[idx].tiempo_fin += allowedDelta;
+                        const item = dataSource[idx];
+                        const { start, end } = getBounds(item, type);
+                        setBounds(item, start + allowedDelta, end + allowedDelta, type);
                     });
-                    audio.currentTime = state.estrofas[selected[0]].tiempo_inicio;
+                    const first = getBounds(dataSource[selected[0]], type);
+                    audio.currentTime = first.start;
                     actions.refresh();
                     ensurePlayheadVisible(audio.currentTime);
                     return;
@@ -225,7 +263,11 @@ export function attachKeyboardListeners() {
                         startIdx = Array.from(state.selectedIndices).sort((a, b) => a - b)[0];
                     } else {
                         const time = audio.currentTime;
-                        startIdx = state.estrofas.findIndex(v => time >= v.tiempo_inicio && time <= v.tiempo_fin);
+                        // Find item under playhead
+                        startIdx = dataSource.findIndex(v => {
+                            const { start, end } = getBounds(v, type);
+                            return time >= start && time <= end;
+                        });
                         if (startIdx === -1) startIdx = 0; // Fallback
                     }
                     state.selectionAnchor = startIdx;
@@ -235,7 +277,7 @@ export function attachKeyboardListeners() {
                 // Move Head
                 let target = state.selectionHead;
                 if (e.code === 'ArrowRight') {
-                    if (target < state.estrofas.length - 1) target++;
+                    if (target < dataSource.length - 1) target++;
                 } else {
                     if (target > 0) target--;
                 }
@@ -249,8 +291,8 @@ export function attachKeyboardListeners() {
                     state.selectedIndices.add(i);
                 }
 
-                const headVerse = state.estrofas[target];
-                audio.currentTime = headVerse.tiempo_inicio + 0.01;
+                const headItem = dataSource[target];
+                audio.currentTime = getBounds(headItem, type).start + 0.01;
                 actions.refresh();
                 ensurePlayheadVisible(audio.currentTime);
                 return;
@@ -261,18 +303,25 @@ export function attachKeyboardListeners() {
             state.selectionHead = null;
 
             const currentTime = audio.currentTime;
-            let currentIndex = state.estrofas.findIndex(v => currentTime >= v.tiempo_inicio && currentTime <= v.tiempo_fin);
+
+            // Find current item based on time
+            let currentIndex = dataSource.findIndex(v => {
+                const { start, end } = getBounds(v, type);
+                return currentTime >= start && currentTime <= end;
+            });
 
             if (currentIndex === -1) {
-                currentIndex = state.estrofas.findIndex(v => v.tiempo_inicio > currentTime);
-                if (currentIndex === -1) currentIndex = state.estrofas.length - 1;
+                // If in gap, find next one
+                currentIndex = dataSource.findIndex(v => getBounds(v, type).start > currentTime);
+                if (currentIndex === -1) currentIndex = dataSource.length - 1;
                 else currentIndex = Math.max(0, currentIndex - 1);
             }
 
             if (e.code === 'ArrowRight') {
-                if (currentIndex < state.estrofas.length - 1) {
+                if (currentIndex < dataSource.length - 1) {
                     const nextIndex = currentIndex + 1;
-                    audio.currentTime = state.estrofas[nextIndex].tiempo_inicio + 0.01;
+                    const nextItem = dataSource[nextIndex];
+                    audio.currentTime = getBounds(nextItem, type).start + 0.01;
                     state.selectedIndices.clear();
                     state.selectedIndices.add(nextIndex);
                     state.selectionAnchor = nextIndex;
@@ -281,9 +330,10 @@ export function attachKeyboardListeners() {
                     ensurePlayheadVisible(audio.currentTime);
                 }
             } else {
-                if (currentIndex >= 0 && state.estrofas[currentIndex - 1]) {
+                if (currentIndex >= 0 && dataSource[currentIndex - 1]) {
                     const prevIndex = currentIndex - 1;
-                    audio.currentTime = state.estrofas[prevIndex].tiempo_inicio + 0.01;
+                    const prevItem = dataSource[prevIndex];
+                    audio.currentTime = getBounds(prevItem, type).start + 0.01;
                     state.selectedIndices.clear();
                     state.selectedIndices.add(prevIndex);
                     state.selectionAnchor = prevIndex;

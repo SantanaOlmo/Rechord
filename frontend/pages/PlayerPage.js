@@ -17,10 +17,10 @@ export function PlayerPage(id) {
             <!-- Background Carousel Layer -->
             <div id="player-bg-carousel" class="absolute inset-0 z-0 pointer-events-none">
                 <!-- Images injected here -->
-                <div class="absolute inset-0 bg-gray-900 transition-opacity duration-1000" id="bg-default"></div>
+                <div class="absolute inset-0 bg-[var(--bg-primary)] transition-opacity duration-1000" id="bg-default"></div>
             </div>
             <!-- Overlay to ensure text readability -->
-            <div class="absolute inset-0 z-0 bg-black/60 pointer-events-none"></div>
+            <div class="absolute inset-0 z-0 bg-[var(--bg-primary)]/60 pointer-events-none"></div>
 
             <div class="relative z-10 w-full flex flex-col h-full"> <!-- Content Wrapper -->
                 ${PlayerHeader()}

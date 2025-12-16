@@ -13,12 +13,12 @@ export function FolderSidebar(isMobile = false) {
     setTimeout(() => initSidebar(isMobile), 0);
 
     return `
-        <div id="resizable-sidebar${isMobile ? '-mobile' : ''}" class="bg-gray-950 flex flex-col w-full h-full overflow-hidden z-10 relative" 
+        <div id="resizable-sidebar${isMobile ? '-mobile' : ''}" class="bg-[var(--sidebar-bg)] flex flex-col w-full h-full overflow-hidden z-10 relative" 
              oncontextmenu="window.onBackgroundContextMenu(event)">
-            <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-950">
-                <h2 class="text-gray-300 font-bold text-sm uppercase tracking-wider">Biblioteca</h2>
+            <div class="p-4 border-b border-[var(--border-primary)] flex justify-between items-center bg-[var(--sidebar-bg)]">
+                <h2 class="text-[var(--text-secondary)] font-bold text-sm uppercase tracking-wider">Biblioteca</h2>
                 ${!isMobile ? `
-                <button id="btn-add-folder" class="text-gray-400 hover:text-white transition flex-shrink-0" title="Nueva Carpeta">
+                <button id="btn-add-folder" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition flex-shrink-0" title="Nueva Carpeta">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 </button>` : ''}
             </div>
@@ -90,12 +90,12 @@ async function initSidebar(isMobile) {
 
             // Simplified content structure
             content.innerHTML = `
-                <div class="px-3 py-2 bg-gray-900/50 folder-search-container hidden" id="search-container-${folderId}${s}">
-                    <input type="text" class="w-full bg-gray-800 text-gray-300 text-xs rounded px-2 py-1 outline-none border border-gray-700 focus:border-indigo-500"
+                <div class="px-3 py-2 bg-[var(--bg-tertiary)] folder-search-container hidden" id="search-container-${folderId}${s}">
+                    <input type="text" class="w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] text-xs rounded px-2 py-1 outline-none border border-[var(--border-primary)] focus:border-[var(--accent-primary)]"
                         placeholder="Buscar canción..." oninput="window.handleFolderSearch(event, ${folderId}, '${suffix}')">
                     <div id="search-results-${folderId}${s}" class="mt-1 space-y-1 max-h-40 overflow-y-auto hidden"></div>
                 </div>
-                <div id="song-list-${folderId}${s}"><div class="pl-8 py-1 text-gray-500 text-xs">Cargando...</div></div>
+                <div id="song-list-${folderId}${s}"><div class="pl-8 py-1 text-[var(--text-muted)] text-xs">Cargando...</div></div>
             `;
             try {
                 const songs = await carpetaService.getFolderSongs(folderId);
@@ -143,20 +143,20 @@ async function initSidebar(isMobile) {
             if (rDiv) {
                 rDiv.classList.remove('hidden');
                 rDiv.innerHTML = results.length ? results.map(s => `
-                    <div class="search-result-item flex items-center p-2 hover:bg-gray-800 cursor-pointer rounded border-b border-gray-800/50 last:border-0"
+                    <div class="search-result-item flex items-center p-2 hover:bg-[var(--bg-tertiary)] cursor-pointer rounded border-b border-[var(--border-primary)] last:border-0"
                          onclick="window.addSongToFolder(${folderId}, ${s.id_cancion}, '${suffix}')">
-                        <div class="w-8 h-8 rounded mr-2 bg-gray-800 flex items-center justify-center text-gray-500">
+                        <div class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-muted)]">
                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
                         </div>
                         <div class="flex-1 overflow-hidden">
-                            <p class="text-xs text-white font-medium truncate">${s.titulo}</p>
-                            <p class="text-[10px] text-gray-400 truncate">${s.artista}</p>
+                            <p class="text-xs text-[var(--text-primary)] font-medium truncate">${s.titulo}</p>
+                            <p class="text-[10px] text-[var(--text-muted)] truncate">${s.artista}</p>
                         </div>
-                        <span class="ml-2 text-indigo-400 hover:text-indigo-300 transition-colors">
+                        <span class="ml-2 text-[var(--accent-light)] hover:text-[var(--accent-hover)] transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </span>
                     </div>
-                `).join('') : '<div class="p-2 text-center text-gray-500 text-xs italic">Sin resultados</div>';
+                `).join('') : '<div class="p-2 text-center text-[var(--text-muted)] text-xs italic">Sin resultados</div>';
             }
         }, 300);
     };
@@ -197,11 +197,11 @@ async function initSidebar(isMobile) {
 
     window.handleDragOver = (e) => {
         e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
-        e.currentTarget.querySelector('.folder-header')?.classList.add('bg-indigo-900/50');
+        e.currentTarget.querySelector('.folder-header')?.classList.add('bg-[var(--accent-primary)]/50');
     };
     window.handleDragLeave = (e) => {
         if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) return;
-        e.currentTarget.querySelector('.folder-header')?.classList.remove('bg-indigo-900/50');
+        e.currentTarget.querySelector('.folder-header')?.classList.remove('bg-[var(--accent-primary)]/50');
     };
 
     window.removeSongFromFolder = async (e, folderId, songId) => {
@@ -261,7 +261,7 @@ async function initSidebar(isMobile) {
         const input = document.createElement('input');
         input.type = 'text';
         input.value = currentName;
-        input.className = 'w-full bg-gray-900 text-white rounded px-1 outline-none border border-indigo-500 text-xs py-0.5';
+        input.className = 'w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded px-1 outline-none border border-[var(--accent-primary)] text-xs py-0.5';
 
         // Replace span with input
         span.replaceWith(input);
