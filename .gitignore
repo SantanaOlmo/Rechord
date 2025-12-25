@@ -38,3 +38,14 @@ docker-compose.override.yml
 # Si usas un proceso de compilación, ignorar la carpeta de salida
 /frontend/dist/
 /frontend/build/
+# Media files hosted externally
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp3
+*.mp4
+*.wav
+*.mov
+*.webp
+*.svg
