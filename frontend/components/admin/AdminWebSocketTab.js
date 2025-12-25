@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../../config.js';
+import { API_ROUTES } from '../../api/routes.js';
 import { authService } from '../../services/authService.js';
 
 export class AdminWebSocketTab {
@@ -57,7 +58,7 @@ export class AdminWebSocketTab {
         if (!indicator) return;
 
         try {
-            const res = await fetch(`${API_BASE_URL.replace('/api', '')}/backend/api/admin_websocket.php?action=status`);
+            const res = await fetch(`${API_ROUTES.ADMIN_WS}?action=status`);
             const data = await res.json();
 
             if (data.isRunning) {
@@ -77,7 +78,7 @@ export class AdminWebSocketTab {
         if (!pwd) return;
         try {
             const user = authService.getCurrentUser();
-            const res = await fetch(`${API_BASE_URL.replace('/api', '')}/backend/api/admin_websocket.php`, {
+            const res = await fetch(`${API_ROUTES.ADMIN_WS}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action, password: pwd, userId: user.id_usuario })

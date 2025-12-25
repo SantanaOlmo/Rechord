@@ -2,9 +2,7 @@
  * Servicio para gestionar acordes sincronizados con la API
  */
 
-import { API_BASE_URL } from '../config.js';
-
-const BASE_URL = `${API_BASE_URL}/acorde_sincronizado.php`;
+import { API_ROUTES } from '../api/routes.js';
 
 /**
  * Obtiene todos los acordes sincronizados de una canción
@@ -13,13 +11,13 @@ const BASE_URL = `${API_BASE_URL}/acorde_sincronizado.php`;
  */
 export async function getAcordesCancion(idCancion) {
     try {
-        const response = await fetch(`${BASE_URL}?id_cancion=${idCancion}`);
+        const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id_cancion=${idCancion}`);
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al obtener acordes');
         }
-        
+
         return data.acordes || [];
     } catch (error) {
         console.error('Error al obtener acordes sincronizados:', error);
@@ -41,13 +39,13 @@ export async function agregarAcorde(acordeData) {
             },
             body: JSON.stringify(acordeData)
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al agregar acorde');
         }
-        
+
         return data;
     } catch (error) {
         console.error('Error al agregar acorde sincronizado:', error);
@@ -69,13 +67,13 @@ export async function actualizarAcorde(acordeData) {
             },
             body: JSON.stringify(acordeData)
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al actualizar acorde');
         }
-        
+
         return data;
     } catch (error) {
         console.error('Error al actualizar acorde sincronizado:', error);
@@ -90,16 +88,16 @@ export async function actualizarAcorde(acordeData) {
  */
 export async function eliminarAcorde(idSincronia) {
     try {
-        const response = await fetch(`${BASE_URL}?id_sincronia=${idSincronia}`, {
+        const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id_sincronia=${idSincronia}`, {
             method: 'DELETE'
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al eliminar acorde');
         }
-        
+
         return data;
     } catch (error) {
         console.error('Error al eliminar acorde sincronizado:', error);

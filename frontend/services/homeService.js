@@ -1,7 +1,7 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 import { authService } from './authService.js';
 
-const BASE_URL = `${API_BASE_URL}/canciones.php`; // As requested, pointing to canciones.php
+// BASE_URL removed
 
 /**
  * Obtiene los datos para la Home Page (secciones configuradas)
@@ -12,7 +12,7 @@ export async function getHomeData() {
         const headers = {};
         if (user) headers['X-User-Id'] = user.id_usuario;
 
-        const endpoint = `${BASE_URL}?action=home_data`;
+        const endpoint = `${API_ROUTES.SONGS}?action=home_data`;
         console.log('homeService: getHomeData calling', endpoint);
 
         const response = await fetch(endpoint, { headers });

@@ -3,6 +3,7 @@ import { socketService } from '../../services/socketService.js';
 import { audioService } from '../../services/audioService.js';
 import { ICON_PLAY, CONTENT_BASE_URL } from '../../config.js';
 import { authService } from '../../services/authService.js';
+import { API_ROUTES } from '../../api/routes.js';
 
 // ... (existing code)
 
@@ -15,8 +16,8 @@ export function updatePlayerMeta(song) {
     if (titleEl) titleEl.textContent = song.titulo;
     if (artistEl) artistEl.textContent = song.artista || "Unknown Artist";
     if (coverEl) {
-        let src = song.ruta_imagen || 'assets/images/placeholder-song.jpg';
-        if (!src.startsWith('http') && !src.startsWith('assets')) {
+        let src = song.ruta_imagen || 'placeholder-song.jpg';
+        if (!src.startsWith('http')) {
             src = `${CONTENT_BASE_URL}/${src}`;
         }
         coverEl.src = src;
@@ -30,7 +31,7 @@ export function PlayerControls(songId, showChords) {
             <!-- LEFT: Track Info -->
             <div class="flex items-center w-1/4 min-w-[200px] pr-4">
                  <div id="player-cover-container" class="w-14 h-14 bg-[var(--bg-tertiary)] rounded shadow-md mr-4 overflow-hidden shrink-0 relative group">
-                    <img id="player-cover" src="assets/images/placeholder-song.jpg" class="w-full h-full object-cover opacity-60 transition-opacity duration-500" />
+                    <img id="player-cover" src="${CONTENT_BASE_URL}/placeholder-song.jpg" class="w-full h-full object-cover opacity-60 transition-opacity duration-500" />
                  </div>
                  <div class="flex flex-col overflow-hidden">
                     <span id="player-title" class="text-[var(--text-primary)] font-bold text-sm truncate hover:underline cursor-pointer">Cargando...</span>
@@ -206,7 +207,7 @@ export function attachPlayerControlsEvents(currentSong) {
             window.saveParamsTimeout = setTimeout(() => {
                 const currentUser = authService.getCurrentUser();
                 if (currentUser) {
-                    fetch('backend/api/usuarios.php', {
+                    fetch(API_ROUTES.USERS, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

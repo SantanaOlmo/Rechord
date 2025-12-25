@@ -16,21 +16,21 @@ export const versionService = {
                 resolve([
                     {
                         id_version: 1,
-                        usuario: { nombre: 'alberto', foto_perfil: 'uploads/avatars/default.png' },
+                        usuario: { nombre: 'alberto', foto_perfil: 'default.png' },
                         titulo_version: 'Acústica suave',
                         likes: 120,
                         fecha_creacion: '2023-10-01'
                     },
                     {
                         id_version: 2,
-                        usuario: { nombre: 'mariaguitar', foto_perfil: 'uploads/avatars/default.png' },
+                        usuario: { nombre: 'mariaguitar', foto_perfil: 'default.png' },
                         titulo_version: 'Versión Rock',
                         likes: 85,
                         fecha_creacion: '2023-10-05'
                     },
                     {
                         id_version: 3,
-                        usuario: { nombre: 'pianoman', foto_perfil: 'uploads/avatars/default.png' },
+                        usuario: { nombre: 'pianoman', foto_perfil: 'default.png' },
                         titulo_version: 'Piano Cover',
                         likes: 45,
                         fecha_creacion: '2023-10-10'

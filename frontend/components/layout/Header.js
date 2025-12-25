@@ -86,7 +86,7 @@ export const Header = {
             rightNav = `
                 <div class="header-right">
                      <button onclick="window.navigate('/profile')" class="flex items-center focus:outline-none hover:opacity-80 transition group" title="Mi Perfil">
-                        <span class="mr-3 text-sm font-medium text-gray-300 group-hover:text-white hidden md:block">${user.nombre}</span>
+                        <span class="mr-3 text-sm font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] hidden md:block">${user.nombre}</span>
                         <img src="${avatarUrl}" alt="Perfil" class="user-avatar-img">
                      </button>
                 </div>

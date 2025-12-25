@@ -1,4 +1,5 @@
 import { API_BASE_URL, CONTENT_BASE_URL } from '../../config.js';
+import { API_ROUTES } from '../../api/routes.js';
 
 export class AdminHeroTab {
     constructor(containerId) {
@@ -13,8 +14,8 @@ export class AdminHeroTab {
 
         container.innerHTML = `
             <div class="p-6">
-                <h3 class="text-xl font-bold mb-4 text-white">Gestión de Hero Video</h3>
-                <p class="text-gray-400 mb-6">Selecciona el video activo o sube uno nuevo arrastrándolo a la tarjeta "+".</p>
+                <h3 class="text-xl font-bold mb-4 text-[var(--text-primary)]">Gestión de Hero Video</h3>
+                <p class="text-[var(--text-muted)] mb-6">Selecciona el video activo o sube uno nuevo arrastrándolo a la tarjeta "+".</p>
                 
                 <div id="hero-carousel-container" class="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x">
                     <!-- Carousel Items injected here -->
@@ -31,7 +32,7 @@ export class AdminHeroTab {
 
     async loadVideos() {
         try {
-            const res = await fetch(`${API_BASE_URL}/hero.php?action=list`);
+            const res = await fetch(`${API_ROUTES.HERO}?action=list`);
             this.videos = await res.json();
 
             // Determine active
@@ -57,8 +58,11 @@ export class AdminHeroTab {
             const videoUrl = `${CONTENT_BASE_URL}/${video.ruta_video}`;
 
             return `
-                <div class="relative flex-shrink-0 w-80 h-48 bg-gray-800 rounded-xl overflow-hidden border-2 transition-all group snap-center ${isActive ? 'border-indigo-500 shadow-indigo-500/20 shadow-lg' : 'border-gray-700 hover:border-gray-500'}">
-                    <video src="${videoUrl}" class="w-full h-full object-cover muted"></video>
+                <div class="relative flex-shrink-0 w-80 h-48 bg-[var(--bg-tertiary)] rounded-xl overflow-hidden border-2 transition-all group snap-center ${isActive ? 'border-[var(--accent-primary)] shadow-indigo-500/20 shadow-lg' : 'border-[var(--border-primary)] hover:border-[var(--border-hover)]'}">
+                    ${videoUrl.match(/\.(mp4|webm|mov)$/i)
+                    ? `<video src="${videoUrl}" class="w-full h-full object-cover muted"></video>`
+                    : `<img src="${videoUrl}" class="w-full h-full object-cover" />`
+                }
                     
                     <!-- Overlay Info -->
                     <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex flex-col justify-between p-3">
@@ -78,8 +82,8 @@ export class AdminHeroTab {
 
         // Add Upload Card
         html += `
-            <div id="drop-zone" class="relative flex-shrink-0 w-80 h-48 bg-gray-800/50 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500 hover:bg-gray-800 transition-all group snap-center group">
-                <input type="file" id="video-upload-input" class="hidden" accept="video/mp4,video/webm,video/quicktime">
+            <div id="drop-zone" class="relative flex-shrink-0 w-80 h-48 bg-[var(--bg-tertiary)] border-2 border-dashed border-[var(--border-primary)] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[var(--accent-primary)] hover:bg-[var(--bg-secondary)] transition-all group snap-center group">
+                <input type="file" id="video-upload-input" class="hidden" accept="video/mp4,video/webm,video/quicktime,image/gif,image/webp">
                 
                 <div class="pointer-events-none flex flex-col items-center transition-transform group-hover:scale-110">
                     <div class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center mb-3 group-hover:bg-indigo-600 transition-colors">
@@ -147,8 +151,8 @@ export class AdminHeroTab {
     }
 
     async handleUpload(file) {
-        if (!file.type.startsWith('video/')) {
-            this.showToast('Por favor sube un archivo de video válido (MP4, WEBM).', 'error');
+        if (!file.type.startsWith('video/') && !['image/gif', 'image/webp'].includes(file.type)) {
+            this.showToast('Por favor sube un archivo válido (MP4, WEBM, GIF, WEBP).', 'error');
             return;
         }
 
@@ -163,7 +167,7 @@ export class AdminHeroTab {
         formData.append('titulo', file.name.replace(/\.[^/.]+$/, ""));
 
         try {
-            const res = await fetch(`${API_BASE_URL}/hero.php?action=upload`, {
+            const res = await fetch(`${API_ROUTES.HERO}?action=upload`, {
                 method: 'POST',
                 body: formData
             });
@@ -182,7 +186,7 @@ export class AdminHeroTab {
 
     async toggleVideo(id) {
         try {
-            const res = await fetch(`${API_BASE_URL}/hero.php?action=toggle_active`, {
+            const res = await fetch(`${API_ROUTES.HERO}?action=toggle_active`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })
@@ -198,7 +202,7 @@ export class AdminHeroTab {
     async deleteVideo(id) {
         if (!confirm("¿Seguro que quieres borrar este video?")) return;
         try {
-            const res = await fetch(`${API_BASE_URL}/hero.php?action=delete`, {
+            const res = await fetch(`${API_ROUTES.HERO}?action=delete`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id })

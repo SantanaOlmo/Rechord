@@ -1,7 +1,7 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 
 export async function getEstrofas(idCancion) {
-    const response = await fetch(`${API_BASE_URL}/estrofas.php?id_cancion=${idCancion}`);
+    const response = await fetch(`${API_ROUTES.VERSES}?id_cancion=${idCancion}`);
     if (!response.ok) {
         throw new Error('Error al obtener estrofas');
     }
@@ -10,7 +10,7 @@ export async function getEstrofas(idCancion) {
 }
 
 export async function crearEstrofa(estrofa) {
-    const response = await fetch(`${API_BASE_URL}/estrofas.php`, {
+    const response = await fetch(`${API_ROUTES.VERSES}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ export async function crearEstrofa(estrofa) {
 }
 
 export async function updateEstrofas(estrofas) {
-    const response = await fetch(`${API_BASE_URL}/estrofas.php`, {
+    const response = await fetch(`${API_ROUTES.VERSES}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

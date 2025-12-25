@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 
 /**
  * Obtiene los acordes sincronizados de una canción
@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../config.js';
  * @returns {Promise<Array>} Lista de acordes sincronizados
  */
 export async function getAcordesSincronizados(idCancion) {
-    const response = await fetch(`${API_BASE_URL}/acorde_sincronizado.php?id_cancion=${idCancion}`);
+    const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id_cancion=${idCancion}`);
     if (!response.ok) {
         throw new Error('Error al obtener acordes sincronizados');
     }
@@ -20,7 +20,7 @@ export async function getAcordesSincronizados(idCancion) {
  * @returns {Promise<Object>} Resultado de la operación
  */
 export async function agregarAcordeSincronizado(acordeData) {
-    const response = await fetch(`${API_BASE_URL}/acorde_sincronizado.php`, {
+    const response = await fetch(`${API_ROUTES.CHORDS_SYNC}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ export async function agregarAcordeSincronizado(acordeData) {
  * @returns {Promise<Object>} Resultado de la operación
  */
 export async function actualizarAcordeSincronizado(acordeData) {
-    const response = await fetch(`${API_BASE_URL}/acorde_sincronizado.php`, {
+    const response = await fetch(`${API_ROUTES.CHORDS_SYNC}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ export async function actualizarAcordeSincronizado(acordeData) {
  * @returns {Promise<Object>} Resultado de la operación
  */
 export async function eliminarAcordeSincronizado(idSincronia) {
-    const response = await fetch(`${API_BASE_URL}/acorde_sincronizado.php?id=${idSincronia}`, {
+    const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id=${idSincronia}`, {
         method: 'DELETE'
     });
     if (!response.ok) {

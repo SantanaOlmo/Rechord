@@ -22,7 +22,7 @@ export class HomeConfigList {
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-xs text-gray-400 border-b border-gray-800 uppercase tracking-wider">
+                        <tr class="text-xs text-[var(--text-muted)] border-b border-[var(--border-primary)] uppercase tracking-wider">
                             <th class="p-4 font-medium">Orden</th>
                             <th class="p-4 font-medium">Título Visible</th>
                             <th class="p-4 font-medium">Tipo</th>
@@ -31,7 +31,7 @@ export class HomeConfigList {
                             <th class="p-4 font-medium text-right">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-800/50">
+                    <tbody class="divide-y divide-[var(--border-primary)]">
                         ${configs.map(conf => this.renderRow(conf)).join('')}
                     </tbody>
                 </table>
@@ -45,15 +45,15 @@ export class HomeConfigList {
     renderRow(conf) {
         const isStatic = conf.tipo === 'static';
         return `
-            <tr class="hover:bg-gray-800/30 group transition-colors">
-                <td class="p-4 text-gray-300 font-mono text-sm w-16">
+            <tr class="hover:bg-[var(--bg-tertiary)] group transition-colors">
+                <td class="p-4 text-[var(--text-muted)] font-mono text-sm w-16">
                     ${conf.orden}
                 </td>
                 <td class="p-4">
                     <div class="flex items-center">
-                        <span class="text-white font-medium" id="display-title-${conf.id_config}">${conf.titulo_mostrar}</span>
+                        <span class="text-[var(--text-primary)] font-medium" id="display-title-${conf.id_config}">${conf.titulo_mostrar}</span>
                         <input type="text" id="edit-title-${conf.id_config}" value="${conf.titulo_mostrar}" 
-                               class="hidden bg-gray-800 text-white border border-indigo-500 rounded px-2 py-1 text-sm focus:outline-none w-full ml-2">
+                               class="hidden bg-[var(--bg-primary)] text-[var(--text-primary)] border border-[var(--accent-primary)] rounded px-2 py-1 text-sm focus:outline-none w-full ml-2">
                     </div>
                 </td>
                 <td class="p-4">
@@ -61,11 +61,11 @@ export class HomeConfigList {
                         ${isStatic ? 'Estática' : 'Hashtag'}
                     </span>
                 </td>
-                <td class="p-4 text-gray-400 text-sm">
+                <td class="p-4 text-[var(--text-muted)] text-sm">
                     ${conf.valor}
                 </td>
                 <td class="p-4 text-center">
-                    <button class="btn-toggle-visibility p-2 rounded-full hover:bg-gray-800 transition-colors ${conf.activo == 1 ? 'text-green-400' : 'text-gray-600'}" 
+                    <button class="btn-toggle-visibility p-2 rounded-full hover:bg-[var(--bg-secondary)] transition-colors ${conf.activo == 1 ? 'text-green-400' : 'text-[var(--text-muted)]'}" 
                             data-id="${conf.id_config}" data-status="${conf.activo}">
                         ${conf.activo == 1
                 ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>`
@@ -74,7 +74,7 @@ export class HomeConfigList {
                     </button>
                 </td>
                 <td class="p-4 text-right space-x-2">
-                    <button class="btn-edit-row p-2 text-gray-400 hover:text-white transition-colors" data-id="${conf.id_config}">
+                    <button class="btn-edit-row p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors" data-id="${conf.id_config}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                     </button>
                     <!-- Save Button (Hidden initially) -->

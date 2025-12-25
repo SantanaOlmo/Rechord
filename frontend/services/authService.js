@@ -3,9 +3,8 @@
  * Maneja el inicio de sesión, registro y gestión de tokens.
  */
 
-import { API_BASE_URL } from '../config.js';
-
-const API_URL = API_BASE_URL;
+import { API_ROUTES } from '../api/routes.js';
+// API_URL removed, using API_ROUTES.USERS
 
 export const authService = {
     /**
@@ -13,7 +12,7 @@ export const authService = {
      */
     async login(email, password) {
         try {
-            const response = await fetch(`${API_URL}/usuarios.php?action=login`, {
+            const response = await fetch(`${API_ROUTES.USERS}?action=login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,7 +43,7 @@ export const authService = {
      */
     async register(username, email, password) {
         try {
-            const response = await fetch(`${API_URL}/usuarios.php?action=register`, {
+            const response = await fetch(`${API_ROUTES.USERS}?action=register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -98,7 +97,7 @@ export const authService = {
 
     async updateProfile(formData) {
         try {
-            const response = await fetch(`${API_URL}/usuarios.php?action=update_profile`, {
+            const response = await fetch(`${API_ROUTES.USERS}?action=update_profile`, {
                 method: 'POST',
                 body: formData // FormData sets Content-Type automatically
             });
@@ -130,7 +129,7 @@ export const authService = {
 
     async getAllUsers() {
         try {
-            const response = await fetch(`${API_URL}/usuarios.php`);
+            const response = await fetch(`${API_ROUTES.USERS}`);
             if (!response.ok) throw new Error('Error al obtener usuarios');
             const data = await response.json();
             return data.users;
@@ -145,7 +144,7 @@ export const authService = {
         if (!currentUser) throw new Error('No estás autenticado');
 
         try {
-            const response = await fetch(`${API_URL}/usuarios.php?action=impersonate`, {
+            const response = await fetch(`${API_ROUTES.USERS}?action=impersonate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

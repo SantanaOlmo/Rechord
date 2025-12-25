@@ -15,7 +15,7 @@ export function FolderSidebar(isMobile = false) {
     return `
         <div id="resizable-sidebar${isMobile ? '-mobile' : ''}" class="bg-[var(--sidebar-bg)] flex flex-col w-full h-full overflow-hidden z-10 relative" 
              oncontextmenu="window.onBackgroundContextMenu(event)">
-            <div class="p-4 border-b border-[var(--border-primary)] flex justify-between items-center bg-[var(--sidebar-bg)]">
+            <div class="p-4 flex justify-between items-center bg-[var(--sidebar-bg)]">
                 <h2 class="text-[var(--text-secondary)] font-bold text-sm uppercase tracking-wider">Biblioteca</h2>
                 ${!isMobile ? `
                 <button id="btn-add-folder" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition flex-shrink-0" title="Nueva Carpeta">

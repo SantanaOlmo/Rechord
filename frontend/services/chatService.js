@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 
 export const chatService = {
 
@@ -8,7 +8,7 @@ export const chatService = {
             return [];
         }
         try {
-            const response = await fetch(`${API_BASE_URL}/chat.php?action=conversations&user_id=${userId}`);
+            const response = await fetch(`${API_ROUTES.CHAT}?action=conversations&user_id=${userId}`);
             const data = await response.json();
             if (response.ok) {
                 return data.conversations || [];
@@ -22,7 +22,7 @@ export const chatService = {
 
     async getMessages(conversationId, userId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/chat.php?action=messages&conversation_id=${conversationId}&user_id=${userId}`);
+            const response = await fetch(`${API_ROUTES.CHAT}?action=messages&conversation_id=${conversationId}&user_id=${userId}`);
             const data = await response.json();
             if (response.ok) {
                 return data.messages || [];
@@ -36,7 +36,7 @@ export const chatService = {
 
     async sendMessage(senderId, receiverId, content) {
         try {
-            const response = await fetch(`${API_BASE_URL}/chat.php`, {
+            const response = await fetch(`${API_ROUTES.CHAT}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -59,7 +59,7 @@ export const chatService = {
 
     async markAsRead(conversationId, userId) {
         try {
-            const response = await fetch(`${API_BASE_URL}/chat.php`, {
+            const response = await fetch(API_ROUTES.CHAT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -78,7 +78,7 @@ export const chatService = {
     async getUnreadCount(userId) {
         if (!userId) return 0;
         try {
-            const response = await fetch(`${API_BASE_URL}/chat.php?action=unread_count&user_id=${userId}`);
+            const response = await fetch(`${API_ROUTES.CHAT}?action=unread_count&user_id=${userId}`);
             const data = await response.json();
             if (response.ok) {
                 return parseInt(data.count) || 0;

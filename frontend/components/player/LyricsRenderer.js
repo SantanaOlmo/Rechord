@@ -1,6 +1,7 @@
 // State to track if user has manually scrolled away
 let isUserScrolling = false;
-let scrollTimeout = null;
+let isAutoScrolling = false;
+let autoScrollTimeout = null;
 let lastActiveIndex = -1;
 
 export function renderLyrics(song) {
@@ -9,19 +10,16 @@ export function renderLyrics(song) {
 
     // Reset state on new render
     isUserScrolling = false;
+    isAutoScrolling = false;
     lastActiveIndex = -1;
 
     // Setup scroll listener to detect manual interaction
     container.onscroll = () => {
-        if (!scrollTimeout) {
-            isUserScrolling = true;
-        } else {
-            clearTimeout(scrollTimeout);
-        }
-        // Debounce keeping the flag true, but we actually want it to remain true until sync
-        // actually, we just set it true. The re-sync button logic will handle when to "detach".
-        // simple logic: scroll event = user interaction.
-        // We will check visibility in highlightLyrics to decide if we show button.
+        // If we are currently auto-scrolling, ignore this event
+        if (isAutoScrolling) return;
+
+        // Otherwise, it's a user event
+        isUserScrolling = true;
         checkSyncStatus();
     };
 
@@ -61,18 +59,16 @@ function checkSyncStatus() {
             stanzaRect.bottom <= containerRect.bottom - 50
         );
 
-        console.log('Sync Check:', { isUserScrolling, isVisible, stanzaTop: stanzaRect.top, containerTop: containerRect.top }); // Debug
-
         if (!isVisible && isUserScrolling) {
-            console.log('SHOWING SYNC BUTTON');
             btnSync.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
         } else if (isVisible) {
-            console.log('HIDING SYNC BUTTON');
-            btnSync.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-            if (isVisible) isUserScrolling = false; // Re-attach if user scrolls back to it
+            // If user scrolled back to view, we can potentially re-attach, but usually we wait for explicit button press?
+            // Actually, if they scroll it back into view manually, we might as well hide the button, but keep 'detached' until they click or next auto-event?
+            // Let's keep logic simple: button shows if detached and invisible.
+            if (!isUserScrolling) {
+                btnSync.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }
         }
-    } else {
-        // console.log('Elements missing for sync check', { container: !!container, activeStanza: !!activeStanza, btnSync: !!btnSync });
     }
 }
 
@@ -112,22 +108,26 @@ export function highlightLyrics(currentTime, song) {
         });
     }
 
-    // Continuously check status to update button if playing moves active element out of view
-    // (Though normally checks run on scroll, if user stays still while song advances, eventually active element changes)
-    checkSyncStatus();
+    // We don't continuously check sync status here to avoid excessive DOM reads,
+    // relying on scroll events to check visibility.
 }
 
 function scrollToStanza(stanza, container) {
-    // Create a timeout to ignore scroll events triggered by this auto-scroll
-    scrollTimeout = setTimeout(() => {
-        scrollTimeout = null;
-    }, 600); // slightly longer than smooth scroll duration
+    isAutoScrolling = true;
 
-    const targetScrollToken = stanza.offsetTop - (container.clientHeight / 2) + (stanza.clientHeight / 2);
-    container.scrollTo({
-        top: targetScrollToken,
-        behavior: 'smooth'
+    // Use clear timeout if existing
+    if (autoScrollTimeout) clearTimeout(autoScrollTimeout);
+
+    stanza.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
     });
+
+    // Reset lock after scroll animation (approx 800ms)
+    autoScrollTimeout = setTimeout(() => {
+        isAutoScrolling = false;
+        autoScrollTimeout = null;
+    }, 800);
 }
 
 // Global function exposed for the button

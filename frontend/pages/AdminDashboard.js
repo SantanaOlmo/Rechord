@@ -7,20 +7,20 @@ export function AdminDashboard() {
         <div class="container mx-auto px-4 pt-24 pb-8 max-w-5xl">
             <header class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Panel de Administración</h1>
-                    <p class="text-gray-400 text-sm">Gestiona usuarios, contenido y configuración</p>
+                    <h1 class="text-3xl font-bold text-[var(--text-primary)] mb-2">Panel de Administración</h1>
+                    <p class="text-[var(--text-muted)] text-sm">Gestiona usuarios, contenido y configuración</p>
                 </div>
                 <!-- Tabs Navigation -->
-                <div class="flex space-x-1 bg-gray-900/50 p-1 rounded-lg">
-                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-indigo-600 text-white shadow-lg" data-tab="users">Usuarios</button>
-                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="home">Configuración Home</button>
-                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="hero">Hero Video</button>
-                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" data-tab="websocket">Websocket</button>
+                <div class="flex space-x-1 bg-[var(--bg-tertiary)] p-1 rounded-lg">
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-[var(--accent-primary)] text-white shadow-lg" data-tab="users">Usuarios</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="home">Configuración Home</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="hero">Hero Video</button>
+                    <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="websocket">Websocket</button>
                 </div>
             </header>
 
             <!-- Content Area -->
-            <div id="dashboard-content-container" class="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-800 relative min-h-[500px]">
+            <div id="dashboard-content-container" class="bg-[var(--bg-secondary)] rounded-2xl shadow-xl overflow-hidden border border-[var(--border-primary)] relative min-h-[500px]">
                 <!-- Dynamic Content -->
                 <div class="flex items-center justify-center h-64 text-gray-500">
                     <div class="text-center">

@@ -1,13 +1,13 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 import { authService } from './authService.js';
 
-const BASE_URL = `${API_BASE_URL}/carpetas.php`;
+// BASE_URL removed
 
 export const carpetaService = {
     async getFolders() {
         const user = authService.getCurrentUser();
         if (!user) return [];
-        const response = await fetch(`${BASE_URL}`, {
+        const response = await fetch(`${API_ROUTES.FOLDERS}`, {
             headers: { 'X-User-Id': user.id_usuario }
         });
         return await response.json();
@@ -15,7 +15,7 @@ export const carpetaService = {
 
     async createFolder(nombre) {
         const user = authService.getCurrentUser();
-        const response = await fetch(`${BASE_URL}?action=create`, {
+        const response = await fetch(`${API_ROUTES.FOLDERS}?action=create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export const carpetaService = {
 
     async renameFolder(id, nombre) {
         const user = authService.getCurrentUser();
-        await fetch(`${BASE_URL}?action=rename`, {
+        await fetch(`${API_ROUTES.FOLDERS}?action=rename`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id_usuario },
             body: JSON.stringify({ id, nombre })
@@ -37,7 +37,7 @@ export const carpetaService = {
 
     async deleteFolder(id) {
         const user = authService.getCurrentUser();
-        await fetch(`${BASE_URL}?id=${id}`, {
+        await fetch(`${API_ROUTES.FOLDERS}?id=${id}`, {
             method: 'DELETE',
             headers: { 'X-User-Id': user.id_usuario }
         });
@@ -45,7 +45,7 @@ export const carpetaService = {
 
     async addSong(idCarpeta, idCancion) {
         const user = authService.getCurrentUser();
-        await fetch(`${BASE_URL}?action=add_song`, {
+        await fetch(`${API_ROUTES.FOLDERS}?action=add_song`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id_usuario },
             body: JSON.stringify({ id_carpeta: idCarpeta, id_cancion: idCancion })
@@ -53,13 +53,13 @@ export const carpetaService = {
     },
 
     async getFolderSongs(idCarpeta) {
-        const response = await fetch(`${BASE_URL}?action=contenido&id=${idCarpeta}`);
+        const response = await fetch(`${API_ROUTES.FOLDERS}?action=contenido&id=${idCarpeta}`);
         return await response.json();
     },
 
     async reorderFolder(idCarpeta, items) {
         const user = authService.getCurrentUser();
-        await fetch(`${BASE_URL}?action=reorder`, {
+        await fetch(`${API_ROUTES.FOLDERS}?action=reorder`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id_usuario },
             body: JSON.stringify({ id_carpeta: idCarpeta, items })
@@ -68,7 +68,7 @@ export const carpetaService = {
 
     async removeSongFromFolder(idCarpeta, idCancion) {
         const user = authService.getCurrentUser();
-        await fetch(`${BASE_URL}?action=remove_song`, {
+        await fetch(`${API_ROUTES.FOLDERS}?action=remove_song`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-User-Id': user.id_usuario },
             body: JSON.stringify({ id_carpeta: idCarpeta, id_cancion: idCancion })

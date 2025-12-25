@@ -2,9 +2,7 @@
  * Servicio para gestionar acordes con la API
  */
 
-import { API_BASE_URL } from '../config.js';
-
-const BASE_URL = `${API_BASE_URL}/acordes.php`;
+import { API_ROUTES } from '../api/routes.js';
 
 /**
  * Obtiene todos los acordes disponibles
@@ -12,13 +10,13 @@ const BASE_URL = `${API_BASE_URL}/acordes.php`;
  */
 export async function getAcordes() {
     try {
-        const response = await fetch(BASE_URL);
+        const response = await fetch(API_ROUTES.CHORDS);
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al obtener acordes');
         }
-        
+
         return data.acordes || data;
     } catch (error) {
         console.error('Error al obtener acordes:', error);
@@ -33,13 +31,13 @@ export async function getAcordes() {
  */
 export async function getAcorde(idAcorde) {
     try {
-        const response = await fetch(`${BASE_URL}?id=${idAcorde}`);
+        const response = await fetch(`${API_ROUTES.CHORDS}?id=${idAcorde}`);
         const data = await response.json();
-        
+
         if (!response.ok) {
             throw new Error(data.message || 'Error al obtener acorde');
         }
-        
+
         return data.acorde || data;
     } catch (error) {
         console.error('Error al obtener acorde:', error);

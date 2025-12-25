@@ -49,7 +49,7 @@ async function initBackgroundCarousel(songId) {
 
     try {
         const { API_BASE_URL, CONTENT_BASE_URL } = await import('../config.js');
-        const res = await fetch(`${API_BASE_URL}/cancion_fondos.php?id_cancion=${songId}`);
+        const res = await fetch(`${API_BASE_URL}/cancion_fondos?id_cancion=${songId}`);
         const backgrounds = await res.json();
 
         if (Array.isArray(backgrounds) && backgrounds.length > 0) {

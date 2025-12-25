@@ -5,8 +5,8 @@
  * * NOTA: Asegúrate de que esta URL coincida con la configuración de tu servidor (Docker/XAMPP).
  * Usamos la ruta local por defecto.
  */
-export const API_BASE_URL = '/rechordb/backend/api';
-export const CONTENT_BASE_URL = '/rechordb/backend';
+export const API_BASE_URL = 'http://localhost:3000/api/rechord'; // Node.js API Central
+export const CONTENT_BASE_URL = 'http://localhost:3000';
 export const WS_URL = 'ws://localhost:8080'; // WebSocket Server configuration
 
 /**

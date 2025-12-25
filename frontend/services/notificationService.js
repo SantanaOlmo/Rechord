@@ -1,15 +1,15 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 
 export const notificationService = {
     async getMyNotifications(userId) {
-        const response = await fetch(`${API_BASE_URL}/notifications.php?user_id=${userId}`);
+        const response = await fetch(`${API_ROUTES.NOTIFICATIONS}?user_id=${userId}`);
         if (!response.ok) throw new Error('Error al cargar notificaciones');
         const data = await response.json();
         return data.notifications || [];
     },
 
     async sendNotification(userId, message) {
-        const response = await fetch(`${API_BASE_URL}/notifications.php`, {
+        const response = await fetch(API_ROUTES.NOTIFICATIONS, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_usuario: userId, mensaje: message })
@@ -19,7 +19,7 @@ export const notificationService = {
     },
 
     async markAsRead(notificationId, userId) {
-        const response = await fetch(`${API_BASE_URL}/notifications.php`, {
+        const response = await fetch(API_ROUTES.NOTIFICATIONS, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_notificacion: notificationId, id_usuario: userId })

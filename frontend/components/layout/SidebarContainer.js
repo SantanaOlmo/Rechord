@@ -7,7 +7,7 @@ export function SidebarContainer() {
 
 
     return `
-        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden border-r border-[var(--border-primary)] bg-[var(--sidebar-bg)] transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
+        <div id="sidebar-container" class="flex flex-col h-full overflow-hidden bg-[var(--sidebar-bg)] transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
             
             <!-- Library Section (Top) -->
             <div id="sidebar-library-section" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">

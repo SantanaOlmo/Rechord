@@ -1,11 +1,12 @@
+import { API_BASE_URL, CONTENT_BASE_URL } from '../../config.js';
+import { API_ROUTES } from '../../api/routes.js';
 
 let carouselInterval = null;
 let animationFrame = null;
 
 export async function initHeroCarousel() {
     try {
-        const { API_BASE_URL, CONTENT_BASE_URL } = await import('../../config.js');
-        const res = await fetch(`${API_BASE_URL}/hero.php?action=active`);
+        const res = await fetch(`${API_ROUTES.HERO}?action=active`);
         if (res.ok) {
             let data = await res.json();
 
@@ -36,13 +37,20 @@ export async function initHeroCarousel() {
                     </div>
                  `;
             } else {
-                slidesHtml = data.map((vid, index) => `
-                    <div class="hero-slide ${index === 0 ? 'active' : ''}" data-index="${index}" style="position: absolute; inset: 0; transition: opacity 0.8s ease-in-out; opacity: ${index === 0 ? '1' : '0'}; z-index: ${index === 0 ? '1' : '0'};">
-                        <video id="hero-vid-${index}" autoplay muted loop playsinline class="w-full h-full object-cover">
-                            <source src="${CONTENT_BASE_URL}/${vid.ruta_video}" type="video/mp4">
-                        </video>
-                    </div>
-                `).join('');
+                slidesHtml = data.map((vid, index) => {
+                    const isVideo = vid.ruta_video.match(/\.(mp4|webm|mov)$/i);
+                    const content = isVideo
+                        ? `<video id="hero-vid-${index}" autoplay muted loop playsinline class="w-full h-full object-cover">
+                               <source src="${CONTENT_BASE_URL}/${vid.ruta_video}" type="video/mp4">
+                           </video>`
+                        : `<img src="${CONTENT_BASE_URL}/${vid.ruta_video}" class="w-full h-full object-cover" alt="Hero Image">`;
+
+                    return `
+                        <div class="hero-slide ${index === 0 ? 'active' : ''}" data-index="${index}" style="position: absolute; inset: 0; transition: opacity 0.8s ease-in-out; opacity: ${index === 0 ? '1' : '0'}; z-index: ${index === 0 ? '1' : '0'};">
+                            ${content}
+                        </div>
+                    `;
+                }).join('');
             }
 
             const carouselContainer = document.createElement('div');

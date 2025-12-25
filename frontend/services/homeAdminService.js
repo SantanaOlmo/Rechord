@@ -1,7 +1,7 @@
-import { API_BASE_URL } from '../config.js';
+import { API_ROUTES } from '../api/routes.js';
 import { authService } from './authService.js';
 
-const HOME_CONFIG_URL = `${API_BASE_URL}/home_config.php`;
+// HOME_CONFIG_URL removed
 
 /**
  * Admin: Obtener configuración completa (incluyendo inactivos)
@@ -9,7 +9,7 @@ const HOME_CONFIG_URL = `${API_BASE_URL}/home_config.php`;
 export async function getAdminHomeData() {
     try {
         const token = authService.getToken();
-        const response = await fetch(`${HOME_CONFIG_URL}?action=admin_list`, {
+        const response = await fetch(`${API_ROUTES.HOME_CONFIG}?action=admin_list`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -33,7 +33,7 @@ export async function getAdminHomeData() {
 export async function addHomeCategory(categoryData) {
     try {
         const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
+        const response = await fetch(API_ROUTES.HOME_CONFIG, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -53,7 +53,7 @@ export async function addHomeCategory(categoryData) {
 export async function deleteHomeCategory(idConfig) {
     try {
         const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
+        const response = await fetch(API_ROUTES.HOME_CONFIG, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -73,7 +73,7 @@ export async function deleteHomeCategory(idConfig) {
 export async function updateHomeConfigOrder(items) {
     try {
         const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
+        const response = await fetch(API_ROUTES.HOME_CONFIG, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -93,7 +93,7 @@ export async function updateHomeConfigOrder(items) {
 export async function updateHomeCategory(categoryData) {
     try {
         const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
+        const response = await fetch(API_ROUTES.HOME_CONFIG, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -113,7 +113,7 @@ export async function updateHomeCategory(categoryData) {
 export async function toggleHomeVisibility(idConfig, active) {
     try {
         const token = authService.getToken();
-        const response = await fetch(HOME_CONFIG_URL, {
+        const response = await fetch(API_ROUTES.HOME_CONFIG, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

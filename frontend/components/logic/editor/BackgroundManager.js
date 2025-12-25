@@ -1,4 +1,5 @@
 import { CONTENT_BASE_URL, API_BASE_URL } from '../../../config.js';
+import { API_ROUTES } from '../../../api/routes.js';
 
 let currentSongId = null;
 let bgGridCheck = null;
@@ -15,7 +16,7 @@ export async function loadBackgrounds() {
     bgGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 mt-10">Cargando...</p>';
 
     try {
-        const res = await fetch(`${API_BASE_URL}/cancion_fondos.php?id_cancion=${currentSongId}`);
+        const res = await fetch(`${API_ROUTES.SONG_BACKGROUNDS}?id_cancion=${currentSongId}`);
         const data = await res.json();
         // Check for error response object
         if (data.error) throw new Error(data.error);
@@ -113,7 +114,7 @@ async function handleBgUpload(file) {
     formData.append('file', file);
 
     try {
-        const res = await fetch(`${API_BASE_URL}/cancion_fondos.php?action=upload`, { method: 'POST', body: formData });
+        const res = await fetch(`${API_ROUTES.SONG_BACKGROUNDS}?action=upload`, { method: 'POST', body: formData });
 
         let data;
         const contentType = res.headers.get("content-type");
@@ -141,7 +142,7 @@ async function handleBgUpload(file) {
 async function deleteBackground(idFondo) {
     if (!confirm('¿Eliminar este fondo?')) return;
     try {
-        const res = await fetch(`${API_BASE_URL}/cancion_fondos.php?id_fondo=${idFondo}`, { method: 'DELETE' });
+        const res = await fetch(`${API_ROUTES.SONG_BACKGROUNDS}?id_fondo=${idFondo}`, { method: 'DELETE' });
         if (res.ok) {
             loadBackgrounds();
             showToast('Fondo eliminado', 'red');
