@@ -15,12 +15,21 @@ export function AdminDashboard() {
                     <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium transition-colors bg-[var(--accent-primary)] text-white shadow-lg" data-tab="users">Usuarios</button>
                     <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="home">Configuración Home</button>
                     <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="hero">Hero Video</button>
+<<<<<<< HEAD
                     <button class="tab-btn px-4 py-2 rounded-md text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors" data-tab="websocket">Websocket</button>
+=======
+
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
             </header>
 
             <!-- Content Area -->
             <div id="dashboard-content-container" class="bg-[var(--bg-secondary)] rounded-2xl shadow-xl overflow-hidden border border-[var(--border-primary)] relative min-h-[500px]">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 <!-- Dynamic Content -->
                 <div class="flex items-center justify-center h-64 text-gray-500">
                     <div class="text-center">

@@ -5,6 +5,10 @@
 
 import { API_ROUTES } from '../api/routes.js';
 // API_URL removed, using API_ROUTES.USERS
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 export const authService = {
     /**
@@ -13,6 +17,10 @@ export const authService = {
     async login(email, password) {
         try {
             const response = await fetch(`${API_ROUTES.USERS}?action=login`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,6 +52,10 @@ export const authService = {
     async register(username, email, password) {
         try {
             const response = await fetch(`${API_ROUTES.USERS}?action=register`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -98,6 +110,10 @@ export const authService = {
     async updateProfile(formData) {
         try {
             const response = await fetch(`${API_ROUTES.USERS}?action=update_profile`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 body: formData // FormData sets Content-Type automatically
             });
@@ -130,6 +146,10 @@ export const authService = {
     async getAllUsers() {
         try {
             const response = await fetch(`${API_ROUTES.USERS}`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             if (!response.ok) throw new Error('Error al obtener usuarios');
             const data = await response.json();
             return data.users;
@@ -145,6 +165,10 @@ export const authService = {
 
         try {
             const response = await fetch(`${API_ROUTES.USERS}?action=impersonate`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

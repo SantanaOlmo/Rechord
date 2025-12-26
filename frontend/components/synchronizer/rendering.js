@@ -7,6 +7,10 @@ import { updatePreview, updatePlayIcon, updateActiveVerse, ensurePlayheadVisible
 export { renderTimeline, renderHeaders, updatePreview, updatePlayIcon, updateActiveVerse, ensurePlayheadVisible };
 
 // Register global actions (Side effects)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 actions.refresh = () => {
     try {
         renderTimeline();

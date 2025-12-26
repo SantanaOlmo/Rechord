@@ -8,6 +8,10 @@ import { CONTENT_BASE_URL } from '../config.js';
 
 import { attachKeyboardListeners } from '../components/synchronizer/events/keyboardEvents.js';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 export function SongPage(songId) {
     // We initiate the player logic (audio, lyrics sync) but in a "sidebar mode"
     // This allows reusing the same controller logic.
@@ -15,6 +19,10 @@ export function SongPage(songId) {
         initPlayer(songId);
         loadVersions(songId);
         attachKeyboardListeners();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     }, 0);
 
     return `
@@ -64,6 +72,10 @@ export function SongPage(songId) {
                        onclick="expandPlayer(${songId})">
                     
                     <div class="p-4 border-b border-[var(--border-primary)] flex justify-between items-center text-[var(--text-muted)]">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         <span class="text-xs uppercase tracking-widest">Letra</span>
                         <div class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-green-400 flex items-center gap-1">
                             Expandir <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
@@ -72,6 +84,10 @@ export function SongPage(songId) {
 
                     <!-- Lyrics Container -->
                     <div id="lyrics-container" class="flex-1 overflow-y-auto p-6 text-left text-lg text-[var(--text-secondary)] select-none relative mask-linear-y grid justify-center content-start scrollbar-hide">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         <p class="mt-40">Cargando letra...</p>
                     </div>
 
@@ -81,6 +97,10 @@ export function SongPage(songId) {
                     <!-- Sync Button (Hidden by default) -->
                     <button id="btn-sync-lyrics" 
                             class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-[var(--accent-primary)] text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-20 flex items-center gap-2 hover:bg-[var(--accent-hover)]"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                             onclick="event.stopPropagation(); window.resyncLyrics()">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                         Sincronizar
@@ -91,6 +111,10 @@ export function SongPage(songId) {
 
              <!-- Bottom Player Controls (Sticky) -->
             <div class="shrink-0 z-50 bg-[var(--bg-secondary)] backdrop-blur-lg border-t border-[var(--border-primary)]">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 ${PlayerControls(songId, false)}
             </div>
 
@@ -142,6 +166,10 @@ async function loadVersions(songId) {
                 <div class="flex items-center justify-between text-xs text-[var(--text-secondary)]">
                     <span class="flex items-center gap-1"><svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> ${v.likes}</span>
                     <span class="bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-[var(--text-primary)]">Ver Detalles</span>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
             </div>
         `).join('');

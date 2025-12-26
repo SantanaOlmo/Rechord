@@ -25,6 +25,10 @@ export function attachEditorEvents() {
         }, true); // Use Capture to ensure we get the event before children stop propagation
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     const songId = location.hash.split('/').pop();
     if (songId) {
         init(songId);
@@ -106,6 +110,10 @@ async function init(songId) {
         state.settings.subdivision = song.subdivision || '1/4';
         state.settings.velocity = parseInt(song.velocity) || 100;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         const audio = audioService.getInstance();
         const path = song.ruta_mp3.startsWith('http') ? song.ruta_mp3 : `${CONTENT_BASE_URL}/${song.ruta_mp3}`;
         if (audioService.currentUrl !== path) {
@@ -135,6 +143,10 @@ async function init(songId) {
             if (titleEl) titleEl.textContent = song.titulo || 'Sin título';
             if (artistEl) artistEl.textContent = song.artista || 'Desconocido';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             setupZoom(audio.duration || song.duracion || 180);
             renderHeaders();
             renderTimeline();
@@ -160,6 +172,10 @@ async function init(songId) {
                 });
             }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             startRenderLoopInContext();
         };
 
@@ -187,6 +203,10 @@ function setupZoom(duration) {
     state.minZoom = availableWidth / duration;
     state.zoom = state.minZoom; // Force full view initially
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     renderTimeline();
 }
 
@@ -223,6 +243,10 @@ function startRenderLoopInContext() {
                 // Optional: If playhead goes behind left edge (e.g. seeking back or loop)
                 // scrollArea.scrollLeft = px - 20;
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         }
 
         if (state.isPlaying) {
@@ -276,4 +300,8 @@ function startRenderLoopInContext() {
 
     // Initial Render
     actions.refresh();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 }

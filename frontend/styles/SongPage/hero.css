@@ -15,6 +15,10 @@
     background-position: center;
     /* Default background if none set */
     background-color: var(--bg-primary);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 }
 
 /* Gradient Overlay using pseudo-element */
@@ -24,6 +28,10 @@
     inset: 0;
     /* Gradient from dark bottom to transparent top */
     background: linear-gradient(to top, var(--hero-gradient-start) 10%, var(--hero-gradient-mid) 60%, var(--hero-gradient-end) 100%), var(--hero-top-gradient);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     z-index: 1;
 }
 

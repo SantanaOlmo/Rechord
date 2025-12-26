@@ -14,6 +14,10 @@ export function SessionSidebar() {
                  <!-- Room Image (Click to Edit) -->
                 <div class="relative group mr-3 cursor-pointer" onclick="window.editRoomImage()">
                     <img id="session-room-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='20' height='20' rx='2' ry='2' fill='%231f2937' stroke='none'/%3E%3Cpath d='M9 18V5l12-2v13'/%3E%3Carea/%3E%3C/svg%3E" class="w-12 h-12 rounded bg-gray-800 object-cover">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                     </div>
@@ -21,6 +25,10 @@ export function SessionSidebar() {
                 
                 <div class="flex-1 overflow-hidden">
                     <h3 id="session-room-name" class="font-bold text-[var(--text-primary)] text-sm truncate cursor-pointer hover:border-b hover:border-[var(--text-muted)] inline-block" onclick="window.editRoomName()">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         Mi Sala
                     </h3>
                     <p class="text-xs text-green-400 flex items-center mt-1">
@@ -30,6 +38,10 @@ export function SessionSidebar() {
 
                 <!-- Invite Button -->
                 <button id="btn-invite-user" class="text-[var(--accent-light)] hover:text-white p-2 rounded-full hover:bg-[var(--accent-hover)] transition-colors ml-2 relative" 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     title="Invitar a la sala" onclick="window.toggleInvitePopover()">
                     ${inviteIcon}
                 </button>
@@ -61,12 +73,20 @@ export function SessionSidebar() {
                         <p id="session-room-code" class="text-lg font-mono text-[var(--text-primary)] tracking-widest select-all">ABCD</p>
                     </div>
                     <button class="w-full bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-xs py-2 rounded transition-colors"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         onclick="navigator.clipboard.writeText(document.getElementById('session-room-code').innerText); alert('Copiado!')">
                         Copiar Código
                     </button>
                  </div>
                  <div id="tab-queue" class="hidden space-y-2">
                     <p class="text-xs text-[var(--text-muted)] text-center mt-4">La cola está vacía.</p>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                  </div>
             </div>
         </div>
@@ -86,6 +106,10 @@ function initSessionLogic() {
         // Activate Btn
         btn.classList.remove('text-[var(--text-muted)]', 'border-transparent');
         btn.classList.add('text-[var(--accent-light)]', 'border-[var(--accent-primary)]');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
         // Hide All Content
         const container = document.getElementById('session-tab-content');

@@ -8,6 +8,10 @@ export function SidebarContainer() {
 
     return `
         <div id="sidebar-container" class="flex flex-col h-full overflow-hidden bg-[var(--sidebar-bg)] transition-all duration-300 relative pt-20 w-64 min-w-[16rem]">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             
             <!-- Library Section (Top) -->
             <div id="sidebar-library-section" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
@@ -21,6 +25,10 @@ export function SidebarContainer() {
             <div id="sidebar-session-section" class="hidden flex-col bg-[var(--bg-secondary)] border-t border-[var(--border-primary)] overflow-hidden transition-all duration-300 h-1/2">
                 ${SessionSidebar()}
             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         </div>
     `;
 }
@@ -30,6 +38,10 @@ function initLogic() {
     const libSection = document.getElementById('sidebar-library-section');
     const sessionSection = document.getElementById('sidebar-session-section');
     const splitHandle = document.getElementById('session-split-handle');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
     if (!container || !sessionSection) return;
 
@@ -60,11 +72,19 @@ function initLogic() {
         e.preventDefault();
     });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     // Global Mouse Move
     let rAF = null;
 
     document.addEventListener('mousemove', (e) => {
         if (!isResizingSplit) return;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
         if (rAF) return; // Skip if frame pending
 
@@ -78,6 +98,10 @@ function initLogic() {
                     sessionSection.style.height = `${100 - percentage}%`;
                 }
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             rAF = null;
         });
     });
@@ -93,5 +117,9 @@ function initLogic() {
             isResizingSplit = false;
             document.body.style.cursor = 'default';
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     });
 }

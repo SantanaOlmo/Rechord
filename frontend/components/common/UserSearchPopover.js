@@ -1,5 +1,5 @@
 import { usuarioService } from '../../services/usuarioService.js';
-import { socketService } from '../../services/socketService.js';
+
 import { CONTENT_BASE_URL } from '../../config.js';
 
 export function UserSearchPopover() {
@@ -57,7 +57,6 @@ export function initInvitePopoverLogic() {
     window.inviteUser = (userId) => {
         // In a real implementation this would likely verify the user isn't already in
         console.log('Inviting user', userId);
-        // socketService.send('INVITE_USER', { userId: userId }); // Assuming backend supports this
         alert('Invitación enviada (Simulación)');
         popover.classList.add('hidden');
         input.value = '';

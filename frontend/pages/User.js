@@ -3,6 +3,10 @@ import { ProfileHeader } from '../components/profile/ProfileHeader.js';
 import { authService } from '../services/authService.js';
 import { ProfileBio } from '../components/profile/ProfileBio.js';
 import { Footer, setupFooterTheme } from '../components/layout/Footer.js';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 import { likeService } from '../services/likeService.js';
 import { SongCard } from '../components/cards/SongCard.js?v=profile';
 import { renderSection } from '../components/logic/HomeRenderer.js';
@@ -13,6 +17,10 @@ export function User(params) {
     // Skeleton Loader structure
     return `
         <div id="user-profile-container" class="w-full bg-gray-900 text-white overflow-hidden relative min-h-[500px] pt-24" data-userid="${id_usuario}">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             <div id="user-loader" class="absolute inset-0 flex items-center justify-center">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
             </div>
@@ -98,6 +106,10 @@ export function attachUserEvents() {
             // Re-apply theme logic after re-render
             setupFooterTheme();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
             // Follow Logic
             // Note: ProfileHeader adds the button HTML if !isOwner.

@@ -2,9 +2,14 @@ import { CONTENT_BASE_URL, ICON_PLAY } from '../../config.js';
 import { authService } from '../../services/authService.js';
 
 export function SongCard(song, isLiked) {
-    const imageUrl = song.ruta_imagen
-        ? `${CONTENT_BASE_URL}/${song.ruta_imagen}`
-        : null;
+    let imageUrl = null;
+    if (song.ruta_imagen) {
+        if (song.ruta_imagen.startsWith('http')) {
+            imageUrl = song.ruta_imagen;
+        } else {
+            imageUrl = `${CONTENT_BASE_URL}/${song.ruta_imagen}`;
+        }
+    }
 
     const isAdmin = authService.isAdmin();
 
@@ -33,6 +38,10 @@ export function SongCard(song, isLiked) {
             ? `<img src="${imageUrl}" alt="${song.titulo}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">`
             : `<div class="w-full h-full flex items-center justify-center bg-[var(--bg-tertiary)]">
                  <svg class="w-10 h-10 md:w-16 md:h-16 text-[var(--text-muted)] opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                </div>`
         }
             
@@ -46,6 +55,10 @@ export function SongCard(song, isLiked) {
                     </svg>
                 </button>
                 <span class="text-[10px] md:text-xs text-white font-medium mt-0.5 drop-shadow-md">${likeCount > 0 ? likeCount : ''}</span>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             </div>
 
             <!-- Admin Edit Button -->
@@ -54,6 +67,10 @@ export function SongCard(song, isLiked) {
                 <button class="p-1.5 bg-black/40 backdrop-blur-sm rounded-full text-white hover:bg-indigo-500 hover:text-white transition"
                     onclick="event.stopPropagation(); window.openEditModal(${song.id_cancion})" title="Editar Propiedades">
                     <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </button>
             </div>
             ` : ''}
@@ -62,6 +79,10 @@ export function SongCard(song, isLiked) {
             <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer backdrop-blur-[2px]" onclick="window.navigate('/song/${song.id_cancion}')">
                 <div class="bg-white rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
                     <img src="${ICON_PLAY}" class="w-4 h-4 md:w-5 md:h-5 ml-1" alt="Play">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
             </div>
         </div>
@@ -79,6 +100,10 @@ export function SongCard(song, isLiked) {
                 </div>
                  <a href="#/sincronizador/${song.id_cancion}" onclick="window.navigate('/sincronizador/${song.id_cancion}'); return false;" 
                    class="text-xs bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--accent-primary)] hover:text-white px-2 py-1 rounded transition-colors">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     Sync
                 </a>
             </div>

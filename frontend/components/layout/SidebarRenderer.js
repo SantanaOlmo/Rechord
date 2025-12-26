@@ -8,6 +8,10 @@ export const SidebarRenderer = {
 
         const s = suffix ? `-${suffix}` : '';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         return folders.map(f => `
             <div class="folder-wrapper"
                  ondrop="window.handleFolderDrop(event, ${f.id_carpeta})"
@@ -28,6 +32,10 @@ export const SidebarRenderer = {
                      <!-- Add Song Button -->
                      <button class="text-[var(--text-muted)] hover:text-white hover:bg-[var(--accent-primary)] rounded-full p-1 transition-all ml-2 flex-shrink-0 z-10"
                              onclick="window.toggleAddSong(event, ${f.id_carpeta}, '${suffix}')"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                              title="Añadir canción">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                      </button>
@@ -35,6 +43,10 @@ export const SidebarRenderer = {
 
                 <!-- Content -->
                 <div id="folder-content-${f.id_carpeta}${s}" class="hidden flex flex-col">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     <!-- Injected via JS -->
                 </div>
             </div>
@@ -48,6 +60,10 @@ export const SidebarRenderer = {
 
         return songs.map((s, idx) => `
             <div class="group flex items-center pl-4 pr-2 py-1 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                  title="${s.titulo} - ${s.artista}"
                  onclick="window.navigate('/song/${s.id_cancion}')"
                  oncontextmenu="window.onSongContextMenu(event, ${folderId}, ${s.id_cancion})">
@@ -69,6 +85,10 @@ export const SidebarRenderer = {
                  </div>
                  
                  <button class="ml-2 text-[var(--text-muted)] hover:text-red-400 opacity-0 group-hover:opacity-100 flex-shrink-0 transition-opacity"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         onclick="event.stopPropagation(); window.removeSongFromFolder(event, ${folderId}, ${s.id_cancion})"
                         title="Quitar de la carpeta">
                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>

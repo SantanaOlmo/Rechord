@@ -1,5 +1,5 @@
 import { AdminUsersTab } from '../admin/AdminUsersTab.js';
-import { AdminWebSocketTab } from '../admin/AdminWebSocketTab.js';
+// import { AdminWebSocketTab } from '../admin/AdminWebSocketTab.js';
 import { AdminHeroTab } from '../admin/AdminHeroTab.js?v=toastcheck';
 import { renderHomeConfigTab } from '../admin/AdminHomeTab.js';
 
@@ -11,7 +11,7 @@ export async function initDashboardLogic() {
 
     // Init modules
     usersTab = new AdminUsersTab('dashboard-content-container');
-    wsTab = new AdminWebSocketTab('dashboard-content-container');
+    // wsTab = new AdminWebSocketTab('dashboard-content-container');
     heroTab = new AdminHeroTab('dashboard-content-container');
 
     // Preload
@@ -48,8 +48,7 @@ function renderTabContent(container) {
         usersTab.render();
     } else if (currentTab === 'home') {
         renderHomeConfigTab(container);
-    } else if (currentTab === 'websocket') {
-        wsTab.render();
+
     } else if (currentTab === 'hero') {
         heroTab.render();
     }

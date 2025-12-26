@@ -1,4 +1,8 @@
 import { API_ROUTES } from '../api/routes.js';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 export const likeService = {
     async toggleLike(id_usuario, id_cancion) {
@@ -16,6 +20,10 @@ export const likeService = {
 
     async addLike(id_usuario, id_cancion) {
         const response = await fetch(`${API_ROUTES.LIKES}`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,6 +36,10 @@ export const likeService = {
 
     async removeLike(id_usuario, id_cancion) {
         const response = await fetch(`${API_ROUTES.LIKES}?id_usuario=${id_usuario}&id_cancion=${id_cancion}`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'DELETE'
         });
         if (!response.ok) throw new Error('Error removing like');
@@ -36,6 +48,10 @@ export const likeService = {
 
     async checkLike(id_usuario, id_cancion) {
         const response = await fetch(`${API_ROUTES.LIKES}?id_usuario=${id_usuario}&id_cancion=${id_cancion}`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         if (!response.ok) return false;
         const data = await response.json();
         return data.liked;
@@ -43,12 +59,20 @@ export const likeService = {
 
     async getUserLikes(id_usuario) {
         const response = await fetch(`${API_ROUTES.LIKES}?id_usuario=${id_usuario}`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         if (!response.ok) return [];
         return await response.json(); // Returns array of song IDs
     },
 
     async getUserLikedSongs(id_usuario) {
         const response = await fetch(`${API_ROUTES.LIKES}?id_usuario=${id_usuario}&full=true`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         if (!response.ok) return [];
         return await response.json(); // Returns array of song objects
     }

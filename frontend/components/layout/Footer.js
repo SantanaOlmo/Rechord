@@ -49,6 +49,10 @@ export function setupFooterTheme() {
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 export function Footer() {
     const handleNav = (path) => {
         window.location.hash = path;
@@ -61,14 +65,28 @@ export function Footer() {
 
     return `
         <footer class="bg-[var(--bg-primary)] border-t border-[var(--border-primary)] pt-12 pb-2 px-8 mt-auto w-full transition-colors duration-300">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 <!-- Col 1: Logo Section (Left) -->
                 <div class="flex flex-col items-center md:items-start text-center md:text-left">
+<<<<<<< HEAD
                     <h1 class="text-4xl font-extrabold tracking-tighter text-[var(--text-primary)]">
                         ReChord<span class="text-[var(--accent-primary)]">.</span>
                     </h1>
                     <p class="text-[var(--text-secondary)] text-sm mt-2">Tu música, tus reglas.</p>
+=======
+                    <a href="#/" class="flex items-center gap-2 group mb-2">
+                        <img src="assets/icons/rechord.png" alt="ReChord Logo" class="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                        <h1 class="text-3xl font-extrabold tracking-tighter text-[var(--text-primary)]">
+                            ReChord<span class="text-[var(--accent-primary)]">.</span>
+                        </h1>
+                    </a>
+                    <p class="text-[var(--text-secondary)] text-sm mt-1">Tu música, tus reglas.</p>
+>>>>>>> 5e4f432 (subir a render)
                 </div>
 
                 <!-- Col 2: Useful Links (Center) -->
@@ -77,6 +95,10 @@ export function Footer() {
                     <a href="#/privacy-policy" class="hover:text-[var(--accent-light)] transition-colors">Política de Privacidad</a>
                     <a href="#/data-protection" class="hover:text-[var(--accent-light)] transition-colors">Protección de Datos</a>
                     <a href="#/faqs" class="hover:text-[var(--accent-light)] transition-colors">FAQs</a>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
 
                 <!-- Col 3: Social Media Links (Right) -->
@@ -89,6 +111,10 @@ export function Footer() {
                         </a>
 
                         <!-- Gmail -->
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         <a href="mailto:alberto16166@gmail.com" class="hover:opacity-80 transition-opacity">
                             <img src="assets/icons/social_media/LogosGoogleGmail.svg" alt="Gmail" class="w-6 h-6 filter grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
                         </a>
@@ -110,6 +136,10 @@ export function Footer() {
 
                         <!-- YouTube -->
                         <a href="https://youtube.com" target="_blank" class="text-[var(--text-muted)] hover:text-[#FF0000] transition-colors duration-300">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                             <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="m10 15l5.19-3L10 9zm11.56-7.83c.13.47.22 1.1.28 1.9c.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83c-.25.9-.83 1.48-1.73 1.73c-.47.13-1.33.22-2.65.28c-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44c-.9-.25-1.48-.83-1.73-1.73c-.13-.47-.22-1.1-.28-1.9c-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83c.25-.9.83-1.48 1.73-1.73c.47-.13 1.33-.22 2.65-.28c1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44c.9.25 1.48.83 1.73 1.73"/></svg>
                         </a>
                     </div>
@@ -139,6 +169,10 @@ export function Footer() {
                     <button id="theme-toggle-btn" class="p-1 rounded-full hover:bg-[var(--bg-tertiary)] transition-colors focus:outline-none" title="Cambiar tema">
                         <!-- Icon injected by JS -->
                     </button>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
             </div>
         </footer>

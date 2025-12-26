@@ -8,6 +8,10 @@ import { togglePlay } from './events/playbackLogic.js';
 
 // Re-export for potential consumers (though usually attached directly)
 export { handleGlobalMouseMove, handleGlobalMouseUp, handleClipMouseDown, togglePlay };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 export function attachListeners() {
     window.addEventListener('mousemove', handleGlobalMouseMove);
@@ -17,4 +21,9 @@ export function attachListeners() {
     attachTimelineListeners();
     attachKeyboardListeners();
     attachUIListeners();
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> 5e4f432 (subir a render)

@@ -17,6 +17,10 @@ export const versionService = {
                     {
                         id_version: 1,
                         usuario: { nombre: 'alberto', foto_perfil: 'default.png' },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         titulo_version: 'Acústica suave',
                         likes: 120,
                         fecha_creacion: '2023-10-01'
@@ -24,6 +28,10 @@ export const versionService = {
                     {
                         id_version: 2,
                         usuario: { nombre: 'mariaguitar', foto_perfil: 'default.png' },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         titulo_version: 'Versión Rock',
                         likes: 85,
                         fecha_creacion: '2023-10-05'
@@ -31,6 +39,10 @@ export const versionService = {
                     {
                         id_version: 3,
                         usuario: { nombre: 'pianoman', foto_perfil: 'default.png' },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         titulo_version: 'Piano Cover',
                         likes: 45,
                         fecha_creacion: '2023-10-10'

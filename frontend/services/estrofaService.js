@@ -2,6 +2,10 @@ import { API_ROUTES } from '../api/routes.js';
 
 export async function getEstrofas(idCancion) {
     const response = await fetch(`${API_ROUTES.VERSES}?id_cancion=${idCancion}`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     if (!response.ok) {
         throw new Error('Error al obtener estrofas');
     }
@@ -11,6 +15,10 @@ export async function getEstrofas(idCancion) {
 
 export async function crearEstrofa(estrofa) {
     const response = await fetch(`${API_ROUTES.VERSES}`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -25,6 +33,10 @@ export async function crearEstrofa(estrofa) {
 
 export async function updateEstrofas(estrofas) {
     const response = await fetch(`${API_ROUTES.VERSES}`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

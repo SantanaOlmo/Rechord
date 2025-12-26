@@ -5,9 +5,25 @@
  * * NOTA: Asegúrate de que esta URL coincida con la configuración de tu servidor (Docker/XAMPP).
  * Usamos la ruta local por defecto.
  */
+<<<<<<< HEAD
 export const API_BASE_URL = 'http://localhost:3000/api/rechord'; // Node.js API Central
 export const CONTENT_BASE_URL = 'http://localhost:3000';
 export const WS_URL = 'ws://localhost:8080'; // WebSocket Server configuration
+=======
+const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+export const API_BASE_URL = isProduction
+    ? 'https://api-central-rechord.onrender.com/api/rechord' // Placeholder: User must update this after Render deploy
+    : 'http://localhost:3000/api/rechord';
+
+export const CONTENT_BASE_URL = isProduction
+    ? 'https://api-central-rechord.onrender.com'
+    : 'http://localhost:3000';
+
+export const WS_URL = isProduction
+    ? 'wss://api-central-rechord.onrender.com'
+    : 'ws://localhost:8080'; // Legacy fallback, though WS is removed
+>>>>>>> 5e4f432 (subir a render)
 
 /**
  * Variables del Administrador (Solo para la demostración de la gestión de usuarios).

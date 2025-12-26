@@ -38,15 +38,10 @@ export function MobileMenu() {
                         <span class="font-medium">Admin</span>
                     </a>` : ''}
 
-                    <button onclick="window.socketService.send('CREATE_ROOM'); window.toggleMobileMenu()" class="flex items-center text-gray-300 hover:text-white space-x-3 w-full text-left">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5S5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5m8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5"/></svg>
-                        <span class="font-medium">Crear Sala</span>
-                    </button>
-
-                    <button onclick="document.getElementById('room-modal').classList.remove('hidden'); window.toggleMobileMenu()" class="flex items-center text-gray-300 hover:text-white space-x-3 w-full text-left">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M10.35 14.01C7.62 13.91 2 15.27 2 18v2h9.54c-2.47-2.76-1.23-5.89-1.19-5.99m9.08 4.01c.36-.59.57-1.28.57-2.02c0-2.21-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4c.74 0 1.43-.22 2.02-.57L20.59 22L22 20.59zM16 18c-1.1 0-2-.9-2-2s.9-2 2-2s2 .9 2 2s-.9 2-2 2"/></svg>
-                        <span class="font-medium">Unirse a Sala</span>
-                    </button>
+                    <!-- Shared Session Removed
+                    <button onclick="window.socketService.send('CREATE_ROOM'); window.toggleMobileMenu()" ...>
+                    <button onclick="document.getElementById('room-modal').classList.remove('hidden'); ...>
+                    -->
 
                     <a href="#/messages" onclick="window.toggleMobileMenu()" class="flex items-center text-gray-300 hover:text-white space-x-3 w-full text-left">
                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>

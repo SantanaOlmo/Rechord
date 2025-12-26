@@ -1,9 +1,13 @@
 import { Store, EVENTS } from '../../core/StateStore.js';
-import { socketService } from '../../services/socketService.js';
+
 import { audioService } from '../../services/audioService.js';
 import { ICON_PLAY, CONTENT_BASE_URL } from '../../config.js';
 import { authService } from '../../services/authService.js';
 import { API_ROUTES } from '../../api/routes.js';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 // ... (existing code)
 
@@ -18,6 +22,10 @@ export function updatePlayerMeta(song) {
     if (coverEl) {
         let src = song.ruta_imagen || 'placeholder-song.jpg';
         if (!src.startsWith('http')) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             src = `${CONTENT_BASE_URL}/${src}`;
         }
         coverEl.src = src;
@@ -36,6 +44,10 @@ export function PlayerControls(songId, showChords) {
                  <div class="flex flex-col overflow-hidden">
                     <span id="player-title" class="text-[var(--text-primary)] font-bold text-sm truncate hover:underline cursor-pointer">Cargando...</span>
                     <span id="player-artist" class="text-[var(--text-secondary)] text-xs truncate hover:underline cursor-pointer">...</span>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                  </div>
             </div>
 
@@ -53,6 +65,10 @@ export function PlayerControls(songId, showChords) {
                     </button>
 
                     <button id="btn-play" class="w-8 h-8 flex items-center justify-center bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-full hover:scale-105 transition shadow-sm mx-2">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                          <svg id="icon-play" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                          <svg id="icon-pause" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     </button>
@@ -62,6 +78,10 @@ export function PlayerControls(songId, showChords) {
                     </button>
 
                     <button class="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition" title="Repetir">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                  </div>
@@ -72,6 +92,10 @@ export function PlayerControls(songId, showChords) {
                     <div class="relative flex-1 h-1 bg-[var(--text-muted)] rounded-full cursor-pointer group select-none" id="progress-bar">
                          <div id="progress-fill" class="absolute h-full bg-[var(--text-primary)] rounded-full w-0 group-hover:bg-[var(--accent-primary)] transition-colors"></div>
                          <div id="progress-handle" class="hidden group-hover:block absolute top-1/2 -mt-1.5 h-3 w-3 bg-[var(--text-primary)] rounded-full shadow hover:scale-125 transition-transform" style="left: 0%"></div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     </div>
                     <span id="total-time" class="min-w-[40px]">0:00</span>
                 </div>
@@ -99,11 +123,19 @@ export function PlayerControls(songId, showChords) {
 
                 <!-- Chords -->
                 <button id="btn-toggle-chords" class="text-[var(--text-muted)] hover:text-[var(--accent-primary)] ${showChords ? 'text-[var(--accent-primary)]' : ''}" title="Mostrar/Ocultar Acordes">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/></svg>
                 </button>
 
                 <!-- Editor -->
                  <a href="#/sincronizador/${songId}" class="text-[var(--text-muted)] hover:text-[var(--text-primary)]" title="Sincronizador">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 </a>
             </div>
@@ -123,23 +155,19 @@ export function attachPlayerControlsEvents(currentSong) {
     const audio = audioService.getInstance();
 
     // Subscribe to Sync State
-    Store.subscribe(EVENTS.SOCKET.SYNC_STATE, (payload) => {
-        const { stateAction, position, songId } = payload;
+    // Store.subscribe(EVENTS.SOCKET.SYNC_STATE, (payload) => { ... });
 
-        // Ensure correct song is loaded if needed (optional implementation)
-        // For now we assume song is same.
+    // if (Math.abs(audio.currentTime - position) > 2) {
+    //    audio.currentTime = position;
+    // }
 
-        if (Math.abs(audio.currentTime - position) > 2) {
-            audio.currentTime = position;
-        }
-
-        if (stateAction === 'PLAY' || stateAction === 'RESUME') {
-            audio.play().catch(e => console.error(e));
-        } else {
-            audio.pause();
-        }
-        updatePlayButtonState();
-    });
+    // if (stateAction === 'PLAY' || stateAction === 'RESUME') {
+    //    audio.play().catch(e => console.error(e));
+    // } else {
+    //    audio.pause();
+    // }
+    // updatePlayButtonState();
+    // });
 
     if (btnPlay) {
         btnPlay.onclick = () => {
@@ -149,12 +177,12 @@ export function attachPlayerControlsEvents(currentSong) {
             if (roomId) {
                 // Remote Logic
                 const action = audio.paused ? 'PLAY' : 'PAUSE';
-                socketService.send('UPDATE_PLAYBACK', {
-                    roomId: roomId,
-                    stateAction: action,
-                    position: audio.currentTime,
-                    songId: currentSong.id_cancion
-                });
+                // socketService.send('UPDATE_PLAYBACK', {
+                //     roomId: roomId,
+                //     stateAction: action,
+                //     position: audio.currentTime,
+                //     songId: currentSong.id_cancion
+                // });
             } else {
                 // Local Logic
                 if (audio.paused) audio.play();
@@ -183,6 +211,10 @@ export function attachPlayerControlsEvents(currentSong) {
             // Default Max (48px)
             document.documentElement.style.setProperty('--lyrics-font-size', '48px');
             if (slider) slider.value = 48;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         }
     }
 
@@ -208,6 +240,10 @@ export function attachPlayerControlsEvents(currentSong) {
                 const currentUser = authService.getCurrentUser();
                 if (currentUser) {
                     fetch(API_ROUTES.USERS, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

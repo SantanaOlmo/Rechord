@@ -23,6 +23,10 @@ export function renderSection(section, likedSongIds) {
         <section class="home-section animate-fade-in-up">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-bold text-[var(--text-primary)] tracking-tight">${section.title}</h2>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             </div>
             
             <div class="relative group/carousel">

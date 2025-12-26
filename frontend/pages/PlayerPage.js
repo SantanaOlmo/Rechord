@@ -83,3 +83,7 @@ async function initBackgroundCarousel(songId) {
         console.error("Error loading backgrounds", e);
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)

@@ -1,25 +1,18 @@
 import { authService } from '../services/authService.js';
 import { likeService } from '../services/likeService.js';
 import { Store } from '../core/StateStore.js';
-import { socketService } from '../services/socketService.js';
+
 
 export function setupGlobalEvents() {
     console.log('Setting up Global Events...');
 
     // Global Player Navigation
+    // Global Player Navigation
     window.playSong = (id) => {
-        const state = Store.getState();
-        if (state.room && state.room.id) {
-            socketService.send('UPDATE_PLAYBACK', {
-                roomId: state.room.id,
-                songId: id,
-                stateAction: 'PLAY',
-                position: 0
-            });
-            window.navigate('/song/' + id);
-        } else {
-            window.navigate('/song/' + id);
-        }
+        // const state = Store.getState();
+        // if (state.room && state.room.id) { ... } else {
+        window.navigate('/song/' + id);
+        // }
     };
 
     // Global Like

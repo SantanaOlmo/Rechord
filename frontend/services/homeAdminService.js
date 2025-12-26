@@ -2,6 +2,10 @@ import { API_ROUTES } from '../api/routes.js';
 import { authService } from './authService.js';
 
 // HOME_CONFIG_URL removed
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 /**
  * Admin: Obtener configuración completa (incluyendo inactivos)
@@ -10,6 +14,10 @@ export async function getAdminHomeData() {
     try {
         const token = authService.getToken();
         const response = await fetch(`${API_ROUTES.HOME_CONFIG}?action=admin_list`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -34,6 +42,10 @@ export async function addHomeCategory(categoryData) {
     try {
         const token = authService.getToken();
         const response = await fetch(API_ROUTES.HOME_CONFIG, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -54,6 +66,10 @@ export async function deleteHomeCategory(idConfig) {
     try {
         const token = authService.getToken();
         const response = await fetch(API_ROUTES.HOME_CONFIG, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -74,6 +90,10 @@ export async function updateHomeConfigOrder(items) {
     try {
         const token = authService.getToken();
         const response = await fetch(API_ROUTES.HOME_CONFIG, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -94,6 +114,10 @@ export async function updateHomeCategory(categoryData) {
     try {
         const token = authService.getToken();
         const response = await fetch(API_ROUTES.HOME_CONFIG, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -114,6 +138,10 @@ export async function toggleHomeVisibility(idConfig, active) {
     try {
         const token = authService.getToken();
         const response = await fetch(API_ROUTES.HOME_CONFIG, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

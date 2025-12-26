@@ -148,6 +148,10 @@ function setupUIEvents() {
             if (btnPlay) btnPlay.click();
         }
     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 }
 
 function updatePlayButton() {

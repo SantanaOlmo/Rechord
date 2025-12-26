@@ -3,6 +3,10 @@
  */
 
 import { API_ROUTES } from '../api/routes.js';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 import { authService } from './authService.js';
 
 // BASE_URL removed, using API_ROUTES.SONGS
@@ -38,6 +42,10 @@ export async function getCancionesUsuario() {
 
         const user = authService.getCurrentUser();
         const response = await fetch(`${API_ROUTES.SONGS}?action=mis_canciones`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'X-User-Id': user ? user.id_usuario : ''
@@ -100,6 +108,10 @@ export async function updateCancion(songData) {
         if (!isFormData) headers['Content-Type'] = 'application/json';
 
         const response = await fetch(`${API_ROUTES.SONGS}?action=update`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: headers,
             body: isFormData ? songData : JSON.stringify(songData)
@@ -123,6 +135,10 @@ export async function toggleLike(idCancion) {
         if (!user) throw new Error('No autenticado');
 
         const response = await fetch(`${API_ROUTES.SONGS}?action=toggle_like`, {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -152,6 +168,10 @@ export async function toggleLike(idCancion) {
 export async function search(term) {
     try {
         const response = await fetch(`${API_ROUTES.SONGS}?search=${encodeURIComponent(term)}`);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Error en búsqueda');
         return data.canciones || [];

@@ -1,8 +1,16 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 export function setupHeroScroll() {
     const main = document.getElementById('main-scroll-container');
     const sidebar = document.getElementById('sidebar-container');
     const hero = document.getElementById('hero-section');
     const header = document.querySelector('header');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
     if (!main || !sidebar || !hero) return;
 
@@ -10,6 +18,10 @@ export function setupHeroScroll() {
     const handleScroll = () => {
         const scrollTop = main.scrollTop;
         const threshold = hero.offsetHeight - 80; // Start transition slightly before end of hero
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
         if (scrollTop >= threshold) {
             sidebar.classList.add('sidebar-visible');
@@ -34,5 +46,9 @@ export function setupHeroScroll() {
     main.addEventListener('scroll', handleScroll);
 
     // Initial check
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     handleScroll();
 }

@@ -4,6 +4,10 @@
     align-items: center;
     justify-content: center;
     background-color: var(--bg-primary);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     padding: 1rem;
 }
 
@@ -57,6 +61,10 @@
     /* text-sm */
     font-weight: 500;
     color: var(--text-secondary);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     margin-bottom: 0.25rem;
 }
 
@@ -64,6 +72,10 @@
     display: block;
     width: 100%;
     background-color: var(--bg-tertiary);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     border: 1px solid var(--border-secondary);
     border-radius: 0.5rem;
     /* rounded-lg */
@@ -96,12 +108,20 @@
     font-weight: 500;
     color: var(--text-primary);
     background-color: var(--accent-primary);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .btn-primary:hover {
     background-color: var(--accent-hover);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     transform: scale(1.02);
 }
 
@@ -129,11 +149,19 @@
 .link-primary {
     font-weight: 500;
     color: var(--accent-light);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
     transition: color 0.2s;
 }
 
 .link-primary:hover {
     color: var(--accent-hover);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 }
 
 .error-message {

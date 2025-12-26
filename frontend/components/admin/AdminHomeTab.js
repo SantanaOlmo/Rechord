@@ -10,6 +10,10 @@ export function renderHomeConfigTab(container) {
             </div>
             
             <button id="btn-toggle-add-cat" class="mt-6 text-[var(--accent-light)] hover:text-[var(--accent-hover)] flex items-center gap-2 font-medium">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Nueva Categoría
             </button>
@@ -29,6 +33,10 @@ export function renderHomeConfigTab(container) {
                 </div>
                 <div class="mt-6 flex gap-3">
                     <button type="submit" class="bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-white py-2 px-6 rounded-lg font-medium shadow-lg transition-all">Añadir</button>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                 </div>
             </form>
         </div>

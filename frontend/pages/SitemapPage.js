@@ -37,8 +37,8 @@ export function SitemapPage() {
                         <ul class="space-y-2">
                             <li><a href="#/messages" class="text-gray-300 hover:text-indigo-400 text-sm transition-colors">Mensajes</a></li>
                             <!-- Use a span for actions that require JS/Auth check if not direct links -->
-                            <li><span class="text-gray-300 hover:text-indigo-400 text-sm transition-colors cursor-pointer" onclick="document.getElementById('room-modal').classList.remove('hidden')">Unirse a Sala</span></li>
-                            <li><span class="text-gray-300 hover:text-indigo-400 text-sm transition-colors cursor-pointer" onclick="window.socketService?.send('CREATE_ROOM')">Crear Sala (Fiesta)</span></li>
+                            <!-- <li><span class="text-gray-300 hover:text-indigo-400 text-sm transition-colors cursor-pointer" onclick="document.getElementById('room-modal').classList.remove('hidden')">Unirse a Sala</span></li> -->
+                            <!-- <li><span class="text-gray-300 hover:text-indigo-400 text-sm transition-colors cursor-pointer" onclick="window.socketService?.send('CREATE_ROOM')">Crear Sala (Fiesta)</span></li> -->
                         </ul>
                     </div>
 

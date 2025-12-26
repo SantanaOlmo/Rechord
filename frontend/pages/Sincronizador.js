@@ -471,6 +471,10 @@ export function render(songId) {
                      <div class="w-60 border-r border-gray-800 bg-gray-900 shrink-0"></div> <!-- Spacer for headers (Adjusted width) -->
                      <div class="flex-1 overflow-hidden relative" id="ruler-container">
                         <div id="ruler-content" class="h-full relative select-none pointer-events-auto cursor-pointer"></div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                      </div>
                 </div>
                 
@@ -505,6 +509,10 @@ export function render(songId) {
                              <div id="playhead" class="absolute top-0 bottom-0 w-2 -ml-1 z-50 cursor-grab group" style="left: 0px">
                                 <div class="w-3 h-3 bg-red-500 transform rotate-45 -ml-0.5 -mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.8)] border border-white/20"></div>
                                 <div class="w-px h-full bg-red-500/80 mx-auto shadow-[0_0_8px_rgba(239,68,68,0.4)]"></div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
                              </div>
                         </div>
                     </div>

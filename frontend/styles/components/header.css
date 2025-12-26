@@ -41,6 +41,10 @@
 }
 
 /* Layout for Centered Search */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 .header-left {
     display: flex;
     align-items: center;
@@ -62,6 +66,10 @@
     flex: 1;
     justify-content: flex-end;
     /* Align to right */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 }
 
 .nav-icon-btn {
@@ -80,6 +88,10 @@
 }
 
 /* Search Bar Static */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 .search-container {
     display: flex;
     align-items: center;
@@ -132,6 +144,10 @@
 /* Specific Header Mode Overrides - NONE needed for search now */
 
 /* Rest of file... */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
 
 .user-avatar-btn {
     position: relative;

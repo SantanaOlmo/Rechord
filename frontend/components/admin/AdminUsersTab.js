@@ -42,6 +42,10 @@ export class AdminUsersTab {
                 <div id="admin-search-container" class="w-full md:w-80"></div>
             </div>
             <div id="admin-users-list" class="divide-y divide-[var(--border-primary)]"></div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5e4f432 (subir a render)
         `;
 
         this.renderList();
