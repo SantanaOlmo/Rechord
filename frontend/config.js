@@ -7,17 +7,20 @@
  */
 const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
+// Tu URL real de Render detectada
+const RENDER_BACKEND_URL = 'https://api-central-bfm8.onrender.com';
+
 export const API_BASE_URL = isProduction
-    ? 'https://api-central-rechord.onrender.com/api/rechord' // Placeholder: User must update this after Render deploy
+    ? `${RENDER_BACKEND_URL}/api/rechord`
     : 'http://localhost:3000/api/rechord';
 
 export const CONTENT_BASE_URL = isProduction
-    ? 'https://api-central-rechord.onrender.com'
+    ? RENDER_BACKEND_URL
     : 'http://localhost:3000';
 
 export const WS_URL = isProduction
-    ? 'wss://api-central-rechord.onrender.com'
-    : 'ws://localhost:8080'; // Legacy fallback, though WS is removed
+    ? RENDER_BACKEND_URL.replace('https', 'wss')
+    : 'ws://localhost:8080';
 
 /**
  * Variables del Administrador (Solo para la demostración de la gestión de usuarios).
