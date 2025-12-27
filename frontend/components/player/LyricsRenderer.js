@@ -27,9 +27,13 @@ export function renderLyrics(song) {
     };
 
     if (!song.estrofas || song.estrofas.length === 0) {
+        // Apply "No Lyrics" Style to Container
+        container.style.backgroundColor = '#2563eb'; // bg-blue-600
+        container.style.maskImage = 'none'; // Disable fade mask for clear text
+
         container.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full min-h-[60vh] bg-blue-600 rounded-xl m-4 shadow-xl">
-                 <div class="lyric-stanza opacity-100 scale-105 text-center cursor-pointer transition-all hover:opacity-90"
+            <div class="flex flex-col items-center justify-center h-full text-center">
+                 <div class="lyric-stanza opacity-100 scale-100 cursor-pointer transition-opacity hover:opacity-80"
                       onclick="window.location.hash = '#/songeditor/${song.id_cancion}'">
                      <p class="leading-tight whitespace-pre-line font-bold text-white" style="font-size: var(--lyrics-font-size, 48px);">
                         No hay letras disponibles.
@@ -41,6 +45,10 @@ export function renderLyrics(song) {
             </div>
         `;
     } else {
+        // Reset Style for Normal Lyrics
+        container.style.backgroundColor = '';
+        container.style.maskImage = '';
+
         const lyricsHtml = song.estrofas.map((estrofa, index) => `
             <div id="stanza-${index}" class="lyric-stanza mb-6 transition-all duration-500 ease-out opacity-30 transform scale-100 origin-center cursor-pointer hover:opacity-60"
                  onclick="const audio = audioService.getInstance(); audio.currentTime = ${estrofa.tiempo_inicio};">
