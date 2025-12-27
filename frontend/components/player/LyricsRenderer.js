@@ -30,9 +30,19 @@ export function renderLyrics(song) {
     const header = sidebar ? sidebar.querySelector('.border-b') : null;
     const gradient = sidebar ? sidebar.querySelector('.bg-gradient-to-t') : null;
 
+    // Player Page Elements
+    const playerContainer = document.querySelector('.player-page-container');
+    const playerCarousel = document.getElementById('player-bg-carousel');
+
     if (!song.estrofas || song.estrofas.length === 0) {
-        // Apply "No Lyrics" Style to Entire Sidebar
+        // Mode A: Song Page Sidebar
         if (sidebar) sidebar.style.backgroundColor = '#2563eb'; // bg-blue-600
+
+        // Mode B: Full Player Page
+        if (playerContainer) {
+            playerContainer.style.backgroundColor = '#2563eb';
+            if (playerCarousel) playerCarousel.style.display = 'none'; // Hide images
+        }
 
         // Adjust Header for Blue Background
         if (header) {
@@ -64,6 +74,11 @@ export function renderLyrics(song) {
     } else {
         // Reset Styles
         if (sidebar) sidebar.style.backgroundColor = '';
+
+        if (playerContainer) {
+            playerContainer.style.backgroundColor = '';
+            if (playerCarousel) playerCarousel.style.display = '';
+        }
 
         if (header) {
             header.style.borderColor = '';
