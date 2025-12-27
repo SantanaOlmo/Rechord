@@ -6,9 +6,10 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    background-color: #111827;
-    /* gray-900 */
-    color: white;
+    background-color: var(--bg-primary);
+    /* gray-900 / white */
+    color: var(--text-primary);
+    /* white / gray-900 */
 }
 
 .song-page-grid {
