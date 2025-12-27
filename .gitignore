@@ -48,4 +48,4 @@ docker-compose.override.yml
 *.wav
 *.mov
 *.webp
-*.svg
+
