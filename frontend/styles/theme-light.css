@@ -48,10 +48,19 @@
     --color-text-light: var(--text-primary);
 
     /* Gradients */
-    /* Gradients (Updated: Must be dark even in light mode for Hero image text contrast) */
-    --hero-gradient-start: #111827;
-    --hero-gradient-mid: rgba(17, 24, 39, 0.4);
-    --hero-gradient-end: rgba(0, 0, 0, 0.2);
-    --hero-top-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    /* Gradients (Light Mode: Fade to White at bottom to blend with page) */
+    --hero-gradient-start: #f9fafb;
+    /* Matches bg-primary (white/gray-50) */
+    --hero-gradient-mid: rgba(249, 250, 251, 0.6);
+    --hero-gradient-end: rgba(255, 255, 255, 0.0);
+    /* Transparent top */
+    --hero-top-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, transparent 100%);
+    /* No top shadow in light mode */
     --sidebar-bg: #f3f4f6;
+
+    /* Hero Text Colors (Light Mode) */
+    --text-hero-title: #111827;
+    /* Gray-900 */
+    --text-hero-artist: #4b5563;
+    /* Gray-600 */
 }

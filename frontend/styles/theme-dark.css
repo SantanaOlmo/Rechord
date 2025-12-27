@@ -70,4 +70,8 @@
     --hero-gradient-end: rgba(0, 0, 0, 0.2);
     --hero-top-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
     --sidebar-bg: var(--gray-900);
+
+    /* Hero Text Colors (Dark Mode) */
+    --text-hero-title: #ffffff;
+    --text-hero-artist: #e5e7eb;
 }

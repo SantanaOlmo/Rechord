@@ -47,9 +47,10 @@
     font-size: 3.5rem;
     font-weight: 800;
     line-height: 1.1;
-    color: white;
+    color: var(--text-hero-title);
     margin-bottom: 0.5rem;
-    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    text-shadow: none;
+    /* Remove shadow by default, let theme decide or handle via vars if needed */
     opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
     text-align: left;
@@ -65,10 +66,10 @@
 
 .hero-artist {
     font-size: 1.5rem;
-    color: #e5e7eb;
+    color: var(--text-hero-artist);
     /* gray-200 */
     font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: none;
     opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
     animation-delay: 100ms;
