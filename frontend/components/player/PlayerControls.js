@@ -35,7 +35,7 @@ export function PlayerControls(songId, showChords) {
             <!-- LEFT: Track Info -->
             <div class="flex items-center w-1/4 min-w-[200px] pr-4">
                  <div id="player-cover-container" class="w-14 h-14 bg-[var(--bg-tertiary)] rounded shadow-md mr-4 overflow-hidden shrink-0 relative group">
-                    <img id="player-cover" src="${CONTENT_BASE_URL}/placeholder-song.jpg" class="w-full h-full object-cover opacity-60 transition-opacity duration-500" />
+                    <img id="player-cover" src="${CONTENT_BASE_URL}/placeholder-song.jpg" class="w-full h-full object-cover opacity-100 transition-opacity duration-500" />
                  </div>
                  <div class="flex flex-col overflow-hidden">
                     <span id="player-title" class="text-[var(--text-primary)] font-bold text-sm truncate hover:underline cursor-pointer">Cargando...</span>
