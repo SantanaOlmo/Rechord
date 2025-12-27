@@ -76,7 +76,7 @@ export const Header = {
                 <button onclick="document.getElementById('room-modal').classList.remove('hidden')" class="nav-icon-btn" title="Unirse a Sala">
                     ${iconJoinRoom}
                 </button> 
-                -->
+
 
                 <!-- Messaging Icon -->
                 <a href="#/messages" class="nav-icon-btn relative group" title="Mensajes">
