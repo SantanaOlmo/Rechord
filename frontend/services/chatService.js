@@ -1,8 +1,5 @@
 import { API_ROUTES } from '../api/routes.js';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
 export const chatService = {
 
@@ -13,10 +10,7 @@ export const chatService = {
         }
         try {
             const response = await fetch(`${API_ROUTES.CHAT}?action=conversations&user_id=${userId}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             const data = await response.json();
             if (response.ok) {
                 return data.conversations || [];
@@ -31,10 +25,7 @@ export const chatService = {
     async getMessages(conversationId, userId) {
         try {
             const response = await fetch(`${API_ROUTES.CHAT}?action=messages&conversation_id=${conversationId}&user_id=${userId}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             const data = await response.json();
             if (response.ok) {
                 return data.messages || [];
@@ -49,10 +40,7 @@ export const chatService = {
     async sendMessage(senderId, receiverId, content) {
         try {
             const response = await fetch(`${API_ROUTES.CHAT}`, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -76,10 +64,7 @@ export const chatService = {
     async markAsRead(conversationId, userId) {
         try {
             const response = await fetch(API_ROUTES.CHAT, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -99,10 +84,7 @@ export const chatService = {
         if (!userId) return 0;
         try {
             const response = await fetch(`${API_ROUTES.CHAT}?action=unread_count&user_id=${userId}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             const data = await response.json();
             if (response.ok) {
                 return parseInt(data.count) || 0;

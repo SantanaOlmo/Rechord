@@ -4,10 +4,7 @@ import { ProfileHeader } from '../components/profile/ProfileHeader.js';
 import { ProfileBio } from '../components/profile/ProfileBio.js';
 import { EditProfileModal } from '../components/modals/EditProfileModal.js';
 import { Footer, setupFooterTheme } from '../components/layout/Footer.js';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 import { setupStandardEvents } from '../logic/profileLogic.js';
 import { likeService } from '../services/likeService.js';
 import { SongCard } from '../components/cards/SongCard.js?v=profile';
@@ -29,10 +26,7 @@ export function Profile(user) {
         return `<div class="text-center text-[var(--text-primary)] mt-10">
             <p class="mb-4">Debes iniciar sesión para ver tu perfil.</p>
             <a href="#/auth/login" class="text-[var(--accent-light)] hover:text-[var(--accent-hover)]">Iniciar sesión</a>
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         </div>`;
     }
 
@@ -42,10 +36,7 @@ export function Profile(user) {
 
     return `
         <div id="profile-container" class="w-full bg-[var(--bg-primary)] text-[var(--text-primary)] relative">
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             <div id="profile-content">
                 ${ProfileHeader(user, isOwner)}
                 ${ProfileBio(user)}
@@ -73,10 +64,7 @@ export function Profile(user) {
                             <button type="submit" class="mt-2 btn-primary py-1 px-4 text-sm">Añadir</button>
                         </form>
                         <button id="btn-toggle-add-cat" class="mt-4 text-sm text-[var(--accent-light)] hover:text-[var(--accent-hover)]">+ Nueva Categoría</button>
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     </div>
                 ` : ''}
 
@@ -85,10 +73,7 @@ export function Profile(user) {
                 ${Footer()}
             </div>
             <div id="profile-loader" class="hidden absolute inset-0 flex items-center justify-center bg-[var(--bg-primary)] z-50">
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
             </div>
         </div>
@@ -108,10 +93,7 @@ export function attachProfileEvents() {
     const currentUser = authService.getCurrentUser();
     if (!currentUser) return;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     (async () => {
         try {
             // Re-fetch fresh data
@@ -162,10 +144,7 @@ export function attachProfileEvents() {
                 ${ProfileBio(user)}
                 
                 <div class="p-6 border-t border-[var(--border-primary)]">
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     ${songsHtml}
                 </div>
 
@@ -175,10 +154,7 @@ export function attachProfileEvents() {
 
             setupStandardEvents(user, isOwner);
             setupFooterTheme();
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         }
     }
 

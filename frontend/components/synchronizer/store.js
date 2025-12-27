@@ -11,10 +11,7 @@ export let state = {
     history: [],
     historyIndex: -1,
     chords: [], // List of stored chords
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     zoom: 50,
     minZoom: 10,
     // Dragging State
@@ -29,10 +26,7 @@ export let state = {
     isXDown: false, // Resize Start
     isCDown: false, // Resize End
     isJDown: false, // Join
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     initialSnapshot: [],
 
     // Ruler Drag State
@@ -82,10 +76,7 @@ export let state = {
     history: {
         stack: [],
         future: []
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     }
 };
 
@@ -94,8 +85,5 @@ export const actions = {
     refresh: () => console.warn('Refresh not linked'),
     toggleTrack: () => console.warn('Toggle not linked'),
     moveTrack: (fromIndex, toIndex) => console.warn('Move not linked')
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 };

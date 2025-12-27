@@ -7,10 +7,7 @@ let animationFrame = null;
 export async function initHeroCarousel() {
     try {
         const res = await fetch(`${API_ROUTES.HERO}?action=active`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         if (res.ok) {
             let data = await res.json();
 
@@ -27,10 +24,7 @@ export async function initHeroCarousel() {
 
             // Clear previous
             section.querySelectorAll('.hero-carousel, .carousel-nav, .hero-progress-container').forEach(el => el.remove());
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
             // Build Carousel HTML
             let slidesHtml = '';
@@ -63,10 +57,7 @@ export async function initHeroCarousel() {
                         </div>
                     `;
                 }).join('');
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             }
 
             const carouselContainer = document.createElement('div');
@@ -86,10 +77,7 @@ export async function initHeroCarousel() {
                 const nextBtn = document.createElement('button');
                 nextBtn.className = 'carousel-nav hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 text-white/80 hover:text-white hover:scale-110 transition-all drop-shadow-md';
                 nextBtn.innerHTML = '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
                 section.appendChild(prevBtn);
                 section.appendChild(nextBtn);
@@ -108,10 +96,7 @@ export async function initHeroCarousel() {
                 progressContainer.innerHTML = progressHtml;
                 section.appendChild(progressContainer);
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 // Logic
                 let currentIndex = 0;
                 const total = data.length;
@@ -142,10 +127,7 @@ export async function initHeroCarousel() {
                         }
                     });
                 };
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
                 const showSlide = (index) => {
                     slides.forEach(s => {
@@ -156,10 +138,7 @@ export async function initHeroCarousel() {
                     slides[index].style.zIndex = '1';
 
                     // Reset video play
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     const vid = slides[index].querySelector('video');
                     if (vid) {
                         vid.currentTime = 0;
@@ -167,10 +146,7 @@ export async function initHeroCarousel() {
                     }
 
                     updateProgress(index);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 };
 
                 const next = () => {
@@ -204,20 +180,14 @@ export async function initHeroCarousel() {
                     const threshold = 50;
                     if (touchEndX < touchStartX - threshold) next(); // Swipe Left -> Next
                     if (touchEndX > touchStartX + threshold) prev(); // Swipe Right -> Prev
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 };
 
                 // Auto rotate
                 const startTimer = () => {
                     if (carouselInterval) clearInterval(carouselInterval);
                     carouselInterval = setInterval(next, DURATION);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                 };
 
                 const resetTimer = () => {
@@ -227,10 +197,7 @@ export async function initHeroCarousel() {
                 startTimer();
                 // Init first progress
                 updateProgress(0);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             }
         }
     } catch (e) {

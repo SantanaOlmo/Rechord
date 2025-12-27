@@ -9,10 +9,7 @@ export function ProfileBio(user) {
                 Acerca de mí
             </h3>
             <p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-line">${userBio}</p>
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         </div>
     </div>
     `;

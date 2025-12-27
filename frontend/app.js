@@ -10,10 +10,8 @@ import { Header } from './components/layout/Header.js';
 
 import { setupGlobalEvents } from './logic/globalEvents.js';
 import { TooltipSystem } from './components/common/TooltipSystem.js';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
+
 
 console.log('%c RECHORD FRONTEND - VERSION: 2025-12-08 17:40 (Refactored) ', 'background: #222; color: #bada55; font-size: 16px; padding: 10px;');
 
@@ -23,11 +21,8 @@ setupGlobalEvents();
 // Initialize Custom Tooltips (Global)
 TooltipSystem.init();
 
-<<<<<<< HEAD
-// Initialize Socket if User is Logged In
-=======
 
->>>>>>> 5e4f432 (subir a render)
+
 // Initialize Socket if User is Logged In
 // Socket removed for migration to Realtime
 // const currentUser = authService.getCurrentUser();

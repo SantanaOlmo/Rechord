@@ -27,10 +27,7 @@ export function FolderSidebar(isMobile = false) {
             <!-- Context Menu (Only needed once globally, but structure here is duplicated. It's hidden/fixed so it doesn't matter much unless IDs conflict.) -->
             <!-- Actually, context menu IDs are unique. We should NOT render it twice or we get duplicates. -->
             <!-- Render context menu ONLY if not mobile OR handle duplicates. best to check if exists. -->
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         </div>
     `;
 }
@@ -58,10 +55,7 @@ async function initSidebar(isMobile) {
 
     const suffix = isMobile ? 'mobile' : '';
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     // Load
     const loadFolders = async () => {
         try {
@@ -75,10 +69,7 @@ async function initSidebar(isMobile) {
     // Shared ID btn-add-folder might be an issue if duplicated. Mobile uses different layout?
     // Mobile view doesn't have the add button in this simplified code.
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     document.getElementById('btn-add-folder')?.addEventListener('click', async () => {
         if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
         const name = prompt('Carpeta:', 'Nueva');
@@ -115,10 +106,7 @@ async function initSidebar(isMobile) {
                 document.getElementById(`song-list-${folderId}${s}`).innerHTML = SidebarRenderer.renderSongs(folderId, songs, suffix);
             } catch (e) { /* Error UI */ }
         } else if (content) {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             content.classList.add('hidden');
             arrow?.classList.remove('rotate-90');
         }
@@ -140,10 +128,7 @@ async function initSidebar(isMobile) {
     function toggleSearch(id, suffix = '') {
         const s = suffix ? `-${suffix}` : '';
         const c = document.getElementById(`search-container-${id}${s}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         c?.classList.toggle('hidden');
         if (!c?.classList.contains('hidden')) c?.querySelector('input')?.focus();
     }
@@ -151,10 +136,7 @@ async function initSidebar(isMobile) {
     // Search Logic
     let searchTimeout;
     window.handleFolderSearch = (e, folderId, suffix = '') => {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         const term = e.target.value.trim();
         clearTimeout(searchTimeout);
         if (term.length < 2) return;
@@ -186,10 +168,7 @@ async function initSidebar(isMobile) {
     };
 
     window.addSongToFolder = async (folderId, songId, suffix = '') => {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
         try {
             await carpetaService.addSong(folderId, songId);
@@ -198,10 +177,7 @@ async function initSidebar(isMobile) {
             const list = document.getElementById(`song-list-${folderId}${s}`);
             if (list) list.innerHTML = SidebarRenderer.renderSongs(folderId, songs, suffix);
             toggleSearch(folderId, suffix); // Close search
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         } catch (e) { console.error(e); }
     };
 
@@ -234,10 +210,7 @@ async function initSidebar(isMobile) {
     window.handleDragLeave = (e) => {
         if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget)) return;
         e.currentTarget.querySelector('.folder-header')?.classList.remove('bg-[var(--accent-primary)]/50');
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     };
 
     window.removeSongFromFolder = async (e, folderId, songId) => {
@@ -249,10 +222,7 @@ async function initSidebar(isMobile) {
     };
 
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
     function showContextMenu(e, type) {
         // Reset visibility
@@ -292,10 +262,7 @@ async function initSidebar(isMobile) {
             window.startInlineRename(ctxFolderId);
         };
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
     window.startInlineRename = (folderId) => {
         const span = document.getElementById(`folder-name-${folderId}`);
@@ -306,10 +273,7 @@ async function initSidebar(isMobile) {
         input.type = 'text';
         input.value = currentName;
         input.className = 'w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded px-1 outline-none border border-[var(--accent-primary)] text-xs py-0.5';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
         // Replace span with input
         span.replaceWith(input);
@@ -367,10 +331,7 @@ async function initSidebar(isMobile) {
             }
         };
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
     loadFolders();
 }

@@ -46,10 +46,7 @@ export function initNewSongLogic(onSuccessCallback) {
             }
             if (imgContent) imgContent.classList.remove('opacity-0');
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         }, 300);
     };
 
@@ -59,20 +56,14 @@ export function initNewSongLogic(onSuccessCallback) {
     });
     btnCancel?.addEventListener('click', closeModal);
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     // Drag & Drop
     [
         { zone: dropZone, input: audioInput, type: 'audio' },
         { zone: document.getElementById('drop-zone-image'), input: document.getElementById('image-input'), type: 'image' }
     ].forEach(({ zone, input, type }) => {
         if (zone && input) {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             // Click to open
             zone.addEventListener('click', () => input.click());
 
@@ -86,10 +77,7 @@ export function initNewSongLogic(onSuccessCallback) {
                 zone.classList.remove('bg-indigo-50', 'border-indigo-500');
                 if (e.dataTransfer.files.length) {
                     input.files = e.dataTransfer.files;
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     const event = new Event('change');
                     input.dispatchEvent(event);
                 }
@@ -103,10 +91,7 @@ export function initNewSongLogic(onSuccessCallback) {
                         const textP = zone.querySelector('p');
                         if (textP) textP.innerHTML = `<span class="text-indigo-600 font-bold">${file.name}</span>`;
                         // Audio Duration
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                         const audio = new Audio(URL.createObjectURL(file));
                         audio.onloadedmetadata = function () {
                             const dur = Math.round(audio.duration);
@@ -126,10 +111,7 @@ export function initNewSongLogic(onSuccessCallback) {
                             };
                             reader.readAsDataURL(file);
                         }
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     }
                 }
             });

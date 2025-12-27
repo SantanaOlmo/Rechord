@@ -13,10 +13,7 @@ export function EditSongModal() {
                         <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="lyrics">Letra</button>
                         <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="verses">Versos</button>
                         <button type="button" class="px-4 py-2 text-gray-400 hover:text-white transition-colors" data-tab="backgrounds">Fondos</button>
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     </div>
 
                     <!-- Tab Content: Properties -->
@@ -118,10 +115,7 @@ export function EditSongModal() {
                         </div>
                     </div>
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
                     <div class="modal-actions mt-4 pt-4 border-t border-gray-700 shrink-0">
                         <button type="button" id="btn-cancel-edit" class="btn-cancel">Cancelar</button>
                         <button type="submit" class="btn-primary" style="width: auto;">Guardar Cambios</button>

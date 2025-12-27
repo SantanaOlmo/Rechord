@@ -1,8 +1,5 @@
 import { API_ROUTES } from '../api/routes.js';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
 /**
  * Obtiene los acordes sincronizados de una canción
@@ -11,10 +8,7 @@ import { API_ROUTES } from '../api/routes.js';
  */
 export async function getAcordesSincronizados(idCancion) {
     const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id_cancion=${idCancion}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     if (!response.ok) {
         throw new Error('Error al obtener acordes sincronizados');
     }
@@ -29,10 +23,7 @@ export async function getAcordesSincronizados(idCancion) {
  */
 export async function agregarAcordeSincronizado(acordeData) {
     const response = await fetch(`${API_ROUTES.CHORDS_SYNC}`, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -52,10 +43,7 @@ export async function agregarAcordeSincronizado(acordeData) {
  */
 export async function actualizarAcordeSincronizado(acordeData) {
     const response = await fetch(`${API_ROUTES.CHORDS_SYNC}`, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -75,10 +63,7 @@ export async function actualizarAcordeSincronizado(acordeData) {
  */
 export async function eliminarAcordeSincronizado(idSincronia) {
     const response = await fetch(`${API_ROUTES.CHORDS_SYNC}?id=${idSincronia}`, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         method: 'DELETE'
     });
     if (!response.ok) {

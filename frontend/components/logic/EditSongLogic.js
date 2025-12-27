@@ -63,10 +63,7 @@ export function initEditSongLogic(onSuccessCallback) {
             setVal('edit-hashtags', Array.isArray(tags) ? tags.join(', ') : '');
 
             // Audio Button
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             const btnDetect = document.getElementById('btn-detect-duration');
             if (btnDetect) {
                 btnDetect.dataset.url = song.ruta_mp3 ? `${CONTENT_BASE_URL}/${song.ruta_mp3}` : '';
@@ -190,8 +187,5 @@ export function initEditSongLogic(onSuccessCallback) {
 
     // Attempt setup
     setupListeners();
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 }

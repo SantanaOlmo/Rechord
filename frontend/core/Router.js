@@ -12,10 +12,7 @@ import { authService } from '../services/authService.js';
 import { render as Sincronizador } from '../pages/Sincronizador.js';
 import { PlayerPage } from '../pages/PlayerPage.js';
 import { setupFooterTheme } from '../components/layout/Footer.js';
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
 
 import { SitemapPage } from '../pages/SitemapPage.js';
@@ -176,10 +173,7 @@ const router = () => {
         setupFooterTheme();
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     // Page Events (Profile already handled above, but double check if route matched /profile could happen if hash is #/profile explicitly)
     if (path === '/profile') {
         attachProfileEvents();

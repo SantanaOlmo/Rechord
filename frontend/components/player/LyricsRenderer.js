@@ -2,10 +2,7 @@
 let isUserScrolling = false;
 let isAutoScrolling = false;
 let autoScrollTimeout = null;
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 let lastActiveIndex = -1;
 
 export function renderLyrics(song) {
@@ -15,10 +12,7 @@ export function renderLyrics(song) {
     // Reset state on new render
     isUserScrolling = false;
     isAutoScrolling = false;
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     lastActiveIndex = -1;
 
     // Setup scroll listener to detect manual interaction
@@ -28,10 +22,7 @@ export function renderLyrics(song) {
 
         // Otherwise, it's a user event
         isUserScrolling = true;
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         checkSyncStatus();
     };
 
@@ -49,10 +40,7 @@ export function renderLyrics(song) {
             <div id="stanza-${index}" class="lyric-stanza mb-6 transition-all duration-500 ease-out opacity-30 transform scale-100 origin-center cursor-pointer hover:opacity-60"
                  onclick="const audio = audioService.getInstance(); audio.currentTime = ${estrofa.tiempo_inicio};">
                 <p class="leading-tight whitespace-pre-line transition-all duration-200 font-bold" style="font-size: var(--lyrics-font-size, 48px);">${estrofa.contenido}</p>
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             </div>
         `).join('');
         container.innerHTML = lyricsHtml;
@@ -85,10 +73,7 @@ function checkSyncStatus() {
                 btnSync.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
             }
         }
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
     }
 }
 
@@ -148,10 +133,7 @@ function scrollToStanza(stanza, container) {
         isAutoScrolling = false;
         autoScrollTimeout = null;
     }, 800);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 }
 
 // Global function exposed for the button

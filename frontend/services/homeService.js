@@ -2,10 +2,7 @@ import { API_ROUTES } from '../api/routes.js';
 import { authService } from './authService.js';
 
 // BASE_URL removed
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
 
 /**
  * Obtiene los datos para la Home Page (secciones configuradas)
@@ -17,10 +14,7 @@ export async function getHomeData() {
         if (user) headers['X-User-Id'] = user.id_usuario;
 
         const endpoint = `${API_ROUTES.SONGS}?action=home_data`;
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         console.log('homeService: getHomeData calling', endpoint);
 
         const response = await fetch(endpoint, { headers });

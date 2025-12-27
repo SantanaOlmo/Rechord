@@ -3,10 +3,7 @@ import { API_ROUTES } from '../api/routes.js';
 export const notificationService = {
     async getMyNotifications(userId) {
         const response = await fetch(`${API_ROUTES.NOTIFICATIONS}?user_id=${userId}`);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
         if (!response.ok) throw new Error('Error al cargar notificaciones');
         const data = await response.json();
         return data.notifications || [];
@@ -14,10 +11,7 @@ export const notificationService = {
 
     async sendNotification(userId, message) {
         const response = await fetch(API_ROUTES.NOTIFICATIONS, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_usuario: userId, mensaje: message })
@@ -28,10 +22,7 @@ export const notificationService = {
 
     async markAsRead(notificationId, userId) {
         const response = await fetch(API_ROUTES.NOTIFICATIONS, {
-<<<<<<< HEAD
-=======
 
->>>>>>> 5e4f432 (subir a render)
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_notificacion: notificationId, id_usuario: userId })
