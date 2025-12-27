@@ -28,11 +28,16 @@ export function renderLyrics(song) {
 
     if (!song.estrofas || song.estrofas.length === 0) {
         container.innerHTML = `
-            <div class="text-gray-400 text-lg flex flex-col items-center">
-                <p class="mb-4 text-xl font-semibold text-gray-500">No hay letras disponibles</p>
-                <a href="#/songeditor/${song.id_cancion}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 transition">
-                    Edita esta canción para añadir las lyrics
-                </a>
+            <div class="flex flex-col items-center justify-center h-full min-h-[60vh]">
+                 <div class="lyric-stanza opacity-100 scale-105 text-center cursor-pointer transition-all hover:opacity-80"
+                      onclick="window.location.hash = '#/songeditor/${song.id_cancion}'">
+                     <p class="leading-tight whitespace-pre-line font-bold text-[var(--text-primary)]" style="font-size: var(--lyrics-font-size, 48px);">
+                        No hay letras disponibles.
+                     </p>
+                     <p class="text-lg mt-4 opacity-50 font-normal text-[var(--text-muted)]">
+                        (Haz clic para añadirlas)
+                     </p>
+                 </div>
             </div>
         `;
     } else {

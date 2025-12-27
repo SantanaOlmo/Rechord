@@ -130,11 +130,11 @@ export function attachProfileEvents() {
                 const likedIds = likedSongs.map(s => s.id_cancion);
                 songsHtml = renderSection(likedSection, likedIds);
             } else {
-                songsHtml = `<div class="p-6 border-t border-gray-800">
-                    <h3 class="text-2xl font-bold text-white mb-6">Canciones que me gustan</h3>
-                    <div class="text-center py-10 bg-gray-900/50 rounded-lg border border-gray-800 border-dashed">
-                        <p class="text-gray-400">Aún no tienes canciones favoritas.</p>
-                        <button onclick="window.navigate('/')" class="mt-2 text-indigo-400 hover:text-indigo-300 text-sm font-medium">Explorar música</button>
+                songsHtml = `<div class="p-6 border-t border-gray-200 dark:border-gray-800">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Canciones que me gustan</h3>
+                    <div class="text-center py-10 bg-white dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-800 border-dashed shadow-sm dark:shadow-none">
+                        <p class="text-gray-500 dark:text-gray-400">Aún no tienes canciones favoritas.</p>
+                        <button onclick="window.location.hash='/'" class="mt-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 text-sm font-medium">Explorar música</button>
                    </div>
                    </div>`;
             }
