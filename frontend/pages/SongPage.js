@@ -132,22 +132,22 @@ async function loadVersions(songId) {
         }
 
         list.innerHTML = versions.map((v, index) => `
-            <div class="version-card group">
-                <div class="absolute top-0 right-0 p-3 opacity-50 group-hover:opacity-100 text-yellow-400 font-bold text-sm">
+            <div class="version-card group relative p-4 rounded-xl transition-all duration-300 hover:scale-[1.02] bg-white border border-gray-100 shadow-sm dark:bg-white/5 dark:border-white/5 dark:shadow-none">
+                <div class="absolute top-0 right-0 p-3 opacity-50 group-hover:opacity-100 text-yellow-500 dark:text-yellow-400 font-bold text-sm">
                     ${index === 0 ? '★ TOP 1' : ''}
                 </div>
                 
                 <div class="flex items-center gap-3 mb-3">
-                    <img src="${v.usuario.foto_perfil || 'assets/icons/default_avatar.png'}" class="w-8 h-8 rounded-full border border-[var(--border-primary)]" alt="${v.usuario.nombre}">
-                    <span class="text-sm text-[var(--text-secondary)]">por <span class="text-[var(--text-primary)] font-medium">${v.usuario.nombre}</span></span>
+                    <img src="${v.usuario.foto_perfil || 'assets/icons/default_avatar.png'}" class="w-8 h-8 rounded-full border border-gray-200 dark:border-[var(--border-primary)]" alt="${v.usuario.nombre}">
+                    <span class="text-sm text-gray-600 dark:text-[var(--text-secondary)]">por <span class="text-gray-900 dark:text-[var(--text-primary)] font-medium">${v.usuario.nombre}</span></span>
                 </div>
                 
-                <h3 class="text-xl font-bold mb-1 text-[var(--text-primary)] group-hover:text-green-400 transition-colors">${v.titulo_version}</h3>
-                <p class="text-xs text-[var(--text-muted)] mb-4">Creada el ${new Date(v.fecha_creacion).toLocaleDateString()}</p>
+                <h3 class="text-xl font-bold mb-1 text-gray-900 dark:text-[var(--text-primary)] group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">${v.titulo_version}</h3>
+                <p class="text-xs text-gray-500 dark:text-[var(--text-muted)] mb-4">Creada el ${new Date(v.fecha_creacion).toLocaleDateString()}</p>
                 
-                <div class="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                <div class="flex items-center justify-between text-xs text-gray-500 dark:text-[var(--text-secondary)]">
                     <span class="flex items-center gap-1"><svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> ${v.likes}</span>
-                    <span class="bg-white/10 px-2 py-1 rounded hover:bg-white/20 text-[var(--text-primary)]">Ver Detalles</span>
+                    <span class="bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-white/10 dark:text-[var(--text-primary)] dark:hover:bg-white/20 px-2 py-1 rounded transition-colors">Ver Detalles</span>
 
                 </div>
             </div>

@@ -28,13 +28,13 @@ export function renderLyrics(song) {
 
     if (!song.estrofas || song.estrofas.length === 0) {
         container.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full min-h-[60vh]">
-                 <div class="lyric-stanza opacity-100 scale-105 text-center cursor-pointer transition-all hover:opacity-80"
+            <div class="flex flex-col items-center justify-center h-full min-h-[60vh] bg-blue-600 rounded-xl m-4 shadow-xl">
+                 <div class="lyric-stanza opacity-100 scale-105 text-center cursor-pointer transition-all hover:opacity-90"
                       onclick="window.location.hash = '#/songeditor/${song.id_cancion}'">
-                     <p class="leading-tight whitespace-pre-line font-bold text-[var(--text-primary)]" style="font-size: var(--lyrics-font-size, 48px);">
+                     <p class="leading-tight whitespace-pre-line font-bold text-white" style="font-size: var(--lyrics-font-size, 48px);">
                         No hay letras disponibles.
                      </p>
-                     <p class="text-lg mt-4 opacity-50 font-normal text-[var(--text-muted)]">
+                     <p class="text-lg mt-4 opacity-70 font-normal text-white">
                         (Haz clic para añadirlas)
                      </p>
                  </div>
