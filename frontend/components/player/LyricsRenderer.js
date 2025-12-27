@@ -26,10 +26,27 @@ export function renderLyrics(song) {
         checkSyncStatus();
     };
 
+    const sidebar = document.getElementById('lyrics-sidebar');
+    const header = sidebar ? sidebar.querySelector('.border-b') : null;
+    const gradient = sidebar ? sidebar.querySelector('.bg-gradient-to-t') : null;
+
     if (!song.estrofas || song.estrofas.length === 0) {
-        // Apply "No Lyrics" Style to Container
-        container.style.backgroundColor = '#2563eb'; // bg-blue-600
-        container.style.maskImage = 'none'; // Disable fade mask for clear text
+        // Apply "No Lyrics" Style to Entire Sidebar
+        if (sidebar) sidebar.style.backgroundColor = '#2563eb'; // bg-blue-600
+
+        // Adjust Header for Blue Background
+        if (header) {
+            header.style.borderColor = 'transparent';
+            header.style.color = 'white';
+            const icon = header.querySelector('.text-green-400');
+            if (icon) icon.classList.replace('text-green-400', 'text-white');
+        }
+
+        // Hide Bottom Gradient
+        if (gradient) gradient.style.display = 'none';
+
+        // Container adjustments
+        container.style.maskImage = 'none';
 
         container.innerHTML = `
             <div class="flex flex-col items-center justify-center h-full text-center">
@@ -45,7 +62,18 @@ export function renderLyrics(song) {
             </div>
         `;
     } else {
-        // Reset Style for Normal Lyrics
+        // Reset Styles
+        if (sidebar) sidebar.style.backgroundColor = '';
+
+        if (header) {
+            header.style.borderColor = '';
+            header.style.color = '';
+            const icon = header.querySelector('.text-white');
+            if (icon) icon.classList.replace('text-white', 'text-green-400');
+        }
+
+        if (gradient) gradient.style.display = '';
+
         container.style.backgroundColor = '';
         container.style.maskImage = '';
 
