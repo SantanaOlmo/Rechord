@@ -94,8 +94,8 @@ export function Footer() {
 
                         <!-- Gmail -->
 
-                        <a href="mailto:alberto16166@gmail.com" class="hover:opacity-80 transition-opacity">
-                            <img src="assets/icons/social_media/LogosGoogleGmail.svg" alt="Gmail" class="w-6 h-6 filter grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                        <a href="mailto:alberto16166@gmail.com" class="hover:opacity-80 transition-opacity text-[var(--text-muted)] hover:text-[#EA4335]">
+                             <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>
                         </a>
 
                         <!-- Instagram -->
