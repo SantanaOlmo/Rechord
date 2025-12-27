@@ -48,9 +48,10 @@
     --color-text-light: var(--text-primary);
 
     /* Gradients */
-    --hero-gradient-start: #ffffff;
-    --hero-gradient-mid: rgba(255, 255, 255, 0.6);
-    --hero-gradient-end: rgba(255, 255, 255, 0.1);
-    --hero-top-gradient: linear-gradient(to bottom, white 0%, transparent 100%);
+    /* Gradients (Updated: Must be dark even in light mode for Hero image text contrast) */
+    --hero-gradient-start: #111827;
+    --hero-gradient-mid: rgba(17, 24, 39, 0.4);
+    --hero-gradient-end: rgba(0, 0, 0, 0.2);
+    --hero-top-gradient: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
     --sidebar-bg: #f3f4f6;
 }
