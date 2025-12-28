@@ -14,13 +14,13 @@ export function highlightFolder(id, active, isMobile) {
                It adapts to whatever the main brand color is (usually blue-ish).
             */
             if (active) {
-                header.classList.add('!bg-[var(--accent-primary)]', '!bg-opacity-20', '!text-[var(--text-primary)]');
+                header.classList.add('!bg-[#237BFF]', '!bg-opacity-20', '!text-[#237BFF]');
                 // Alternatively, force text to accent color: header.classList.add('!text-[var(--accent-primary)]');
                 // But text-primary usually reads better on light backgrounds.
-                header.querySelector('svg')?.classList.add('text-[var(--accent-primary)]');
+                header.querySelector('svg')?.classList.add('!text-[#237BFF]');
             } else {
-                header.classList.remove('!bg-[var(--accent-primary)]', '!bg-opacity-20', '!text-[var(--text-primary)]');
-                header.querySelector('svg')?.classList.remove('text-[var(--accent-primary)]');
+                header.classList.remove('!bg-[#237BFF]', '!bg-opacity-20', '!text-[#237BFF]');
+                header.querySelector('svg')?.classList.remove('!text-[#237BFF]');
             }
         }
     }
@@ -74,7 +74,7 @@ export function setupSelection(isMobile) {
         }
 
         selectionBox = document.createElement('div');
-        selectionBox.className = 'absolute bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)] z-50 pointer-events-none';
+        selectionBox.className = 'absolute bg-[#237BFF]/20 border border-[#237BFF] z-50 pointer-events-none';
         selectionBox.style.left = startX + 'px';
         selectionBox.style.top = startY + 'px';
         listContainer.appendChild(selectionBox);
