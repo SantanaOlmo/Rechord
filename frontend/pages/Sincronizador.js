@@ -14,9 +14,12 @@ export function render(songId) {
             ${SyncHeader()}
 
             <!-- 2. Main Workspace (Split View) -->
-            <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 relative gap-[5px] px-[5px] pt-[5px]">
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 relative px-[5px] pt-[5px]">
                 
                 ${SyncSidebar()}
+
+                <!-- Resizer Handle -->
+                <div id="sidebar-resizer" class="w-[5px] cursor-col-resize hover:bg-blue-500/50 transition-colors z-50 shrink-0 hidden md:block"></div>
 
                 <!-- Right: Verse Display -->
                 <div class="flex-1 flex flex-col relative bg-[var(--bg-tertiary)] rounded-xl overflow-hidden border border-[var(--border-primary)] shadow-inner">
@@ -114,7 +117,7 @@ export function render(songId) {
                 <div class="flex-1 flex overflow-hidden relative">
                     
                     <!-- Track Controls (Fixed Left) -->
-                    <div class="w-60 bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-20 shadow-lg">
+                    <div id="track-headers-sidebar" class="w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-20 shadow-lg">
                         <!-- Vertical View Switcher -->
                         <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
                             <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">

@@ -170,11 +170,54 @@ export function attachUIListeners() {
                 }
             }
         });
+    }
+
+    // --- SIDEBAR RESIZING LOGIC ---
+    const resizer = document.getElementById('sidebar-resizer');
+    const sidebar = document.getElementById('editor-sidebar');
+    const trackHeaders = document.getElementById('track-headers-sidebar');
+
+    if (resizer && sidebar) {
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            document.body.classList.add('select-none'); // Prevent selection while dragging
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            // Calculate new width optimized with requestAnimationFrame logic implicitly by browser event handling, 
+            // but we can just set it directly as layout thrashing is unavoidable here.
+            // Using requestAnimationFrame explicitly for "no lag" feel if events are too frequent.
+            requestAnimationFrame(() => {
+                const newWidth = e.clientX - sidebar.getBoundingClientRect().left;
+
+                // Constraints (min 200px, max 50% of screen)
+                if (newWidth > 200 && newWidth < window.innerWidth * 0.6) {
+                    sidebar.style.width = `${newWidth}px`;
+                    if (trackHeaders) trackHeaders.style.width = `${newWidth}px`;
+                    // Dispatch resize event so timeline can update if needed (though timeline is flex, checks container)
+                    actions.refresh();
+                }
+            });
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.body.classList.remove('select-none');
+                actions.refresh(); // Final refresh
+            }
+        });
+    }
+
+    // Refresh layout on window resize to ensure timeline fills width
+    window.addEventListener('resize', () => {
+        actions.refresh();
     });
 }
-
-// Refresh layout on window resize to ensure timeline fills width
-window.addEventListener('resize', () => {
-    actions.refresh();
-});
-}
+```

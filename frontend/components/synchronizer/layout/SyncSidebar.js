@@ -3,7 +3,7 @@ import { SyncShortcuts } from './SyncShortcuts.js';
 
 export const SyncSidebar = () => `
     <!-- Left Sidebar: Preferences / Navigation -->
-    <div id="editor-sidebar" class="w-full md:flex-1 bg-[var(--bg-secondary)] flex flex-col z-30 rounded-xl overflow-hidden border border-[var(--border-primary)] shadow-inner">
+    <div id="editor-sidebar" class="w-full md:w-[350px] md:flex-none bg-[var(--bg-secondary)] flex flex-col z-30 rounded-xl overflow-hidden border border-[var(--border-primary)] shadow-inner">
         <div class="flex flex-1 overflow-hidden">
             <!-- Navigation Rail -->
             <div class="w-16 bg-[var(--bg-tertiary)] flex flex-col items-center py-4 border-r border-[var(--border-primary)] gap-4 shrink-0 z-20 justify-evenly">
