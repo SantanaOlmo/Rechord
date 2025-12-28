@@ -102,16 +102,13 @@ function handleFolderSearch(e, folderId, suffix = '') {
                 <div class="search-result-item flex items-center p-2 hover:bg-[var(--bg-tertiary)] cursor-pointer rounded border-b border-[var(--border-primary)] last:border-0"
                         onclick="window.addSongToFolder(${folderId}, '${s.id_cancion}', '${suffix}')">
                     <div class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-muted)] overflow-hidden flex-shrink-0">
-                            ${s.ruta_imagen ? `<img src="${CONTENT_BASE_URL}/${s.ruta_imagen}" class="w-full h-full object-cover">` :
+                            ${s.ruta_imagen ? `<img src="${CONTENT_BASE_URL}/${s.ruta_imagen}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerHTML='<svg class=\\'w-4 h-4\\' fill=\\'none\\' stroke=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3\\'></path></svg>'">` :
                     `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>`}
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <p class="text-xs text-[var(--text-primary)] font-medium truncate">${s.titulo}</p>
                         <p class="text-[10px] text-[var(--text-muted)] truncate">${s.artista}</p>
                     </div>
-                    <span class="ml-2 text-[var(--accent-light)] hover:text-[var(--accent-hover)] transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    </span>
                 </div>
             `).join('') : '<div class="p-2 text-center text-[var(--text-muted)] text-xs italic">Sin resultados</div>';
         }
