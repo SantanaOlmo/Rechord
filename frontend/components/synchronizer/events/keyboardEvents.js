@@ -21,391 +21,411 @@ function setBounds(item, start, end, type) {
     }
 }
 
+
+// State for the Game Loop
+const activeKeys = new Set();
+let loopId = null;
+let lastTick = 0;
+const TICK_RATE = 50; // ms between updates (approx 20fps for control speed)
+
 export function attachKeyboardListeners() {
     if (isAttached) return;
     isAttached = true;
 
+    // Track Modifiers directly in state for UI feedback if needed, but rely on activeKeys for logic
     window.addEventListener('keyup', (e) => {
+        activeKeys.delete(e.code);
+
         if (e.code === 'KeyZ') state.isZDown = false;
         if (e.code === 'KeyX') state.isXDown = false;
         if (e.code === 'KeyC') state.isCDown = false;
         if (e.code === 'KeyJ') state.isJDown = false;
+
+        // Stop Loop if no direction keys are held
+        if (!activeKeys.has('ArrowLeft') && !activeKeys.has('ArrowRight')) {
+            stopLoop();
+        }
     });
 
     window.addEventListener('keydown', (e) => {
-        // Prevent if typing
         if (['INPUT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable) return;
 
-        // Prevent if not on Sync Page OR Song Page
         const onSyncPage = !!document.getElementById('timeline-container');
         const onSongPage = !!document.querySelector('.song-page-container');
-
         if (!onSyncPage && !onSongPage) return;
 
         // Context Setup
         const type = state.selectionType || 'verse';
         const dataSource = type === 'section' ? state.settings.songSections : state.estrofas;
-        const activeTrack = type === 'section' ? 'chords' : 'lyrics'; // Or use state.activeTrack
 
-        // GLOBAL UNDO (Ctrl+Z)
-        if (e.ctrlKey && e.code === 'KeyZ') {
-            e.preventDefault();
+        // Global Undo/Redo/Save/Play (One-off actions)
+        if (handleGlobalShortcuts(e, dataSource)) return;
 
-            const getter = (t) => {
-                if (t === 'section') return state.settings.songSections;
-                return state.estrofas;
-            };
+        // Update Key State
+        activeKeys.add(e.code);
 
-            const result = history.undo(getter);
-            if (result) {
-                const { type: rType, data } = result;
-                if (rType === 'section') state.settings.songSections = data;
-                else state.estrofas = data;
-                actions.refresh();
-            }
-            return;
-        }
-
-        // TOGGLE PLAY (Space)
-        if (e.code === 'Space') {
-            e.preventDefault();
-            togglePlay();
-        }
-
-        // SAVE (Ctrl+S)
-        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
-            e.preventDefault();
-            const btnSave = document.getElementById('btn-save-sync');
-            if (btnSave) btnSave.click();
-            return;
-        }
-
-        // MODIFIER STATE (J)
-        if (e.code === 'KeyJ') {
-            state.isJDown = true;
-        }
-
-        // Clip Navigation using Arrows
-        if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
-            e.preventDefault();
-            const audio = audioService.getInstance();
-            if (!audio) return;
-
-            // Modifier Actions (Require Selection OR Beat Marker)
-            if (state.selectedIndices.size > 0) {
-                // If Shift is NOT held, we act on modifiers or move focused clip
-                if (state.isZDown || state.isXDown || state.isCDown || state.isJDown) {
-                    if (!e.repeat) history.push(dataSource, type);
-                }
-            } else if (state.settings.selectedRegionIndex !== -1 && state.settings.selectedMarkerType) {
-                // MOVE SPECIFIC BEAT MARKER (Start or End)
-                // ... Existing Beat Marker Logic (Unchanged) ...
-                e.preventDefault();
-                let delta = 0.01;
-                if (e.shiftKey) delta = 0.1;
-                const change = (e.code === 'ArrowRight') ? delta : -delta;
-                const idx = state.settings.selectedRegionIndex;
-                const mType = state.settings.selectedMarkerType;
-                const region = state.settings.beatMarker[idx];
-                import('../editor/settings/BeatMarkerManager.js').then(({ BeatMarkerManager }) => {
-                    let s = region.start;
-                    let end = region.end || 180;
-                    if (mType === 'start') s += change;
-                    else end += change;
-                    BeatMarkerManager.updateMarker(idx, s, end);
-                });
-                return;
-            }
-
-            // DIRECTIONAL JOIN (J + Arrow)
-            if (state.isJDown && state.selectedIndices.size > 0) {
-                const sorted = Array.from(state.selectedIndices)
-                    .map(i => ({ index: i, item: dataSource[i] }))
-                    .sort((a, b) => getBounds(a.item, type).start - getBounds(b.item, type).start);
-
-                let changed = false;
-
-                if (e.code === 'ArrowLeft') {
-                    for (let i = 1; i < sorted.length; i++) {
-                        const prevObj = sorted[i - 1];
-                        const currObj = sorted[i];
-                        const prev = prevObj.item;
-                        const curr = currObj.item;
-                        const { start: currStart, end: currEnd } = getBounds(curr, type);
-                        const prevEnd = getBounds(prev, type).end;
-                        const duration = currEnd - currStart;
-
-                        if (Math.abs(currStart - prevEnd) > 0.001) {
-                            setBounds(curr, prevEnd, prevEnd + duration, type);
-                            changed = true;
-                        }
-                    }
-                } else if (e.code === 'ArrowRight') {
-                    for (let i = sorted.length - 2; i >= 0; i--) {
-                        const nextObj = sorted[i + 1];
-                        const currObj = sorted[i];
-                        const next = nextObj.item;
-                        const curr = currObj.item;
-                        const { start: currStart, end: currEnd } = getBounds(curr, type);
-                        const nextStart = getBounds(next, type).start;
-                        const duration = currEnd - currStart;
-
-                        if (Math.abs(currEnd - nextStart) > 0.001) {
-                            setBounds(curr, nextStart - duration, nextStart, type);
-                            changed = true;
-                        }
-                    }
-                }
-
-                if (changed) {
-                    actions.refresh();
-                }
-                return;
-            }
-
-            // MODIFIER LOGIC FOR CLIPS (X, C, Z)
-            if (state.selectedIndices.size > 0) {
-                // Check shift key from event OR manual state (if reliable)
-                const isShift = e.shiftKey || state.keys?.Shift;
-                const step = isShift ? 0.2 : 0.1;
-                const delta = (e.code === 'ArrowRight') ? step : -step;
-                const selected = Array.from(state.selectedIndices);
-
-                // 1. Resize START (X + Arrows)
-                if (state.isXDown) {
-                    if (!e.repeat) history.push(dataSource, type);
-                    selected.forEach(idx => {
-                        const item = dataSource[idx];
-                        const { start, end } = getBounds(item, type);
-                        let newVal = start + delta;
-                        let minLimit = 0;
-
-                        // Check previous item in dataSource
-                        if (idx > 0 && !state.selectedIndices.has(idx - 1)) {
-                            minLimit = getBounds(dataSource[idx - 1], type).end;
-                        }
-
-                        newVal = Math.max(minLimit, Math.min(newVal, end - 0.1));
-                        setBounds(item, newVal, end, type);
-                    });
-                    const first = getBounds(dataSource[selected[0]], type);
-                    audio.currentTime = first.start;
-                    actions.refresh();
-                    ensurePlayheadVisible(audio.currentTime);
-                    return;
-                }
-
-                // 2. Resize END (C + Arrows)
-                if (state.isCDown) {
-                    if (!e.repeat) history.push(dataSource, type);
-                    selected.forEach(idx => {
-                        const item = dataSource[idx];
-                        const { start, end } = getBounds(item, type);
-                        let newVal = end + delta;
-                        let maxLimit = Infinity;
-
-                        // Check next item
-                        if (idx < dataSource.length - 1 && !state.selectedIndices.has(idx + 1)) {
-                            maxLimit = getBounds(dataSource[idx + 1], type).start;
-                        }
-
-                        newVal = Math.max(start + 0.1, Math.min(newVal, maxLimit));
-                        setBounds(item, start, newVal, type);
-                    });
-                    const first = getBounds(dataSource[selected[0]], type);
-                    // audio.currentTime = first.end; // User requested playhead stays put
-                    actions.refresh();
-                    // ensurePlayheadVisible(audio.currentTime); 
-                    return;
-                }
-
-                // 3. Move Clip (Z + Arrows)
-                if (state.isZDown) {
-                    if (!e.repeat) history.push(dataSource, type);
-                    let allowedDelta = delta;
-                    if (delta < 0) {
-                        for (let idx of selected) {
-                            if (!state.selectedIndices.has(idx - 1)) {
-                                const { start } = getBounds(dataSource[idx], type);
-                                const prevEnd = (idx > 0) ? getBounds(dataSource[idx - 1], type).end : 0;
-                                const maxMove = prevEnd - start;
-                                if (allowedDelta < maxMove) allowedDelta = maxMove;
-                            }
-                        }
-                    } else {
-                        for (let idx of selected) {
-                            if (!state.selectedIndices.has(idx + 1)) {
-                                const { end } = getBounds(dataSource[idx], type);
-                                const nextStart = (idx < dataSource.length - 1) ? getBounds(dataSource[idx + 1], type).start : Infinity;
-                                const maxMove = nextStart - end;
-                                if (allowedDelta > maxMove) allowedDelta = maxMove;
-                            }
-                        }
-                    }
-
-                    selected.forEach(idx => {
-                        const item = dataSource[idx];
-                        const { start, end } = getBounds(item, type);
-                        setBounds(item, start + allowedDelta, end + allowedDelta, type);
-                    });
-                    const first = getBounds(dataSource[selected[0]], type);
-                    audio.currentTime = first.start;
-                    actions.refresh();
-                    ensurePlayheadVisible(audio.currentTime);
-                    return;
-                }
-
-                // 4. Compress/Expand Gaps (Alt + Arrows)
-                if (e.altKey) {
-                    if (!e.repeat) history.push(dataSource, type);
-
-                    const sortedIndices = Array.from(state.selectedIndices).sort((a, b) => a - b);
-                    const compressionStep = 0.05;
-                    const shiftAmount = (e.code === 'ArrowRight') ? compressionStep : -compressionStep;
-                    let cumulativeShift = 0;
-
-                    for (let i = 1; i < sortedIndices.length; i++) {
-                        const currentIdx = sortedIndices[i];
-                        cumulativeShift += shiftAmount;
-
-                        const item = dataSource[currentIdx];
-                        const { start, end } = getBounds(item, type);
-                        const duration = end - start;
-
-                        let newStart = start + cumulativeShift;
-                        let newEnd = newStart + duration;
-
-                        // Collision Check (Left Neighbor)
-                        if (currentIdx > 0) {
-                            const prevItem = dataSource[currentIdx - 1];
-                            const prevEnd = getBounds(prevItem, type).end;
-                            if (newStart < prevEnd) {
-                                newStart = prevEnd;
-                                newEnd = newStart + duration;
-                            }
-                        }
-
-                        // Collision Check (Right Neighbor) - mainly for expanding
-                        if (currentIdx < dataSource.length - 1) {
-                            const nextItem = dataSource[currentIdx + 1];
-                            const nextStart = getBounds(nextItem, type).start;
-                            if (newEnd > nextStart) {
-                                newEnd = nextStart;
-                                newStart = newEnd - duration;
-                            }
-                        }
-
-                        // Double-check Left (Priority: Don't push back into left neighbor if blocked by right)
-                        if (currentIdx > 0) {
-                            const prevItem = dataSource[currentIdx - 1];
-                            const prevEnd = getBounds(prevItem, type).end;
-                            if (newStart < prevEnd) {
-                                newStart = prevEnd;
-                                newEnd = newStart + duration;
-                            }
-                        }
-
-                        setBounds(item, newStart, newEnd, type);
-                    }
-                    actions.refresh();
-                    return;
-                }
-            }
-
-            // Normal Navigation (Clears Anchor if no Shift)
-            if (e.shiftKey) {
-                // Initialize Anchor if needed
-                if (state.selectionAnchor === null || state.selectedIndices.size === 0) {
-                    let startIdx = -1;
-                    if (state.selectedIndices.size > 0) {
-                        startIdx = Array.from(state.selectedIndices).sort((a, b) => a - b)[0];
-                    } else {
-                        const time = audio.currentTime;
-                        // Find item under playhead
-                        startIdx = dataSource.findIndex(v => {
-                            const { start, end } = getBounds(v, type);
-                            return time >= start && time <= end;
-                        });
-                        if (startIdx === -1) startIdx = 0; // Fallback
-                    }
-                    state.selectionAnchor = startIdx;
-                    state.selectionHead = startIdx;
-                }
-
-                // Move Head
-                let target = state.selectionHead;
-                if (e.code === 'ArrowRight') {
-                    if (target < dataSource.length - 1) target++;
-                } else {
-                    if (target > 0) target--;
-                }
-                state.selectionHead = target;
-
-                // Re-build Selection Set
-                const min = Math.min(state.selectionAnchor, state.selectionHead);
-                const max = Math.max(state.selectionAnchor, state.selectionHead);
-                state.selectedIndices.clear();
-                for (let i = min; i <= max; i++) {
-                    state.selectedIndices.add(i);
-                }
-
-                const headItem = dataSource[target];
-                audio.currentTime = getBounds(headItem, type).start + 0.01;
-                actions.refresh();
-                ensurePlayheadVisible(audio.currentTime);
-                return;
-            }
-
-            // Normal Navigation (No Shift, No Modifiers)
-            state.selectionAnchor = null;
-            state.selectionHead = null;
-
-            const currentTime = audio.currentTime;
-
-            // Find current item based on time
-            let currentIndex = dataSource.findIndex(v => {
-                const { start, end } = getBounds(v, type);
-                return currentTime >= start && currentTime <= end;
-            });
-
-            if (currentIndex === -1) {
-                // If in gap, find next one
-                currentIndex = dataSource.findIndex(v => getBounds(v, type).start > currentTime);
-                if (currentIndex === -1) currentIndex = dataSource.length - 1;
-                else currentIndex = Math.max(0, currentIndex - 1);
-            }
-
-            if (e.code === 'ArrowRight') {
-                if (currentIndex < dataSource.length - 1) {
-                    const nextIndex = currentIndex + 1;
-                    const nextItem = dataSource[nextIndex];
-                    audio.currentTime = getBounds(nextItem, type).start + 0.01;
-                    state.selectedIndices.clear();
-                    state.selectedIndices.add(nextIndex);
-                    state.selectionAnchor = nextIndex;
-                    state.selectionHead = nextIndex;
-                    actions.refresh();
-                    ensurePlayheadVisible(audio.currentTime);
-                }
-            } else {
-                if (currentIndex >= 0 && dataSource[currentIndex - 1]) {
-                    const prevIndex = currentIndex - 1;
-                    const prevItem = dataSource[prevIndex];
-                    audio.currentTime = getBounds(prevItem, type).start + 0.01;
-                    state.selectedIndices.clear();
-                    state.selectedIndices.add(prevIndex);
-                    state.selectionAnchor = prevIndex;
-                    state.selectionHead = prevIndex;
-                    actions.refresh();
-                    ensurePlayheadVisible(audio.currentTime);
-                }
-            }
-        } // End of Arrow check
-
-        // Track Modifiers (keydown)
+        // Update UI State hints
         if (e.code === 'KeyZ') state.isZDown = true;
         if (e.code === 'KeyX') state.isXDown = true;
         if (e.code === 'KeyC') state.isCDown = true;
         if (e.code === 'KeyJ') state.isJDown = true;
+
+        // Start Loop if Arrow Pressed and not running
+        if ((e.code === 'ArrowLeft' || e.code === 'ArrowRight') && !loopId) {
+            e.preventDefault();
+            // Snapshot history ONCE effectively when movement starts
+            const isModifying = state.isZDown || state.isXDown || state.isCDown || state.isJDown || e.altKey;
+            if (isModifying && state.selectedIndices.size > 0) {
+                history.push(dataSource, type);
+            }
+            startLoop();
+        }
     });
 }
+
+function handleGlobalShortcuts(e, dataSource) {
+    if (e.ctrlKey && e.code === 'KeyZ') {
+        e.preventDefault();
+        const getter = (t) => t === 'section' ? state.settings.songSections : state.estrofas;
+        const result = history.undo(getter);
+        if (result) {
+            if (result.type === 'section') state.settings.songSections = result.data;
+            else state.estrofas = result.data;
+            actions.refresh();
+        }
+        return true;
+    }
+    if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+        return true;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.code === 'KeyS') {
+        e.preventDefault();
+        const btnSave = document.getElementById('btn-save-sync');
+        if (btnSave) btnSave.click();
+        return true;
+    }
+    return false;
+}
+
+function startLoop() {
+    if (loopId) return;
+    lastTick = 0; // Force immediate first tick
+    loopId = requestAnimationFrame(loop);
+}
+
+function stopLoop() {
+    if (loopId) {
+        cancelAnimationFrame(loopId);
+        loopId = null;
+    }
+}
+
+function loop(timestamp) {
+    if (!loopId) return; // Guard
+
+    const elapsed = timestamp - lastTick;
+
+    if (elapsed > TICK_RATE) {
+        handleMovementTick();
+        lastTick = timestamp;
+    }
+
+    loopId = requestAnimationFrame(loop);
+}
+
+function handleMovementTick() {
+    const audio = audioService.getInstance();
+    if (!audio) return;
+
+    const type = state.selectionType || 'verse';
+    const dataSource = type === 'section' ? state.settings.songSections : state.estrofas;
+
+    // Determine Direction
+    // If both pressed, cancel out or prioritize last? Let's prioritize Left for simplicity if both
+    let direction = 0;
+    if (activeKeys.has('ArrowLeft')) direction = -1;
+    if (activeKeys.has('ArrowRight')) direction = 1;
+
+    if (direction === 0) return; // Should stop loop? kept active while held for responsiveness
+
+    // Logic Dispatch
+    const isShift = activeKeys.has('ShiftLeft') || activeKeys.has('ShiftRight');
+    const isAlt = activeKeys.has('AltLeft') || activeKeys.has('AltRight');
+
+    // 1. Modifiers with Selection
+    if (state.selectedIndices.size > 0) {
+        // A. Compression (Alt)
+        if (isAlt) {
+            applyCompression(direction, dataSource, type);
+            return;
+        }
+        // B. Move (Z)
+        if (state.isZDown) {
+            applyMove(direction, isShift, dataSource, type);
+            return;
+        }
+        // C. Resize Start (X)
+        if (state.isXDown) {
+            applyResizeStart(direction, isShift, dataSource, type);
+            return;
+        }
+        // D. Resize End (C)
+        if (state.isCDown) {
+            applyResizeEnd(direction, isShift, dataSource, type);
+            return;
+        }
+        // E. Join (J)
+        if (state.isJDown) {
+            applyJoin(direction, dataSource, type);
+            return;
+        }
+    }
+
+    // 2. Navigation (No modification modifiers)
+    applyNavigation(direction, isShift, dataSource, type, audio);
+}
+
+// --- Logic Implementations ---
+
+function applyMove(direction, isShift, dataSource, type) {
+    const selected = Array.from(state.selectedIndices);
+    const audio = audioService.getInstance();
+    const step = isShift ? 0.2 : 0.1; // Shift = x2 Speed
+    let delta = direction * step;
+
+    // Collision Limit Check
+    let allowedDelta = delta;
+    if (delta < 0) { // Moving Left
+        for (let idx of selected) {
+            if (!state.selectedIndices.has(idx - 1)) {
+                const { start } = getBounds(dataSource[idx], type);
+                const prevEnd = (idx > 0) ? getBounds(dataSource[idx - 1], type).end : 0;
+                const maxMove = prevEnd - start; // Negative numbers
+                if (allowedDelta < maxMove) allowedDelta = maxMove;
+            }
+        }
+    } else { // Moving Right
+        for (let idx of selected) {
+            if (!state.selectedIndices.has(idx + 1)) {
+                const { end } = getBounds(dataSource[idx], type);
+                const nextStart = (idx < dataSource.length - 1) ? getBounds(dataSource[idx + 1], type).start : Infinity;
+                const maxMove = nextStart - end;
+                if (allowedDelta > maxMove) allowedDelta = maxMove;
+            }
+        }
+    }
+
+    if (Math.abs(allowedDelta) < 0.0001) return; // Blocked
+
+    selected.forEach(idx => {
+        const item = dataSource[idx];
+        const { start, end } = getBounds(item, type);
+        setBounds(item, start + allowedDelta, end + allowedDelta, type);
+    });
+
+    const first = getBounds(dataSource[selected[0]], type);
+    audio.currentTime = first.start;
+    actions.refresh();
+    ensurePlayheadVisible(audio.currentTime);
+}
+
+function applyResizeStart(direction, isShift, dataSource, type) {
+    const step = isShift ? 0.2 : 0.1;
+    const delta = direction * step;
+    const selected = Array.from(state.selectedIndices);
+    const audio = audioService.getInstance();
+
+    selected.forEach(idx => {
+        const item = dataSource[idx];
+        const { start, end } = getBounds(item, type);
+        let newVal = start + delta;
+        let minLimit = 0;
+
+        if (idx > 0 && !state.selectedIndices.has(idx - 1)) {
+            minLimit = getBounds(dataSource[idx - 1], type).end;
+        }
+        newVal = Math.max(minLimit, Math.min(newVal, end - 0.1));
+        setBounds(item, newVal, end, type);
+    });
+
+    if (selected.length > 0) {
+        const first = getBounds(dataSource[selected[0]], type);
+        audio.currentTime = first.start;
+        actions.refresh();
+        ensurePlayheadVisible(audio.currentTime);
+    }
+}
+
+function applyResizeEnd(direction, isShift, dataSource, type) {
+    const step = isShift ? 0.2 : 0.1;
+    const delta = direction * step;
+    const selected = Array.from(state.selectedIndices);
+
+    selected.forEach(idx => {
+        const item = dataSource[idx];
+        const { start, end } = getBounds(item, type);
+        let newVal = end + delta;
+        let maxLimit = Infinity;
+
+        if (idx < dataSource.length - 1 && !state.selectedIndices.has(idx + 1)) {
+            maxLimit = getBounds(dataSource[idx + 1], type).start;
+        }
+        newVal = Math.max(start + 0.1, Math.min(newVal, maxLimit));
+        setBounds(item, start, newVal, type);
+    });
+    actions.refresh();
+}
+
+function applyCompression(direction, dataSource, type) {
+    const sortedIndices = Array.from(state.selectedIndices).sort((a, b) => a - b);
+    const compressionStep = 0.05;
+    const shiftAmount = (direction === 1) ? compressionStep : -compressionStep;
+    let cumulativeShift = 0;
+
+    for (let i = 1; i < sortedIndices.length; i++) {
+        const currentIdx = sortedIndices[i];
+        cumulativeShift += shiftAmount;
+
+        const item = dataSource[currentIdx];
+        const { start, end } = getBounds(item, type);
+        const duration = end - start;
+
+        let newStart = start + cumulativeShift;
+        let newEnd = newStart + duration;
+
+        // Collision Check (Left Neighbor)
+        if (currentIdx > 0) {
+            const prevItem = dataSource[currentIdx - 1];
+            const prevEnd = getBounds(prevItem, type).end;
+            if (newStart < prevEnd) {
+                newStart = prevEnd;
+                newEnd = newStart + duration;
+            }
+        }
+        // Collision Check (Right Neighbor)
+        if (currentIdx < dataSource.length - 1) {
+            const nextItem = dataSource[currentIdx + 1];
+            const nextStart = getBounds(nextItem, type).start;
+            if (newEnd > nextStart) {
+                newEnd = nextStart;
+                newStart = newEnd - duration;
+            }
+        }
+        // Priority Left Check
+        if (currentIdx > 0) {
+            const prevItem = dataSource[currentIdx - 1];
+            const prevEnd = getBounds(prevItem, type).end;
+            if (newStart < prevEnd) {
+                newStart = prevEnd;
+                newEnd = newStart + duration;
+            }
+        }
+
+        setBounds(item, newStart, newEnd, type);
+    }
+    actions.refresh();
+}
+
+function applyJoin(direction, dataSource, type) {
+    const sorted = Array.from(state.selectedIndices)
+        .map(i => ({ index: i, item: dataSource[i] }))
+        .sort((a, b) => getBounds(a.item, type).start - getBounds(b.item, type).start);
+
+    let changed = false;
+
+    if (direction === -1) { // Left
+        for (let i = 1; i < sorted.length; i++) {
+            const prev = sorted[i - 1].item;
+            const curr = sorted[i].item;
+            const { start: currStart, end: currEnd } = getBounds(curr, type);
+            const prevEnd = getBounds(prev, type).end;
+            const duration = currEnd - currStart;
+
+            if (Math.abs(currStart - prevEnd) > 0.001) {
+                setBounds(curr, prevEnd, prevEnd + duration, type);
+                changed = true;
+            }
+        }
+    } else { // Right
+        for (let i = sorted.length - 2; i >= 0; i--) {
+            const next = sorted[i + 1].item;
+            const curr = sorted[i].item;
+            const { start: currStart, end: currEnd } = getBounds(curr, type);
+            const nextStart = getBounds(next, type).start;
+            const duration = currEnd - currStart;
+
+            if (Math.abs(currEnd - nextStart) > 0.001) {
+                setBounds(curr, nextStart - duration, nextStart, type);
+                changed = true;
+            }
+        }
+    }
+    if (changed) actions.refresh();
+}
+
+function applyNavigation(direction, isShift, dataSource, type, audio) {
+    // Only triggers ONCE per key press actually, navigation shouldn't loop fast.
+    // However, if holding arrow, we DO want repeat navigation (scrolling through).
+    // The TICK_RATE (50ms) handles the speed.
+
+    // Shift Selection (Anchor) - Copied logic but adapted for loop
+    if (isShift) {
+        if (state.selectionAnchor === null || state.selectedIndices.size === 0) {
+            // Init Anchor (simplified)
+            let startIdx = 0;
+            if (state.selectedIndices.size > 0) startIdx = Math.min(...state.selectedIndices);
+            else {
+                const t = audio.currentTime;
+                startIdx = dataSource.findIndex(v => t >= getBounds(v, type).start && t <= getBounds(v, type).end);
+                if (startIdx === -1) startIdx = 0;
+            }
+            state.selectionAnchor = startIdx;
+            state.selectionHead = startIdx;
+        }
+
+        let target = state.selectionHead;
+        if (direction === 1) {
+            if (target < dataSource.length - 1) target++;
+        } else {
+            if (target > 0) target--;
+        }
+        state.selectionHead = target;
+
+        const min = Math.min(state.selectionAnchor, state.selectionHead);
+        const max = Math.max(state.selectionAnchor, state.selectionHead);
+        state.selectedIndices.clear();
+        for (let i = min; i <= max; i++) state.selectedIndices.add(i);
+
+        const headItem = dataSource[target];
+        audio.currentTime = getBounds(headItem, type).start + 0.01;
+        actions.refresh();
+        ensurePlayheadVisible(audio.currentTime);
+        return;
+    }
+
+    // Normal Jump (No Shift)
+    state.selectionAnchor = null;
+    state.selectionHead = null;
+    const t = audio.currentTime;
+    // Find closest relative to time, or selected?
+    // Using simple logic: find current, move next/prev
+    let idx = dataSource.findIndex(v => t >= getBounds(v, type).start && t <= getBounds(v, type).end);
+    if (idx === -1) {
+        idx = dataSource.findIndex(v => getBounds(v, type).start > t);
+        if (idx === -1) idx = dataSource.length - 1;
+        else idx = Math.max(0, idx - 1);
+    }
+
+    let nextIdx = idx + direction;
+    if (nextIdx >= 0 && nextIdx < dataSource.length) {
+        const item = dataSource[nextIdx];
+        audio.currentTime = getBounds(item, type).start + 0.01;
+        state.selectedIndices.clear();
+        state.selectedIndices.add(nextIdx);
+        actions.refresh();
+        ensurePlayheadVisible(audio.currentTime);
+    }
+}
+
