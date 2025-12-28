@@ -39,20 +39,26 @@ function renderBeatMarker() {
 
 function renderSelectionBox() {
     const activeTrackEl = document.getElementById(`track-${state.activeTrack}`);
-    if (state.isSelecting && activeTrackEl) {
-        const box = document.createElement('div');
-        box.className = 'absolute bg-blue-500/20 border border-blue-400 z-50 pointer-events-none';
-        const trackRect = activeTrackEl.getBoundingClientRect();
-        const x1 = Math.min(state.selectionStart.x, state.selectionCurrent.x) - trackRect.left;
-        const y1 = Math.min(state.selectionStart.y, state.selectionCurrent.y) - trackRect.top;
-        const width = Math.abs(state.selectionCurrent.x - state.selectionStart.x);
-        const height = Math.abs(state.selectionCurrent.y - state.selectionStart.y);
+    if (activeTrackEl) {
+        // Remove existing
+        const existing = activeTrackEl.querySelector('.selection-box-overlay');
+        if (existing) existing.remove();
 
-        box.style.left = `${x1}px`;
-        box.style.top = `${y1}px`;
-        box.style.width = `${width}px`;
-        box.style.height = `${height}px`;
-        activeTrackEl.appendChild(box);
+        if (state.isSelecting) {
+            const box = document.createElement('div');
+            box.className = 'selection-box-overlay absolute bg-blue-500/20 border border-blue-400 z-50 pointer-events-none transition-none'; // Added class and transition-none
+            const trackRect = activeTrackEl.getBoundingClientRect();
+            const x1 = Math.min(state.selectionStart.x, state.selectionCurrent.x) - trackRect.left;
+            const y1 = Math.min(state.selectionStart.y, state.selectionCurrent.y) - trackRect.top;
+            const width = Math.abs(state.selectionCurrent.x - state.selectionStart.x);
+            const height = Math.abs(state.selectionCurrent.y - state.selectionStart.y);
+
+            box.style.left = `${x1}px`;
+            box.style.top = `${y1}px`;
+            box.style.width = `${width}px`;
+            box.style.height = `${height}px`;
+            activeTrackEl.appendChild(box);
+        }
     }
 }
 
