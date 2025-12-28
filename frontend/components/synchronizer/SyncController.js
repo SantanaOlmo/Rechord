@@ -246,20 +246,27 @@ function startRenderLoopInContext() {
     };
     loop();
     // Link Actions
+    let refreshPending = false;
     actions.refresh = () => {
-        renderTimeline();
-        renderHeaders();
-        updatePreview();
-        updatePlayIcon();
+        if (refreshPending) return;
+        refreshPending = true;
 
-        // Sync Wavesurfer Zoom
-        if (state.wavesurfer && state.wavesurfer.getDuration() > 0) {
-            try {
-                state.wavesurfer.zoom(state.zoom);
-            } catch (e) {
-                console.warn("WaveSurfer zoom failed:", e);
+        requestAnimationFrame(() => {
+            renderTimeline();
+            renderHeaders();
+            updatePreview();
+            updatePlayIcon();
+
+            // Sync Wavesurfer Zoom
+            if (state.wavesurfer && state.wavesurfer.getDuration() > 0) {
+                try {
+                    state.wavesurfer.zoom(state.zoom);
+                } catch (e) {
+                    // console.warn("WaveSurfer zoom failed:", e);
+                }
             }
-        }
+            refreshPending = false;
+        });
     };
 
     actions.toggleTrack = (key) => {
