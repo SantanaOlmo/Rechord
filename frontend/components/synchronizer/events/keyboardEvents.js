@@ -192,7 +192,12 @@ function handleMovementTick() {
 function applyMove(direction, isShift, dataSource, type) {
     const selected = Array.from(state.selectedIndices);
     const audio = audioService.getInstance();
-    const step = isShift ? 0.2 : 0.1; // Shift = x2 Speed
+
+    // Speed Logic: Default 0.1, Shift 0.3 (3x), Double-Shift 0.4 (4x)
+    let step = 0.1;
+    if (isSuperShift) step = 0.4;
+    else if (isShift) step = 0.3;
+
     let delta = direction * step;
 
     // Collision Limit Check
@@ -232,7 +237,11 @@ function applyMove(direction, isShift, dataSource, type) {
 }
 
 function applyResizeStart(direction, isShift, dataSource, type) {
-    const step = isShift ? 0.2 : 0.1;
+    // Speed Logic
+    let step = 0.1;
+    if (isSuperShift) step = 0.4;
+    else if (isShift) step = 0.3;
+
     const delta = direction * step;
     const selected = Array.from(state.selectedIndices);
     const audio = audioService.getInstance();
@@ -259,7 +268,11 @@ function applyResizeStart(direction, isShift, dataSource, type) {
 }
 
 function applyResizeEnd(direction, isShift, dataSource, type) {
-    const step = isShift ? 0.2 : 0.1;
+    // Speed Logic
+    let step = 0.1;
+    if (isSuperShift) step = 0.4;
+    else if (isShift) step = 0.3;
+
     const delta = direction * step;
     const selected = Array.from(state.selectedIndices);
 
