@@ -1,15 +1,14 @@
-```
 import { sidebarState } from './state.js';
 
 export function highlightFolder(id, active, isMobile) {
     const suffix = isMobile ? '-mobile' : '';
-    const nameEl = document.getElementById(`folder - name - ${ id }${ suffix } `);
-    if(nameEl) {
+    const nameEl = document.getElementById(`folder-name-${id}${suffix}`);
+    if (nameEl) {
         const header = nameEl.closest('.folder-header');
-        if(header) {
+        if (header) {
             // Use !important to override default hover styles
             // Celestito: !bg-sky-200 (Light Mode) / !bg-sky-900 (Dark Mode)
-            if(active) header.classList.add('!bg-sky-200', 'dark:!bg-sky-900', '!text-blue-900', 'dark:!text-blue-100');
+            if (active) header.classList.add('!bg-sky-200', 'dark:!bg-sky-900', '!text-blue-900', 'dark:!text-blue-100');
             else header.classList.remove('!bg-sky-200', 'dark:!bg-sky-900', '!text-blue-900', 'dark:!text-blue-100');
         }
     }
