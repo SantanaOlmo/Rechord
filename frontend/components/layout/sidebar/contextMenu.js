@@ -59,7 +59,6 @@ showConfirmModal(async () => {
         const cx = document.getElementById('folder-context-menu');
         if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
     });
-}
 
     // Handlers
     window.onFolderContextMenu = (e, folderId) => {
@@ -72,139 +71,139 @@ showConfirmModal(async () => {
         showContextMenu(e, 'folder');
     };
 
-window.onBackgroundContextMenu = (e) => {
-    e.preventDefault();
-    // showContextMenu(e, 'bg'); 
-};
+    window.onBackgroundContextMenu = (e) => {
+        e.preventDefault();
+        // showContextMenu(e, 'bg'); 
+    };
 
-setupContextActions(isMobile);
+    setupContextActions(isMobile);
 }
 
 function showContextMenu(e, type) {
-    const ctxMenu = document.getElementById('folder-context-menu');
-    if (!ctxMenu) return;
+        const ctxMenu = document.getElementById('folder-context-menu');
+        if (!ctxMenu) return;
 
-    ['ctx-new-folder', 'ctx-add-song', 'ctx-rename', 'ctx-remove-song', 'ctx-delete', 'ctx-separator'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-    });
+        ['ctx-new-folder', 'ctx-add-song', 'ctx-rename', 'ctx-remove-song', 'ctx-delete', 'ctx-separator'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
 
-    if (type === 'bg') {
-        document.getElementById('ctx-new-folder')?.classList.remove('hidden');
-    } else if (type === 'folder') {
-        document.getElementById('ctx-rename')?.classList.remove('hidden');
-        document.getElementById('ctx-separator')?.classList.remove('hidden');
+        if (type === 'bg') {
+            document.getElementById('ctx-new-folder')?.classList.remove('hidden');
+        } else if (type === 'folder') {
+            document.getElementById('ctx-rename')?.classList.remove('hidden');
+            document.getElementById('ctx-separator')?.classList.remove('hidden');
 
-        const delLabel = document.getElementById('ctx-delete');
-        if (delLabel) {
-            delLabel.classList.remove('hidden');
-            const count = sidebarState.selectedFolderIds.size;
-            delLabel.textContent = count > 1 ? `Eliminar ${count} Carpetas` : 'Eliminar Carpeta';
+            const delLabel = document.getElementById('ctx-delete');
+            if (delLabel) {
+                delLabel.classList.remove('hidden');
+                const count = sidebarState.selectedFolderIds.size;
+                delLabel.textContent = count > 1 ? `Eliminar ${count} Carpetas` : 'Eliminar Carpeta';
+            }
+            if (sidebarState.selectedFolderIds.size > 1) {
+                document.getElementById('ctx-rename')?.classList.add('hidden');
+            }
         }
-        if (sidebarState.selectedFolderIds.size > 1) {
-            document.getElementById('ctx-rename')?.classList.add('hidden');
-        }
+
+        ctxMenu.style.left = `${e.pageX}px`;
+        ctxMenu.style.top = `${e.pageY}px`;
+        ctxMenu.classList.remove('hidden');
     }
-
-    ctxMenu.style.left = `${e.pageX}px`;
-    ctxMenu.style.top = `${e.pageY}px`;
-    ctxMenu.classList.remove('hidden');
-}
 
 function setupContextActions(isMobile) {
-    const btnNewFolder = document.getElementById('ctx-new-folder');
-    if (btnNewFolder) {
-        btnNewFolder.onclick = async () => {
-            // Re-use logic from button, but here we can prompt or just create
-            // The user wanted prompt for ctx menu? Logic in original code used prompt.
-            // But user dislikes alerts. We might want to use the same inline logic.
-            // For now, let's call the same consistent logic: Create Default + Inline Rename
-            // We can reuse action logic if we had exported it cleanly, or just copy "Create Default" approach
-            // Simulating click on add button or calling similar logic
-            const count = sidebarState.folders.filter(f => f.nombre && f.nombre.startsWith('Nueva Carpeta')).length;
-            const name = `Nueva Carpeta ${count + 1}`;
-            const result = await carpetaService.createFolder(name);
-            await loadFolders(isMobile);
-            if (result?.id) setTimeout(() => startInlineRename(result.id, isMobile), 50);
-        };
-    }
+        const btnNewFolder = document.getElementById('ctx-new-folder');
+        if (btnNewFolder) {
+            btnNewFolder.onclick = async () => {
+                // Re-use logic from button, but here we can prompt or just create
+                // The user wanted prompt for ctx menu? Logic in original code used prompt.
+                // But user dislikes alerts. We might want to use the same inline logic.
+                // For now, let's call the same consistent logic: Create Default + Inline Rename
+                // We can reuse action logic if we had exported it cleanly, or just copy "Create Default" approach
+                // Simulating click on add button or calling similar logic
+                const count = sidebarState.folders.filter(f => f.nombre && f.nombre.startsWith('Nueva Carpeta')).length;
+                const name = `Nueva Carpeta ${count + 1}`;
+                const result = await carpetaService.createFolder(name);
+                await loadFolders(isMobile);
+                if (result?.id) setTimeout(() => startInlineRename(result.id, isMobile), 50);
+            };
+        }
 
-    const btnRename = document.getElementById('ctx-rename');
-    if (btnRename) {
-        btnRename.onclick = () => {
-            if (sidebarState.selectedFolderIds.size !== 1) return;
-            const target = sidebarState.ctxFolderId || [...sidebarState.selectedFolderIds][0];
-            startInlineRename(target); // No need for isMobile, it's auto-detected
-        };
-    }
+        const btnRename = document.getElementById('ctx-rename');
+        if (btnRename) {
+            btnRename.onclick = () => {
+                if (sidebarState.selectedFolderIds.size !== 1) return;
+                const target = sidebarState.ctxFolderId || [...sidebarState.selectedFolderIds][0];
+                startInlineRename(target); // No need for isMobile, it's auto-detected
+            };
+        }
 
-    // Delete Logic
-    const btnDelete = document.getElementById('ctx-delete');
-    if (btnDelete) {
-        btnDelete.onclick = () => {
-            const count = sidebarState.selectedFolderIds.size;
-            if (count === 0 && !sidebarState.ctxFolderId) return;
-            if (count === 0 && sidebarState.ctxFolderId) sidebarState.addSelection(sidebarState.ctxFolderId);
+        // Delete Logic
+        const btnDelete = document.getElementById('ctx-delete');
+        if (btnDelete) {
+            btnDelete.onclick = () => {
+                const count = sidebarState.selectedFolderIds.size;
+                if (count === 0 && !sidebarState.ctxFolderId) return;
+                if (count === 0 && sidebarState.ctxFolderId) sidebarState.addSelection(sidebarState.ctxFolderId);
 
-            const modalTitle = document.querySelector('#confirm-content h3');
-            const modalText = document.querySelector('#confirm-content p');
-            if (modalTitle) modalTitle.textContent = sidebarState.selectedFolderIds.size > 1 ? `¿Eliminar ${sidebarState.selectedFolderIds.size} Carpetas?` : '¿Eliminar Carpeta?';
+                const modalTitle = document.querySelector('#confirm-content h3');
+                const modalText = document.querySelector('#confirm-content p');
+                if (modalTitle) modalTitle.textContent = sidebarState.selectedFolderIds.size > 1 ? `¿Eliminar ${sidebarState.selectedFolderIds.size} Carpetas?` : '¿Eliminar Carpeta?';
 
-            showConfirmModal(async () => {
-                const oldFolders = [...sidebarState.folders];
-                const idsToDelete = [...sidebarState.selectedFolderIds];
+                showConfirmModal(async () => {
+                    const oldFolders = [...sidebarState.folders];
+                    const idsToDelete = [...sidebarState.selectedFolderIds];
 
-                // Play Animation
-                await animateDeletionSequence(idsToDelete, isMobile);
+                    // Play Animation
+                    await animateDeletionSequence(idsToDelete, isMobile);
 
-                // Optimistic
-                sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
+                    // Optimistic
+                    sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
 
-                ['folders-list', 'folders-list-mobile'].forEach(id => {
-                    const list = document.getElementById(id);
-                    if (list) {
-                        const suffix = id.includes('mobile') ? 'mobile' : '';
-                        list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+                    ['folders-list', 'folders-list-mobile'].forEach(id => {
+                        const list = document.getElementById(id);
+                        if (list) {
+                            const suffix = id.includes('mobile') ? 'mobile' : '';
+                            list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+                        }
+                    });
+
+                    try {
+                        await Promise.all(idsToDelete.map(id => carpetaService.deleteFolder(id)));
+                        sidebarState.clearSelection();
+                    } catch (e) {
+                        console.error(e);
+                        sidebarState.setFolders(oldFolders);
+                        if (list) list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+                        // alert("Error"); // User dislikes alerts, maybe toast?
                     }
                 });
-
-                try {
-                    await Promise.all(idsToDelete.map(id => carpetaService.deleteFolder(id)));
-                    sidebarState.clearSelection();
-                } catch (e) {
-                    console.error(e);
-                    sidebarState.setFolders(oldFolders);
-                    if (list) list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
-                    // alert("Error"); // User dislikes alerts, maybe toast?
-                }
-            });
-        };
+            };
+        }
     }
-}
 
 function showConfirmModal(onConfirm) {
-    const modal = document.getElementById('confirm-modal');
-    if (!modal) return;
+        const modal = document.getElementById('confirm-modal');
+        if (!modal) return;
 
-    const backdrop = document.getElementById('confirm-backdrop');
-    const content = document.getElementById('confirm-content');
-    const btnCancel = document.getElementById('btn-cancel-modal');
-    const btnConfirm = document.getElementById('btn-confirm-delete');
+        const backdrop = document.getElementById('confirm-backdrop');
+        const content = document.getElementById('confirm-content');
+        const btnCancel = document.getElementById('btn-cancel-modal');
+        const btnConfirm = document.getElementById('btn-confirm-delete');
 
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-95'); content.classList.add('scale-100');
-    }, 10);
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95'); content.classList.add('scale-100');
+        }, 10);
 
-    const close = () => {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        content.classList.remove('scale-100'); content.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-        btnConfirm.onclick = null; btnCancel.onclick = null;
-    };
+        const close = () => {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100'); content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+            btnConfirm.onclick = null; btnCancel.onclick = null;
+        };
 
-    btnCancel.onclick = close;
-    backdrop.onclick = close;
-    btnConfirm.onclick = () => { close(); if (onConfirm) onConfirm(); };
-}
+        btnCancel.onclick = close;
+        backdrop.onclick = close;
+        btnConfirm.onclick = () => { close(); if (onConfirm) onConfirm(); };
+    }
