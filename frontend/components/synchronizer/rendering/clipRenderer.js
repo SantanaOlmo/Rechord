@@ -11,7 +11,16 @@ import { state } from '../store.js';
  */
 export function renderClips(container, items, type, getCoords, renderContent, styleOptions) {
     if (!container) return;
-    container.innerHTML = '';
+
+    // 1. Map existing elements by index for reuse (Reconciliation)
+    const existingMap = new Map();
+    Array.from(container.children).forEach(child => {
+        if (child.dataset.index) {
+            existingMap.set(child.dataset.index, child);
+        }
+    });
+
+    const usedIndices = new Set();
 
     items.forEach((item, index) => {
         const { start, end } = getCoords(item);
@@ -20,8 +29,9 @@ export function renderClips(container, items, type, getCoords, renderContent, st
         if (durationSec < 0.5) durationSec = 0.5;
         const widthPx = durationSec * state.zoom;
 
-        const isSelected = state.selectedIndices.has(index) && (state.selectionType || 'verse') === type; // Assuming default verse if undefined? Or strict typing
-        // Note: state.selectionType might be undefined initially -> verse.
+        const isSelected = state.selectedIndices.has(index) && (state.selectionType || 'verse') === type;
+        const indexStr = String(index);
+        usedIndices.add(indexStr);
 
         // Determine classes
         let baseClass = `absolute top-2 h-20 rounded text-xs overflow-hidden select-none cursor-pointer group transition-colors duration-75 shadow-sm flex flex-col justify-between z-20`;
@@ -29,14 +39,25 @@ export function renderClips(container, items, type, getCoords, renderContent, st
             ? `bg-white ring-2 ring-inset ${styleOptions.ringSelected} ${styleOptions.textSelected} font-bold`
             : `${styleOptions.bg} ring-1 ring-inset ${styleOptions.ring} text-white ${styleOptions.hoverBg}`;
 
-        const clip = document.createElement('div');
-        clip.className = `${baseClass} ${themeClass}`;
-        clip.style.left = `${startPx}px`;
-        clip.style.width = `${widthPx}px`;
-        clip.dataset.index = index;
-        if (type !== 'verse') clip.dataset.clipType = type; // Only needed if different from default
+        const outputClass = `${baseClass} ${themeClass}`;
+        const outputLeft = `${startPx}px`;
+        const outputWidth = `${widthPx}px`;
 
-        clip.innerHTML = `
+        let clip = existingMap.get(indexStr);
+
+        if (clip) {
+            // UPDATE existing element (Fast path)
+            // Only touch DOM if changed
+            if (clip.className !== outputClass) clip.className = outputClass;
+            // Direct style updates are cheap, but could check clip.style.left !== outputLeft
+            clip.style.left = outputLeft;
+            clip.style.width = outputWidth;
+
+            // Content might change? For text edits, yes. For moves, no.
+            // We can re-render content string and compare, or just update innerHTML if unsure.
+            // For now, simply update innerHTML to ensure correctness, assuming string generation is fast.
+            // Optimization: Store content hash/string in dataset?
+            const innerHTML = `
             ${renderContent(item, index)}
             ${isSelected ? `
             <div class="resize-handle left absolute top-0 bottom-0 left-0 w-3 cursor-ew-resize bg-transparent hover:bg-white/20 z-20 flex items-center justify-center group-hover:bg-white/5" data-handle="left">
@@ -45,9 +66,38 @@ export function renderClips(container, items, type, getCoords, renderContent, st
             <div class="resize-handle right absolute top-0 bottom-0 right-0 w-3 cursor-ew-resize bg-transparent hover:bg-white/20 z-20 flex items-center justify-center group-hover:bg-white/5" data-handle="right">
                  <div class="w-0.5 h-6 bg-white/30 rounded"></div>
             </div>` : ''}
-        `;
+            `;
 
-        container.appendChild(clip);
+            if (clip.innerHTML !== innerHTML) clip.innerHTML = innerHTML;
+
+        } else {
+            // CREATE new element (Slow path - first render only)
+            clip = document.createElement('div');
+            clip.className = outputClass;
+            clip.style.left = outputLeft;
+            clip.style.width = outputWidth;
+            clip.dataset.index = indexStr;
+            if (type !== 'verse') clip.dataset.clipType = type;
+
+            clip.innerHTML = `
+            ${renderContent(item, index)}
+            ${isSelected ? `
+            <div class="resize-handle left absolute top-0 bottom-0 left-0 w-3 cursor-ew-resize bg-transparent hover:bg-white/20 z-20 flex items-center justify-center group-hover:bg-white/5" data-handle="left">
+                <div class="w-0.5 h-6 bg-white/30 rounded"></div>
+            </div>
+            <div class="resize-handle right absolute top-0 bottom-0 right-0 w-3 cursor-ew-resize bg-transparent hover:bg-white/20 z-20 flex items-center justify-center group-hover:bg-white/5" data-handle="right">
+                 <div class="w-0.5 h-6 bg-white/30 rounded"></div>
+            </div>` : ''}
+            `;
+            container.appendChild(clip);
+        }
+    });
+
+    // 3. Cleanup unused elements (Garbage collection)
+    existingMap.forEach((node, idx) => {
+        if (!usedIndices.has(idx)) {
+            node.remove();
+        }
     });
 }
 
