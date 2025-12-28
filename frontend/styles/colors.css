@@ -52,15 +52,21 @@
     --border-primary: var(--gray-700);
     --border-secondary: var(--gray-600);
 
-    --accent-primary: var(--indigo-500);
-    --accent-hover: var(--indigo-600);
-    --accent-light: var(--indigo-400);
+    --electric-blue: #237BFF;
+    --electric-blue-hover: #1b62cc;
+    /* Darker variant */
+    --electric-blue-light: #64a2ff;
+    /* Lighter variant */
+
+    --accent-primary: var(--electric-blue);
+    --accent-hover: var(--electric-blue-hover);
+    --accent-light: var(--electric-blue-light);
 
     --color-error: #ef4444;
     /* red-500 */
 
     /* Legacy / Specific Overrides */
-    --color-primary: var(--indigo-500);
+    --color-primary: var(--electric-blue);
     --color-background: var(--bg-primary);
     --color-text-light: var(--text-primary);
 }
