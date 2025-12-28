@@ -1,8 +1,8 @@
 
-import { loadFolders, startInlineRename, setupCreateFolder } from './actions.js';
-import { setupSelection } from './selection.js';
-import { setupContextMenu } from './contextMenu.js';
-import { SidebarRenderer } from '../SidebarRenderer.js';
+import { loadFolders, startInlineRename, setupCreateFolder } from './sidebar/actions.js';
+import { setupSelection } from './sidebar/selection.js';
+import { setupContextMenu } from './sidebar/contextMenu.js';
+import { SidebarRenderer } from './SidebarRenderer.js';
 import { carpetaService } from '../../../services/carpetaService.js';
 import { search } from '../../../services/cancionService.js';
 import { authService } from '../../../services/authService.js';
