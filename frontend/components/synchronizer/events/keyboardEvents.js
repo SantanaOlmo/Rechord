@@ -208,9 +208,9 @@ function applyMove(direction, isShift, dataSource, type) {
     const selected = Array.from(state.selectedIndices);
     const audio = audioService.getInstance();
 
-    // Speed Logic: Default 0.1, Shift 0.3 (3x), Double-Shift 0.4 (4x)
+    // Speed Logic: Default 0.1, Shift 0.3 (3x), Double-Shift 0.6 (6x)
     let step = 0.1;
-    if (isSuperShift) step = 0.4;
+    if (isSuperShift) step = 0.6;
     else if (isShift) step = 0.3;
 
     let delta = direction * step;
