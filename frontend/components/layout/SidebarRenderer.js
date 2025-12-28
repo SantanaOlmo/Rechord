@@ -45,7 +45,7 @@ export const SidebarRenderer = {
     },
 
     renderSongs(folderId, songs, suffix = '') {
-        if (songs.length === 0) {
+        if (!songs || !Array.isArray(songs) || songs.length === 0) {
             return '<div class="pl-10 py-1 text-[var(--text-muted)] italic text-xs">Vacío</div>';
         }
 

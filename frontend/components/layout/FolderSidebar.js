@@ -100,9 +100,10 @@ function handleFolderSearch(e, folderId, suffix = '') {
             rDiv.classList.remove('hidden');
             rDiv.innerHTML = results.length ? results.map(s => `
                 <div class="search-result-item flex items-center p-2 hover:bg-[var(--bg-tertiary)] cursor-pointer rounded border-b border-[var(--border-primary)] last:border-0"
-                        onclick="window.addSongToFolder(${folderId}, ${s.id_cancion}, '${suffix}')">
-                    <div class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-muted)]">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                        onclick="window.addSongToFolder(${folderId}, '${s.id_cancion}', '${suffix}')">
+                    <div class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-muted)] overflow-hidden flex-shrink-0">
+                            ${s.ruta_imagen ? `<img src="${CONTENT_BASE_URL}/${s.ruta_imagen}" class="w-full h-full object-cover">` :
+                    `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>`}
                     </div>
                     <div class="flex-1 overflow-hidden">
                         <p class="text-xs text-[var(--text-primary)] font-medium truncate">${s.titulo}</p>
