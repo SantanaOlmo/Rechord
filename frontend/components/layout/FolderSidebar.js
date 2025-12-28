@@ -282,193 +282,361 @@ async function initSidebar(isMobile) {
         await carpetaService.removeSongFromFolder(folderId, songId);
         const songs = await carpetaService.getFolderSongs(folderId);
         document.getElementById(`song-list-${folderId}`).innerHTML = SidebarRenderer.renderSongs(folderId, songs);
-    };
 
 
 
+        // Selection State
+        let selectedFolderIds = new Set();
+        let selectionBox = null;
+        let startX, startY;
 
-    // Global Context Menu Handlers
-    window.onFolderContextMenu = (e, folderId) => {
-        e.preventDefault();
-        e.stopPropagation();
-        ctxFolderId = folderId;
-        ctxSongId = null;
-        showContextMenu(e, 'folder');
-    };
+        // Determine the correct list container ID
+        const listId = isMobile ? 'folders-list-mobile' : 'folders-list';
+        // Selection Handling
+        const listContainer = document.getElementById(listId);
+        if (listContainer) {
+            listContainer.style.position = 'relative'; // Ensure relative for absolute box
 
-    window.onBackgroundContextMenu = (e) => {
-        e.preventDefault();
-        // showContextMenu(e, 'bg'); // Optional: Right click on empty space
-    };
+            listContainer.addEventListener('mousedown', (e) => {
+                // Ignore if clicking interactive elements or right click
+                if (e.target.closest('button') || e.target.closest('input') || e.button !== 0) return;
 
-    function showContextMenu(e, type) {
-        const ctxMenu = document.getElementById('folder-context-menu');
-        if (!ctxMenu) return;
+                // Check if clicking a folder header
+                const folderHeader = e.target.closest('.folder-header');
+                if (folderHeader) {
+                    const folderWrapper = folderHeader.closest('.folder-wrapper');
+                    // Extract ID from wrapper onclick or similar? 
+                    // SidebarRenderer renders: oncontextmenu="window.onFolderContextMenu(event, ${f.id_carpeta})"
+                    // We can parse ID from the ID attribute of elements inside? 
+                    // folder-name-${id} exists.
+                    const nameId = folderWrapper.querySelector('[id^="folder-name-"]')?.id;
+                    if (nameId) {
+                        const id = parseInt(nameId.split('-')[2]);
+                        if (!e.ctrlKey && !e.shiftKey && !selectedFolderIds.has(id)) {
+                            clearSelection();
+                            addToSelection(id);
+                        } else if (e.ctrlKey) {
+                            toggleSelection(id);
+                        }
+                        // Shift logic omitted for brevity, user asked for drag
+                    }
+                    return;
+                }
 
-        // Reset visibility
-        ['ctx-new-folder', 'ctx-add-song', 'ctx-rename', 'ctx-remove-song', 'ctx-delete', 'ctx-separator'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('hidden');
-        });
+                // Start Drag Selection
+                startX = e.layerX; // relative to container
+                startY = e.layerY + listContainer.scrollTop;
 
-        if (type === 'bg') {
-            document.getElementById('ctx-new-folder')?.classList.remove('hidden');
-        } else if (type === 'folder') {
-            document.getElementById('ctx-rename')?.classList.remove('hidden');
-            document.getElementById('ctx-separator')?.classList.remove('hidden');
-            document.getElementById('ctx-delete')?.classList.remove('hidden');
-            // Add song is contextual, maybe keep if needed
-            // document.getElementById('ctx-add-song')?.classList.remove('hidden');
-        } else if (type === 'song') {
-            document.getElementById('ctx-remove-song')?.classList.remove('hidden');
+                // Create Box
+                selectionBox = document.createElement('div');
+                selectionBox.className = 'absolute bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)] z-50 pointer-events-none';
+                selectionBox.style.left = startX + 'px';
+                selectionBox.style.top = startY + 'px';
+                listContainer.appendChild(selectionBox);
+
+                if (!e.ctrlKey) clearSelection();
+
+                const onMouseMove = (ev) => {
+                    const currentX = ev.layerX;
+                    const currentY = ev.layerY + listContainer.scrollTop;
+
+                    const width = Math.abs(currentX - startX);
+                    const height = Math.abs(currentY - startY);
+                    const left = Math.min(currentX, startX);
+                    const top = Math.min(currentY, startY);
+
+                    selectionBox.style.width = width + 'px';
+                    selectionBox.style.height = height + 'px';
+                    selectionBox.style.left = left + 'px';
+                    selectionBox.style.top = top + 'px';
+
+                    // Check Collisions
+                    const boxRect = { left: left, top: top, right: left + width, bottom: top + height };
+
+                    // We need to check against folder headers specifically
+                    const headers = listContainer.querySelectorAll('.folder-header');
+                    headers.forEach(header => {
+                        const headerRect = {
+                            left: header.offsetLeft,
+                            top: header.offsetTop,
+                            right: header.offsetLeft + header.offsetWidth,
+                            bottom: header.offsetTop + header.offsetHeight
+                        };
+
+                        // Simple AABB collision inside the scrollable container logic is tricky due to scroll.
+                        // Using standard rects usually easier, but let's try relative logic matching
+                        if (boxRect.left < headerRect.right && boxRect.right > headerRect.left &&
+                            boxRect.top < headerRect.bottom && boxRect.bottom > headerRect.top) {
+                            const wrapper = header.closest('.folder-wrapper');
+                            const nameId = wrapper.querySelector('[id^="folder-name-"]')?.id;
+                            if (nameId) {
+                                const id = parseInt(nameId.split('-')[2]);
+                                addToSelection(id);
+                            }
+                        }
+                        // Note: Deselecting items that leave the box typically requires tracking "pre-drag selection"
+                        // For simplicity, this additive drag is standard "add to selection".
+                    });
+                };
+
+                const onMouseUp = () => {
+                    selectionBox?.remove();
+                    selectionBox = null;
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
         }
 
-        ctxMenu.style.left = `${e.pageX}px`;
-        ctxMenu.style.top = `${e.pageY}px`;
-        ctxMenu.classList.remove('hidden');
-    }
-
-    // Actions
-    const btnNewFolder = document.getElementById('ctx-new-folder');
-    if (btnNewFolder) {
-        btnNewFolder.onclick = async () => {
-            const name = prompt('Nombre de la carpeta:', 'Nueva Carpeta');
-            if (name) { await carpetaService.createFolder(name); loadFolders(); }
-        };
-    }
-
-    const btnRename = document.getElementById('ctx-rename');
-    if (btnRename) {
-        btnRename.onclick = () => {
-            if (!ctxFolderId) return;
-            window.startInlineRename(ctxFolderId);
-        };
-    }
-
-
-    window.startInlineRename = (folderId) => {
-        const span = document.getElementById(`folder-name-${folderId}`);
-        if (!span) return;
-
-        const currentName = span.textContent;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = currentName;
-        input.className = 'w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded px-1 outline-none border border-[var(--accent-primary)] text-xs py-0.5';
-
-
-        // Replace span with input
-        span.replaceWith(input);
-        input.focus();
-        input.select();
-
-        const save = async () => {
-            const newName = input.value.trim();
-            if (newName && newName !== currentName) {
-                await carpetaService.renameFolder(folderId, newName);
-                loadFolders(); // Reload to restore UI state
+        function addToSelection(id) {
+            selectedFolderIds.add(id);
+            highlightFolder(id, true);
+        }
+        function toggleSelection(id) {
+            if (selectedFolderIds.has(id)) {
+                selectedFolderIds.delete(id);
+                highlightFolder(id, false);
             } else {
-                input.replaceWith(span); // Revert if empty or unchanged
+                addToSelection(id);
             }
+        }
+        function clearSelection() {
+            selectedFolderIds.forEach(id => highlightFolder(id, false));
+            selectedFolderIds.clear();
+        }
+        function highlightFolder(id, active) {
+            const s = isMobile ? '-mobile' : '';
+            // SidebarRenderer uses folder-name-ID but wrapper doesn't have ID. 
+            // We can find the header via the name element
+            const nameEl = document.getElementById(`folder-name-${id}${s}`);
+            if (nameEl) {
+                const header = nameEl.closest('.folder-header');
+                if (header) {
+                    if (active) header.classList.add('bg-[var(--accent-primary)]', 'text-white');
+                    else header.classList.remove('bg-[var(--accent-primary)]', 'text-white');
+                }
+            }
+        }
+
+        // Global Context Menu Handlers (Updated for Multi-Select)
+        window.onFolderContextMenu = (e, folderId) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // If clicking outside selection, reset selection into single
+            if (!selectedFolderIds.has(folderId)) {
+                clearSelection();
+                addToSelection(folderId);
+            }
+
+            ctxFolderId = folderId; // Primary target for single actions
+            ctxSongId = null;
+            showContextMenu(e, 'folder');
         };
 
-        input.addEventListener('blur', save);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                input.blur(); // Triggers save
-            } else if (e.key === 'Escape') {
-                input.removeEventListener('blur', save); // Prevent saving on blur
-                input.replaceWith(span);
-            }
-        });
-
-        // Prevent click propagation to folder toggle
-        input.addEventListener('click', (e) => e.stopPropagation());
-    };
-
-    const btnAddCtx = document.getElementById('ctx-add-song');
-    if (btnAddCtx) {
-        btnAddCtx.onclick = () => {
-            if (ctxFolderId) window.toggleAddSong({ stopPropagation: () => { } }, ctxFolderId);
+        window.onBackgroundContextMenu = (e) => {
+            e.preventDefault();
+            // showContextMenu(e, 'bg'); // Optional: Right click on empty space
         };
-    }
 
-    const btnDelete = document.getElementById('ctx-delete');
-    if (btnDelete) {
-        btnDelete.onclick = () => {
-            if (!ctxFolderId) return;
-            showConfirmModal(async () => {
-                // Optimistic UI Update: Remove immediately
-                const oldFolders = [...folders];
-                folders = folders.filter(f => f.id_carpeta !== ctxFolderId);
-                const list = document.getElementById(isMobile ? 'folders-list-mobile' : 'folders-list');
-                const suffix = isMobile ? 'mobile' : '';
-                if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+        function showContextMenu(e, type) {
+            const ctxMenu = document.getElementById('folder-context-menu');
+            if (!ctxMenu) return;
 
-                try {
-                    await carpetaService.deleteFolder(ctxFolderId);
-                    // No need to reload if successful, UI is already updated.
-                } catch (e) {
-                    // Revert if error
-                    console.error("Delete failed", e);
-                    folders = oldFolders;
-                    if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
-                    alert("Error al eliminar la carpeta");
+            // Reset visibility
+            ['ctx-new-folder', 'ctx-add-song', 'ctx-rename', 'ctx-remove-song', 'ctx-delete', 'ctx-separator'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            if (type === 'bg') {
+                document.getElementById('ctx-new-folder')?.classList.remove('hidden');
+            } else if (type === 'folder') {
+                document.getElementById('ctx-rename')?.classList.remove('hidden');
+                document.getElementById('ctx-separator')?.classList.remove('hidden');
+
+                const delLabel = document.getElementById('ctx-delete');
+                if (delLabel) {
+                    delLabel.classList.remove('hidden');
+                    delLabel.textContent = selectedFolderIds.size > 1 ? `Eliminar ${selectedFolderIds.size} Carpetas` : 'Eliminar Carpeta';
+                }
+
+                // Disable Rename if multiple
+                if (selectedFolderIds.size > 1) {
+                    document.getElementById('ctx-rename')?.classList.add('hidden');
+                }
+
+            } else if (type === 'song') {
+                document.getElementById('ctx-remove-song')?.classList.remove('hidden');
+            }
+
+            ctxMenu.style.left = `${e.pageX}px`;
+            ctxMenu.style.top = `${e.pageY}px`;
+            ctxMenu.classList.remove('hidden');
+        }
+
+        // Actions
+        const btnNewFolder = document.getElementById('ctx-new-folder');
+        if (btnNewFolder) {
+            btnNewFolder.onclick = async () => {
+                const name = prompt('Nombre de la carpeta:', 'Nueva Carpeta');
+                if (name) { await carpetaService.createFolder(name); loadFolders(); }
+            };
+        }
+
+        const btnRename = document.getElementById('ctx-rename');
+        if (btnRename) {
+            btnRename.onclick = () => {
+                // Cannot rename multiple at once efficiently nicely, restrict to 1
+                if (selectedFolderIds.size !== 1) return;
+                // Use the one in set or the context target
+                const target = ctxFolderId || [...selectedFolderIds][0];
+                window.startInlineRename(target);
+            };
+        }
+
+
+        window.startInlineRename = (folderId) => {
+            const span = document.getElementById(`folder-name-${folderId}`);
+            if (!span) return;
+
+            const currentName = span.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'w-full bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded px-1 outline-none border border-[var(--accent-primary)] text-xs py-0.5';
+
+
+            // Replace span with input
+            span.replaceWith(input);
+            input.focus();
+            input.select();
+
+            const save = async () => {
+                const newName = input.value.trim();
+                if (newName && newName !== currentName) {
+                    await carpetaService.renameFolder(folderId, newName);
+                    loadFolders(); // Reload to restore UI state
+                } else {
+                    input.replaceWith(span); // Revert if empty or unchanged
+                }
+            };
+
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur(); // Triggers save
+                } else if (e.key === 'Escape') {
+                    input.removeEventListener('blur', save); // Prevent saving on blur
+                    input.replaceWith(span);
                 }
             });
+
+            // Prevent click propagation to folder toggle
+            input.addEventListener('click', (e) => e.stopPropagation());
         };
+
+        const btnAddCtx = document.getElementById('ctx-add-song');
+        if (btnAddCtx) {
+            btnAddCtx.onclick = () => {
+                if (ctxFolderId) window.toggleAddSong({ stopPropagation: () => { } }, ctxFolderId);
+            };
+        }
+
+        const btnDelete = document.getElementById('ctx-delete');
+        if (btnDelete) {
+            btnDelete.onclick = () => {
+                if (selectedFolderIds.size === 0 && !ctxFolderId) return;
+
+                // If nothing selected but context used (should resolve to single select), force sync
+                if (selectedFolderIds.size === 0 && ctxFolderId) selectedFolderIds.add(ctxFolderId);
+
+                const count = selectedFolderIds.size;
+
+                // Custom Text for Modal
+                const modalTitle = document.querySelector('#confirm-content h3');
+                const modalText = document.querySelector('#confirm-content p');
+                if (modalTitle) modalTitle.textContent = count > 1 ? `¿Eliminar ${count} Carpetas?` : '¿Eliminar Carpeta?';
+                if (modalText) modalText.textContent = 'Esta acción no se puede deshacer.';
+
+                showConfirmModal(async () => {
+                    // Optimistic UI Update: Remove ALL IDs
+                    const oldFolders = [...folders];
+                    const idsToDelete = [...selectedFolderIds];
+
+                    folders = folders.filter(f => !idsToDelete.includes(f.id_carpeta));
+
+                    const list = document.getElementById(isMobile ? 'folders-list-mobile' : 'folders-list');
+                    const suffix = isMobile ? 'mobile' : '';
+                    if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+
+                    try {
+                        // Execute all deletes
+                        await Promise.all(idsToDelete.map(id => carpetaService.deleteFolder(id)));
+                        selectedFolderIds.clear();
+                    } catch (e) {
+                        console.error("Delete failed", e);
+                        folders = oldFolders;
+                        if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+                        alert("Error al eliminar alguna carpeta");
+                    }
+                });
+            };
+        }
+
+        // Modal Logic Helper
+        function showConfirmModal(onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            const backdrop = document.getElementById('confirm-backdrop');
+            const content = document.getElementById('confirm-content');
+            const btnCancel = document.getElementById('btn-cancel-modal');
+            const btnConfirm = document.getElementById('btn-confirm-delete');
+
+            if (!modal) return;
+
+            // Show
+            modal.classList.remove('hidden');
+            // Small delay for transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+
+            const close = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 200);
+
+                // Cleanup listeners to avoid duplicates
+                btnConfirm.onclick = null;
+                btnCancel.onclick = null;
+            };
+
+            btnCancel.onclick = close;
+            backdrop.onclick = close;
+
+            btnConfirm.onclick = () => {
+                close();
+                if (onConfirm) onConfirm();
+            };
+        }
+
+        const btnRemoveSong = document.getElementById('ctx-remove-song');
+        if (btnRemoveSong) {
+            btnRemoveSong.onclick = async () => {
+                if (ctxSongFolderId && ctxSongId && confirm('¿Quitar canción de la carpeta?')) {
+                    await carpetaService.removeSongFromFolder(ctxSongFolderId, ctxSongId);
+                    const songs = await carpetaService.getFolderSongs(ctxSongFolderId);
+                    document.getElementById(`song-list-${ctxSongFolderId}`).innerHTML = SidebarRenderer.renderSongs(ctxSongFolderId, songs);
+                }
+            };
+        }
+
+
+        loadFolders();
     }
-
-    // Modal Logic Helper
-    function showConfirmModal(onConfirm) {
-        const modal = document.getElementById('confirm-modal');
-        const backdrop = document.getElementById('confirm-backdrop');
-        const content = document.getElementById('confirm-content');
-        const btnCancel = document.getElementById('btn-cancel-modal');
-        const btnConfirm = document.getElementById('btn-confirm-delete');
-
-        if (!modal) return;
-
-        // Show
-        modal.classList.remove('hidden');
-        // Small delay for transition
-        setTimeout(() => {
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        }, 10);
-
-        const close = () => {
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 200);
-
-            // Cleanup listeners to avoid duplicates
-            btnConfirm.onclick = null;
-            btnCancel.onclick = null;
-        };
-
-        btnCancel.onclick = close;
-        backdrop.onclick = close;
-
-        btnConfirm.onclick = () => {
-            close();
-            if (onConfirm) onConfirm();
-        };
-    }
-
-    const btnRemoveSong = document.getElementById('ctx-remove-song');
-    if (btnRemoveSong) {
-        btnRemoveSong.onclick = async () => {
-            if (ctxSongFolderId && ctxSongId && confirm('¿Quitar canción de la carpeta?')) {
-                await carpetaService.removeSongFromFolder(ctxSongFolderId, ctxSongId);
-                const songs = await carpetaService.getFolderSongs(ctxSongFolderId);
-                document.getElementById(`song-list-${ctxSongFolderId}`).innerHTML = SidebarRenderer.renderSongs(ctxSongFolderId, songs);
-            }
-        };
-    }
-
-
-    loadFolders();
-}
