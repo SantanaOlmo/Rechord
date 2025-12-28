@@ -254,7 +254,7 @@ function applyMove(direction, isShift, dataSource, type) {
 function applyResizeStart(direction, isShift, dataSource, type) {
     // Speed Logic
     let step = 0.1;
-    if (isSuperShift) step = 0.4;
+    if (isSuperShift) step = 0.6;
     else if (isShift) step = 0.3;
 
     const delta = direction * step;
@@ -285,7 +285,7 @@ function applyResizeStart(direction, isShift, dataSource, type) {
 function applyResizeEnd(direction, isShift, dataSource, type) {
     // Speed Logic
     let step = 0.1;
-    if (isSuperShift) step = 0.4;
+    if (isSuperShift) step = 0.6;
     else if (isShift) step = 0.3;
 
     const delta = direction * step;
