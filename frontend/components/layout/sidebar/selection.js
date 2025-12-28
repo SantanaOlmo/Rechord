@@ -47,11 +47,30 @@ export function setupSelection(isMobile) {
             const nameId = folderWrapper.querySelector('[id^="folder-name-"]')?.id;
             if (nameId) {
                 const id = parseInt(nameId.split('-')[2]);
-                if (!e.ctrlKey && !e.shiftKey && !sidebarState.selectedFolderIds.has(id)) {
-                    clearSelection(isMobile);
-                    addToSelection(id, isMobile);
+
+                if (e.shiftKey && sidebarState.lastSelectedId) {
+                    // Range Selection
+                    const allFolders = [...document.querySelectorAll('[id^="folder-name-"]')].map(el => parseInt(el.id.split('-')[2]));
+                    const startIdx = allFolders.indexOf(sidebarState.lastSelectedId);
+                    const endIdx = allFolders.indexOf(id);
+
+                    if (startIdx !== -1 && endIdx !== -1) {
+                        const [min, max] = [Math.min(startIdx, endIdx), Math.max(startIdx, endIdx)];
+                        const range = allFolders.slice(min, max + 1);
+
+                        if (!e.ctrlKey) clearSelection(isMobile);
+                        range.forEach(fid => addToSelection(fid, isMobile));
+                    }
                 } else if (e.ctrlKey) {
                     toggleSelection(id, isMobile);
+                    sidebarState.lastSelectedId = id;
+                } else {
+                    // Single Select
+                    if (!sidebarState.selectedFolderIds.has(id) || sidebarState.selectedFolderIds.size > 1) {
+                        clearSelection(isMobile);
+                        addToSelection(id, isMobile);
+                    }
+                    sidebarState.lastSelectedId = id;
                 }
             }
             return;
