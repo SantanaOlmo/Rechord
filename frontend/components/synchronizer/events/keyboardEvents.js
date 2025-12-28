@@ -21,12 +21,13 @@ function setBounds(item, start, end, type) {
     }
 }
 
-
 // State for the Game Loop
 const activeKeys = new Set();
 let loopId = null;
 let lastTick = 0;
 const TICK_RATE = 50; // ms between updates (approx 20fps for control speed)
+let lastShiftPressTime = 0;
+let isSuperShift = false;
 
 export function attachKeyboardListeners() {
     if (isAttached) return;
@@ -40,6 +41,12 @@ export function attachKeyboardListeners() {
         if (e.code === 'KeyX') state.isXDown = false;
         if (e.code === 'KeyC') state.isCDown = false;
         if (e.code === 'KeyJ') state.isJDown = false;
+
+        // Reset SuperShift if all Shift keys are released
+        if ((e.code === 'ShiftLeft' || e.code === 'ShiftRight') &&
+            !activeKeys.has('ShiftLeft') && !activeKeys.has('ShiftRight')) {
+            isSuperShift = false;
+        }
 
         // Stop Loop if no direction keys are held
         if (!activeKeys.has('ArrowLeft') && !activeKeys.has('ArrowRight')) {
@@ -60,6 +67,15 @@ export function attachKeyboardListeners() {
 
         // Global Undo/Redo/Save/Play (One-off actions)
         if (handleGlobalShortcuts(e, dataSource)) return;
+
+        // Double-Tap Shift Detection
+        if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+            const now = Date.now();
+            if (now - lastShiftPressTime < 300) {
+                isSuperShift = true;
+            }
+            lastShiftPressTime = now;
+        }
 
         // Update Key State
         activeKeys.add(e.code);
@@ -143,7 +159,6 @@ function handleMovementTick() {
     const dataSource = type === 'section' ? state.settings.songSections : state.estrofas;
 
     // Determine Direction
-    // If both pressed, cancel out or prioritize last? Let's prioritize Left for simplicity if both
     let direction = 0;
     if (activeKeys.has('ArrowLeft')) direction = -1;
     if (activeKeys.has('ArrowRight')) direction = 1;
@@ -326,15 +341,6 @@ function applyCompression(direction, dataSource, type) {
                 newStart = newEnd - duration;
             }
         }
-        // Priority Left Check
-        if (currentIdx > 0) {
-            const prevItem = dataSource[currentIdx - 1];
-            const prevEnd = getBounds(prevItem, type).end;
-            if (newStart < prevEnd) {
-                newStart = prevEnd;
-                newEnd = newStart + duration;
-            }
-        }
 
         setBounds(item, newStart, newEnd, type);
     }
@@ -379,14 +385,8 @@ function applyJoin(direction, dataSource, type) {
 }
 
 function applyNavigation(direction, isShift, dataSource, type, audio) {
-    // Only triggers ONCE per key press actually, navigation shouldn't loop fast.
-    // However, if holding arrow, we DO want repeat navigation (scrolling through).
-    // The TICK_RATE (50ms) handles the speed.
-
-    // Shift Selection (Anchor) - Copied logic but adapted for loop
     if (isShift) {
         if (state.selectionAnchor === null || state.selectedIndices.size === 0) {
-            // Init Anchor (simplified)
             let startIdx = 0;
             if (state.selectedIndices.size > 0) startIdx = Math.min(...state.selectedIndices);
             else {
@@ -418,7 +418,6 @@ function applyNavigation(direction, isShift, dataSource, type, audio) {
         return;
     }
 
-    // Normal Jump (No Shift)
     state.selectionAnchor = null;
     state.selectionHead = null;
     const t = audio.currentTime;
@@ -441,4 +440,3 @@ function applyNavigation(direction, isShift, dataSource, type, audio) {
         ensurePlayheadVisible(audio.currentTime);
     }
 }
-
