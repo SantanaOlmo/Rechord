@@ -5,7 +5,7 @@ import { startInlineRename, loadFolders, setupCreateFolder } from './actions.js'
 import { addToSelection, clearSelection } from './selection.js';
 import { animateDeletionSequence } from './animations.js';
 
-import { animateDeletionSequence } from './animations.js';
+
 
 // ... (existing imports)
 
