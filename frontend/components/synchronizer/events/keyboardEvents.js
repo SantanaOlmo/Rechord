@@ -211,9 +211,9 @@ export function attachKeyboardListeners() {
                         setBounds(item, start, newVal, type);
                     });
                     const first = getBounds(dataSource[selected[0]], type);
-                    audio.currentTime = first.end; // Visual feedback
+                    // audio.currentTime = first.end; // User requested playhead stays put
                     actions.refresh();
-                    ensurePlayheadVisible(audio.currentTime);
+                    // ensurePlayheadVisible(audio.currentTime); 
                     return;
                 }
 
