@@ -41,22 +41,42 @@ async function initSidebar(isMobile) {
     const listId = isMobile ? 'folders-list-mobile' : 'folders-list';
     const list = document.getElementById(listId);
 
-    // Only init context menu listeners ONCE globally
-    if (!window.sidebarContextInitialized) {
-        window.sidebarContextInitialized = true;
-        // Context Menu Logic
-        const ctxMenu = document.getElementById('folder-context-menu'); // This assumes context menu is in DOM. 
-        // Strategy: Put context menu in Main Layout or ensure it's rendered by Desktop sidebar.
-        // If mobile renders first/only, it might be missing?
-        // For now, assuming Desktop sidebar exists invisible or we put it in root.
+    // Inject Context Menu & Modal if not exists
+    if (!document.getElementById('folder-context-menu')) {
+        const menuHtml = `
+            <div id="folder-context-menu" class="fixed z-50 bg-[var(--bg-secondary)] border border-[var(--border-primary)] shadow-xl rounded-md py-1 hidden w-48 text-sm select-none">
+                <div id="ctx-new-folder" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Nueva Carpeta</div>
+                <div id="ctx-add-song" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Añadir Canción</div>
+                <div id="ctx-rename" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Renombrar</div>
+                <div id="ctx-separator" class="border-t border-[var(--border-primary)] my-1 hidden"></div>
+                <div id="ctx-delete" class="px-4 py-2 hover:bg-red-900/30 text-red-400 cursor-pointer hidden">Eliminar Carpeta</div>
+                <div id="ctx-remove-song" class="px-4 py-2 hover:bg-red-900/30 text-red-400 cursor-pointer hidden">Quitar de Carpeta</div>
+            </div>
+
+            <!-- Custom Confirm Modal -->
+             <div id="confirm-modal" class="fixed inset-0 z-[70] flex items-center justify-center hidden opacity-0 transition-opacity duration-200 pointer-events-none">
+                <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="confirm-backdrop"></div>
+                <div class="relative bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-xl p-6 shadow-2xl w-80 text-center transform scale-95 transition-transform duration-200" id="confirm-content">
+                    <div class="w-12 h-12 rounded-full bg-red-900/20 text-red-500 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </div>
+                    <h3 class="text-[var(--text-primary)] font-bold text-lg mb-2">¿Eliminar Carpeta?</h3>
+                    <p class="text-[var(--text-secondary)] text-sm mb-6">Esta acción es irreversible y eliminará el contenido de la carpeta.</p>
+                    <div class="flex justify-center space-x-3">
+                        <button id="btn-cancel-modal" class="px-4 py-2 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--bg-primary)] text-sm font-medium transition cursor-pointer">Cancelar</button>
+                        <button id="btn-confirm-delete" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 text-sm font-bold transition shadow-lg cursor-pointer hover:scale-105">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', menuHtml);
+
+        // Close on click outside context menu
+        document.addEventListener('click', (e) => {
+            const cx = document.getElementById('folder-context-menu');
+            if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
+        });
     }
-
-    if (!list) return;
-
-    const suffix = isMobile ? 'mobile' : '';
-
-
-    // Load
     const loadFolders = async () => {
         try {
             folders = await carpetaService.getFolders();
@@ -371,11 +391,66 @@ async function initSidebar(isMobile) {
 
     const btnDelete = document.getElementById('ctx-delete');
     if (btnDelete) {
-        btnDelete.onclick = async () => {
-            if (ctxFolderId && confirm('¿Borrar carpeta permanentemente?')) {
-                await carpetaService.deleteFolder(ctxFolderId);
-                loadFolders();
-            }
+        btnDelete.onclick = () => {
+            if (!ctxFolderId) return;
+            showConfirmModal(async () => {
+                // Optimistic UI Update: Remove immediately
+                const oldFolders = [...folders];
+                folders = folders.filter(f => f.id_carpeta !== ctxFolderId);
+                const list = document.getElementById(isMobile ? 'folders-list-mobile' : 'folders-list');
+                const suffix = isMobile ? 'mobile' : '';
+                if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+
+                try {
+                    await carpetaService.deleteFolder(ctxFolderId);
+                    // No need to reload if successful, UI is already updated.
+                } catch (e) {
+                    // Revert if error
+                    console.error("Delete failed", e);
+                    folders = oldFolders;
+                    if (list) list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+                    alert("Error al eliminar la carpeta");
+                }
+            });
+        };
+    }
+
+    // Modal Logic Helper
+    function showConfirmModal(onConfirm) {
+        const modal = document.getElementById('confirm-modal');
+        const backdrop = document.getElementById('confirm-backdrop');
+        const content = document.getElementById('confirm-content');
+        const btnCancel = document.getElementById('btn-cancel-modal');
+        const btnConfirm = document.getElementById('btn-confirm-delete');
+
+        if (!modal) return;
+
+        // Show
+        modal.classList.remove('hidden');
+        // Small delay for transition
+        setTimeout(() => {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+
+        const close = () => {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+
+            // Cleanup listeners to avoid duplicates
+            btnConfirm.onclick = null;
+            btnCancel.onclick = null;
+        };
+
+        btnCancel.onclick = close;
+        backdrop.onclick = close;
+
+        btnConfirm.onclick = () => {
+            close();
+            if (onConfirm) onConfirm();
         };
     }
 
