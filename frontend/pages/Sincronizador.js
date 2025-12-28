@@ -374,6 +374,16 @@ export function render(songId) {
                                                 <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">→</span>
                                             </div>
                                         </div>
+
+                                        <div class="flex items-center justify-between group">
+                                            <span class="text-xs text-gray-400 group-hover:text-green-300 transition-colors">Comprimir</span>
+                                            <div class="flex items-center gap-1">
+                                                <span class="w-8 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">Alt</span>
+                                                <span class="text-gray-500 text-[10px]">+</span>
+                                                <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">←</span>
+                                                <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">→</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
