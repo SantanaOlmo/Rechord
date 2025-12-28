@@ -3,11 +3,32 @@ import { carpetaService } from '../../../services/carpetaService.js';
 import { SidebarRenderer } from '../SidebarRenderer.js';
 import { startInlineRename, loadFolders, setupCreateFolder } from './actions.js';
 import { addToSelection, clearSelection } from './selection.js';
+import { animateDeletionSequence } from './animations.js';
 
-export function setupContextMenu(isMobile) {
-    // Inject HTML if needed
-    if (!document.getElementById('folder-context-menu')) {
-        const menuHtml = `
+import { animateDeletionSequence } from './animations.js';
+
+// ... (existing imports)
+
+// Inside setupContextActions -> btnDelete.onclick -> showConfirmModal callback:
+
+showConfirmModal(async () => {
+    const oldFolders = [...sidebarState.folders];
+    const idsToDelete = [...sidebarState.selectedFolderIds];
+
+    // 1. Play Cinematic Animation
+    await animateDeletionSequence(idsToDelete, isMobile);
+
+    // 2. Optimistic Update (After animation)
+    sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
+
+    ['folders-list', 'folders-list-mobile'].forEach(id => {
+        const list = document.getElementById(id);
+        if (list) {
+            const suffix = id.includes('mobile') ? 'mobile' : '';
+            list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+        }
+    });
+    const menuHtml = `
             <div id="folder-context-menu" class="fixed z-50 bg-[var(--bg-secondary)] border border-[var(--border-primary)] shadow-xl rounded-md py-1 hidden w-48 text-sm select-none">
                 <div id="ctx-new-folder" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Nueva Carpeta</div>
                 <div id="ctx-add-song" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Añadir Canción</div>
@@ -32,13 +53,13 @@ export function setupContextMenu(isMobile) {
                 </div>
             </div>
         `;
-        document.body.insertAdjacentHTML('beforeend', menuHtml);
+    document.body.insertAdjacentHTML('beforeend', menuHtml);
 
-        document.addEventListener('click', (e) => {
-            const cx = document.getElementById('folder-context-menu');
-            if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
-        });
-    }
+    document.addEventListener('click', (e) => {
+        const cx = document.getElementById('folder-context-menu');
+        if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
+    });
+}
 
     // Handlers
     window.onFolderContextMenu = (e, folderId) => {
@@ -51,12 +72,12 @@ export function setupContextMenu(isMobile) {
         showContextMenu(e, 'folder');
     };
 
-    window.onBackgroundContextMenu = (e) => {
-        e.preventDefault();
-        // showContextMenu(e, 'bg'); 
-    };
+window.onBackgroundContextMenu = (e) => {
+    e.preventDefault();
+    // showContextMenu(e, 'bg'); 
+};
 
-    setupContextActions(isMobile);
+setupContextActions(isMobile);
 }
 
 function showContextMenu(e, type) {
@@ -132,6 +153,9 @@ function setupContextActions(isMobile) {
             showConfirmModal(async () => {
                 const oldFolders = [...sidebarState.folders];
                 const idsToDelete = [...sidebarState.selectedFolderIds];
+
+                // Play Animation
+                await animateDeletionSequence(idsToDelete, isMobile);
 
                 // Optimistic
                 sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
