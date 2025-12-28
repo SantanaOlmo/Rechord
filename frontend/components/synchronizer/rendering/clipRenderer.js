@@ -40,7 +40,7 @@ export function renderClips(container, items, type, getCoords, renderContent, st
             : `${styleOptions.bg} ring-1 ring-inset ${styleOptions.ring} text-white ${styleOptions.hoverBg}`;
 
         const outputClass = `${baseClass} ${themeClass}`;
-        const outputLeft = `${startPx}px`;
+        const outputTransform = `translateX(${startPx}px)`;
         const outputWidth = `${widthPx}px`;
 
         let clip = existingMap.get(indexStr);
@@ -49,14 +49,12 @@ export function renderClips(container, items, type, getCoords, renderContent, st
             // UPDATE existing element (Fast path)
             // Only touch DOM if changed
             if (clip.className !== outputClass) clip.className = outputClass;
-            // Direct style updates are cheap, but could check clip.style.left !== outputLeft
-            clip.style.left = outputLeft;
-            clip.style.width = outputWidth;
 
-            // Content might change? For text edits, yes. For moves, no.
-            // We can re-render content string and compare, or just update innerHTML if unsure.
-            // For now, simply update innerHTML to ensure correctness, assuming string generation is fast.
-            // Optimization: Store content hash/string in dataset?
+            // Use transform for better performance (Composite layer)
+            if (clip.style.transform !== outputTransform) clip.style.transform = outputTransform;
+            if (clip.style.width !== outputWidth) clip.style.width = outputWidth;
+
+            // Content
             const innerHTML = `
             ${renderContent(item, index)}
             ${isSelected ? `
@@ -74,7 +72,11 @@ export function renderClips(container, items, type, getCoords, renderContent, st
             // CREATE new element (Slow path - first render only)
             clip = document.createElement('div');
             clip.className = outputClass;
-            clip.style.left = outputLeft;
+            // Use transform instead of left
+            clip.style.transform = outputTransform;
+            // Optimization hint
+            clip.style.willChange = 'transform, width';
+            clip.style.left = '0'; // Reset left just in case
             clip.style.width = outputWidth;
             clip.dataset.index = indexStr;
             if (type !== 'verse') clip.dataset.clipType = type;
