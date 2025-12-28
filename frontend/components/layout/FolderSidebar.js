@@ -41,6 +41,10 @@ async function initSidebar(isMobile) {
     const listId = isMobile ? 'folders-list-mobile' : 'folders-list';
     const list = document.getElementById(listId);
 
+    if (!list) return;
+
+    const suffix = isMobile ? 'mobile' : '';
+
     // Inject Context Menu & Modal if not exists
     if (!document.getElementById('folder-context-menu')) {
         const menuHtml = `
