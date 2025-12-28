@@ -95,7 +95,7 @@ export function attachKeyboardListeners() {
             if (state.selectedIndices.size > 0) {
                 // If Shift is NOT held, we act on modifiers or move focused clip
                 if (state.isZDown || state.isXDown || state.isCDown || state.isJDown) {
-                    history.push(dataSource, type);
+                    if (!e.repeat) history.push(dataSource, type);
                 }
             } else if (state.settings.selectedRegionIndex !== -1 && state.settings.selectedMarkerType) {
                 // MOVE SPECIFIC BEAT MARKER (Start or End)
@@ -171,7 +171,7 @@ export function attachKeyboardListeners() {
 
                 // 1. Resize START (X + Arrows)
                 if (state.isXDown) {
-                    history.push(dataSource, type);
+                    if (!e.repeat) history.push(dataSource, type);
                     selected.forEach(idx => {
                         const item = dataSource[idx];
                         const { start, end } = getBounds(item, type);
@@ -195,7 +195,7 @@ export function attachKeyboardListeners() {
 
                 // 2. Resize END (C + Arrows)
                 if (state.isCDown) {
-                    history.push(dataSource, type);
+                    if (!e.repeat) history.push(dataSource, type);
                     selected.forEach(idx => {
                         const item = dataSource[idx];
                         const { start, end } = getBounds(item, type);
@@ -219,7 +219,7 @@ export function attachKeyboardListeners() {
 
                 // 3. Move Clip (Z + Arrows)
                 if (state.isZDown) {
-                    history.push(dataSource, type);
+                    if (!e.repeat) history.push(dataSource, type);
                     let allowedDelta = delta;
                     if (delta < 0) {
                         for (let idx of selected) {
