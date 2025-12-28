@@ -99,15 +99,13 @@ function handleFolderSearch(e, folderId, suffix = '') {
         if (rDiv) {
             rDiv.classList.remove('hidden');
             rDiv.innerHTML = results.length ? results.map(s => `
-                <div class="search-result-item flex items-center p-2 hover:bg-[var(--bg-tertiary)] cursor-pointer rounded border-b border-[var(--border-primary)] last:border-0"
+                <div class="search-result-item flex items-center p-2 hover:bg-[#237BFF]/20 hover:text-[#237BFF] cursor-pointer rounded border-b border-[var(--border-primary)] last:border-0"
                         onclick="window.addSongToFolder(${folderId}, '${s.id_cancion}', '${suffix}')">
-                    <div class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] flex items-center justify-center text-[var(--text-muted)] overflow-hidden flex-shrink-0">
-                            ${s.ruta_imagen ? `<img src="${CONTENT_BASE_URL}/${s.ruta_imagen}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentNode.innerHTML='<svg class=\\'w-4 h-4\\' fill=\\'none\\' stroke=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3\\'></path></svg>'">` :
-                    `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>`}
-                    </div>
+                    <img src="${s.ruta_imagen ? (s.ruta_imagen.startsWith('http') ? s.ruta_imagen : CONTENT_BASE_URL + '/' + s.ruta_imagen) : 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%239ca3af\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Crect x=\'2\' y=\'2\' width=\'20\' height=\'20\' rx=\'2\' ry=\'2\' fill=\'%231f2937\' stroke=\'none\'/%3E%3Cpath d=\'M9 18V5l12-2v13\'/%3E%3Ccircle cx=\'6\' cy=\'18\' r=\'3\'/%3E%3Ccircle cx=\'18\' cy=\'16\' r=\'3\'/%3E%3C/svg%3E'}" 
+                         class="w-8 h-8 rounded mr-2 bg-[var(--bg-tertiary)] object-cover flex-shrink-0">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-xs text-[var(--text-primary)] font-medium truncate">${s.titulo}</p>
-                        <p class="text-[10px] text-[var(--text-muted)] truncate">${s.artista}</p>
+                        <p class="text-xs font-medium truncate">${s.titulo}</p>
+                        <p class="text-[10px] opacity-70 truncate">${s.artista}</p>
                     </div>
                 </div>
             `).join('') : '<div class="p-2 text-center text-[var(--text-muted)] text-xs italic">Sin resultados</div>';

@@ -6,7 +6,6 @@ export const sidebarState = {
     ctxSongId: null,
     ctxSongFolderId: null,
     lastSelectedId: null, // Anchor for Shift-select
-    lastSelectedId: null, // Anchor for Shift-select
 
     // Setters
     setFolders(newFolders) { this.folders = newFolders; },
