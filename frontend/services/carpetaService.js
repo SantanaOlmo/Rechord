@@ -59,7 +59,10 @@ export const carpetaService = {
     },
 
     async getFolderSongs(idCarpeta) {
-        const response = await fetch(`${API_ROUTES.FOLDERS}?action=contenido&id=${idCarpeta}`);
+        const user = authService.getCurrentUser();
+        const response = await fetch(`${API_ROUTES.FOLDERS}?action=contenido&id=${idCarpeta}`, {
+            headers: { 'X-User-Id': user.id_usuario }
+        });
 
         return await response.json();
     },

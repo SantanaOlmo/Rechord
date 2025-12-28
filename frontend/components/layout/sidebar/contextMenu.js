@@ -192,3 +192,4 @@ export function setupContextMenu(isMobile) {
         backdrop.onclick = close;
         btnConfirm.onclick = () => { close(); if (onConfirm) onConfirm(); };
     }
+}
