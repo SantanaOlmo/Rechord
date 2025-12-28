@@ -9,26 +9,11 @@ import { animateDeletionSequence } from './animations.js';
 
 // ... (existing imports)
 
-// Inside setupContextActions -> btnDelete.onclick -> showConfirmModal callback:
 
-showConfirmModal(async () => {
-    const oldFolders = [...sidebarState.folders];
-    const idsToDelete = [...sidebarState.selectedFolderIds];
-
-    // 1. Play Cinematic Animation
-    await animateDeletionSequence(idsToDelete, isMobile);
-
-    // 2. Optimistic Update (After animation)
-    sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
-
-    ['folders-list', 'folders-list-mobile'].forEach(id => {
-        const list = document.getElementById(id);
-        if (list) {
-            const suffix = id.includes('mobile') ? 'mobile' : '';
-            list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
-        }
-    });
-    const menuHtml = `
+export function setupContextMenu(isMobile) {
+    // Inject HTML if needed
+    if (!document.getElementById('folder-context-menu')) {
+        const menuHtml = `
             <div id="folder-context-menu" class="fixed z-50 bg-[var(--bg-secondary)] border border-[var(--border-primary)] shadow-xl rounded-md py-1 hidden w-48 text-sm select-none">
                 <div id="ctx-new-folder" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Nueva Carpeta</div>
                 <div id="ctx-add-song" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Añadir Canción</div>
@@ -53,33 +38,33 @@ showConfirmModal(async () => {
                 </div>
             </div>
         `;
-    document.body.insertAdjacentHTML('beforeend', menuHtml);
+        document.body.insertAdjacentHTML('beforeend', menuHtml);
 
-    document.addEventListener('click', (e) => {
-        const cx = document.getElementById('folder-context-menu');
-        if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
-    });
+        document.addEventListener('click', (e) => {
+            const cx = document.getElementById('folder-context-menu');
+            if (cx && !cx.contains(e.target)) cx.classList.add('hidden');
+        });
 
-    // Handlers
-    window.onFolderContextMenu = (e, folderId) => {
-        e.preventDefault(); e.stopPropagation();
-        if (!sidebarState.selectedFolderIds.has(folderId)) {
-            clearSelection(isMobile);
-            addToSelection(folderId, isMobile);
-        }
-        sidebarState.setCtxFolderId(folderId);
-        showContextMenu(e, 'folder');
-    };
+        // Handlers
+        window.onFolderContextMenu = (e, folderId) => {
+            e.preventDefault(); e.stopPropagation();
+            if (!sidebarState.selectedFolderIds.has(folderId)) {
+                clearSelection(isMobile);
+                addToSelection(folderId, isMobile);
+            }
+            sidebarState.setCtxFolderId(folderId);
+            showContextMenu(e, 'folder');
+        };
 
-    window.onBackgroundContextMenu = (e) => {
-        e.preventDefault();
-        // showContextMenu(e, 'bg'); 
-    };
+        window.onBackgroundContextMenu = (e) => {
+            e.preventDefault();
+            // showContextMenu(e, 'bg'); 
+        };
 
-    setupContextActions(isMobile);
-}
+        setupContextActions(isMobile);
+    }
 
-function showContextMenu(e, type) {
+    function showContextMenu(e, type) {
         const ctxMenu = document.getElementById('folder-context-menu');
         if (!ctxMenu) return;
 
@@ -110,7 +95,7 @@ function showContextMenu(e, type) {
         ctxMenu.classList.remove('hidden');
     }
 
-function setupContextActions(isMobile) {
+    function setupContextActions(isMobile) {
         const btnNewFolder = document.getElementById('ctx-new-folder');
         if (btnNewFolder) {
             btnNewFolder.onclick = async () => {
@@ -181,7 +166,7 @@ function setupContextActions(isMobile) {
         }
     }
 
-function showConfirmModal(onConfirm) {
+    function showConfirmModal(onConfirm) {
         const modal = document.getElementById('confirm-modal');
         if (!modal) return;
 
