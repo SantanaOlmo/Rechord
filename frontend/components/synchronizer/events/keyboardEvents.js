@@ -258,41 +258,50 @@ export function attachKeyboardListeners() {
                     if (!e.repeat) history.push(dataSource, type);
 
                     const sortedIndices = Array.from(state.selectedIndices).sort((a, b) => a - b);
-                    // The first clip stays put. Subsequent clips move.
-                    // Left -> Reduce Gap -> Move clips Left (closer to start)
-                    // Right -> Increase Gap -> Move clips Right (away from start)
                     const compressionStep = 0.05;
-                    // ArrowLeft: Shift = -0.05 (Closer). ArrowRight: Shift = +0.05 (Further)
                     const shiftAmount = (e.code === 'ArrowRight') ? compressionStep : -compressionStep;
-
                     let cumulativeShift = 0;
 
                     for (let i = 1; i < sortedIndices.length; i++) {
                         const currentIdx = sortedIndices[i];
-                        const prevIdx = sortedIndices[i - 1]; // Previous in SELECTION, typically adjacent
-
-                        // We want to change the distance relative to the PREVIOUS SELECTED item?
-                        // User says: "reducir la distancia que hay entre uno y otro... conforme al primero"
-
-                        // Logic: 
-                        // i=0: Shift=0
-                        // i=1: Shift = 1 * delta
-                        // i=2: Shift = 2 * delta
-
                         cumulativeShift += shiftAmount;
 
                         const item = dataSource[currentIdx];
                         const { start, end } = getBounds(item, type);
-
-                        // Ensure valid bounds (don't overlap previous unselected items, though user said specifically selected ones)
-                        // For simplicity, we just apply shift. Collision logic is complex here.
+                        const duration = end - start;
 
                         let newStart = start + cumulativeShift;
-                        let newEnd = end + cumulativeShift;
+                        let newEnd = newStart + duration;
 
-                        // Simple collision check with IMMEDIATELY PRECEDING clip (even if not selected? No, user logic implies selected group)
-                        // But technically we should respect physical bounds.
-                        // Let's rely on visual feedback for now as per user request "reducir distancia".
+                        // Collision Check (Left Neighbor)
+                        if (currentIdx > 0) {
+                            const prevItem = dataSource[currentIdx - 1];
+                            const prevEnd = getBounds(prevItem, type).end;
+                            if (newStart < prevEnd) {
+                                newStart = prevEnd;
+                                newEnd = newStart + duration;
+                            }
+                        }
+
+                        // Collision Check (Right Neighbor) - mainly for expanding
+                        if (currentIdx < dataSource.length - 1) {
+                            const nextItem = dataSource[currentIdx + 1];
+                            const nextStart = getBounds(nextItem, type).start;
+                            if (newEnd > nextStart) {
+                                newEnd = nextStart;
+                                newStart = newEnd - duration;
+                            }
+                        }
+
+                        // Double-check Left (Priority: Don't push back into left neighbor if blocked by right)
+                        if (currentIdx > 0) {
+                            const prevItem = dataSource[currentIdx - 1];
+                            const prevEnd = getBounds(prevItem, type).end;
+                            if (newStart < prevEnd) {
+                                newStart = prevEnd;
+                                newEnd = newStart + duration;
+                            }
+                        }
 
                         setBounds(item, newStart, newEnd, type);
                     }
