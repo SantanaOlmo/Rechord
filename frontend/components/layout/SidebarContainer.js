@@ -12,7 +12,7 @@ export function SidebarContainer() {
             
             <!-- Library Section (Top) -->
             <div id="sidebar-library-section" class="flex-1 flex flex-col overflow-hidden transition-all duration-300 relative">
-                ${FolderSidebar(true)} 
+                ${FolderSidebar(false)} 
             </div>
 
             <!-- Resize Handle (Middle) - Only visible when session active -->

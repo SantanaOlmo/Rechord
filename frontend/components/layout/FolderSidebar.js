@@ -70,11 +70,50 @@ async function initSidebar(isMobile) {
     // Mobile view doesn't have the add button in this simplified code.
 
 
-    document.getElementById('btn-add-folder')?.addEventListener('click', async () => {
-        if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
-        const name = prompt('Carpeta:', 'Nueva');
-        if (name) { await carpetaService.createFolder(name); loadFolders(); }
-    });
+    // Inject Context Menu if not exists
+    if (!document.getElementById('folder-context-menu')) {
+        const menuHtml = `
+            <div id="folder-context-menu" class="fixed z-50 bg-[var(--bg-secondary)] border border-[var(--border-primary)] shadow-xl rounded-md py-1 hidden w-48 text-sm">
+                <div id="ctx-new-folder" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Nueva Carpeta</div>
+                <div id="ctx-add-song" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Añadir Canción</div>
+                <div id="ctx-rename" class="px-4 py-2 hover:bg-[var(--bg-tertiary)] cursor-pointer text-[var(--text-primary)] hidden">Renombrar</div>
+                <div id="ctx-separator" class="border-t border-[var(--border-primary)] my-1 hidden"></div>
+                <div id="ctx-delete" class="px-4 py-2 hover:bg-red-900/30 text-red-400 cursor-pointer hidden">Eliminar Carpeta</div>
+                <div id="ctx-remove-song" class="px-4 py-2 hover:bg-red-900/30 text-red-400 cursor-pointer hidden">Quitar de Carpeta</div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', menuHtml);
+
+        // Close on click outside
+        document.addEventListener('click', () => {
+            document.getElementById('folder-context-menu')?.classList.add('hidden');
+        });
+    }
+
+    const btnAdd = document.getElementById('btn-add-folder');
+    if (btnAdd) {
+        // Use .onclick to prevent duplicates
+        btnAdd.onclick = async () => {
+            if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
+
+            // Count existing "Nueva Carpeta" to suggest a number
+            const count = folders ? folders.filter(f => f.nombre && f.nombre.startsWith('Nueva Carpeta')).length : 0;
+            const name = `Nueva Carpeta ${count + 1}`;
+
+            // Create immediately
+            const result = await carpetaService.createFolder(name);
+
+            // Reload UI to show it
+            await loadFolders();
+
+            // Check both id_carpeta (DB) and id
+            const newId = result?.id_carpeta || result?.id;
+
+            if (newId) {
+                setTimeout(() => window.startInlineRename(newId), 50);
+            }
+        };
+    }
 
     // Expose Global Loader for other components to trigger refresh
     window.loadSidebarFolders = loadFolders;
@@ -224,19 +263,38 @@ async function initSidebar(isMobile) {
 
 
 
+    // Global Context Menu Handlers
+    window.onFolderContextMenu = (e, folderId) => {
+        e.preventDefault();
+        e.stopPropagation();
+        ctxFolderId = folderId;
+        ctxSongId = null;
+        showContextMenu(e, 'folder');
+    };
+
+    window.onBackgroundContextMenu = (e) => {
+        e.preventDefault();
+        // showContextMenu(e, 'bg'); // Optional: Right click on empty space
+    };
+
     function showContextMenu(e, type) {
+        const ctxMenu = document.getElementById('folder-context-menu');
+        if (!ctxMenu) return;
+
         // Reset visibility
         ['ctx-new-folder', 'ctx-add-song', 'ctx-rename', 'ctx-remove-song', 'ctx-delete', 'ctx-separator'].forEach(id => {
-            document.getElementById(id)?.classList.add('hidden');
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
         });
 
         if (type === 'bg') {
             document.getElementById('ctx-new-folder')?.classList.remove('hidden');
         } else if (type === 'folder') {
-            document.getElementById('ctx-add-song')?.classList.remove('hidden');
             document.getElementById('ctx-rename')?.classList.remove('hidden');
             document.getElementById('ctx-separator')?.classList.remove('hidden');
             document.getElementById('ctx-delete')?.classList.remove('hidden');
+            // Add song is contextual, maybe keep if needed
+            // document.getElementById('ctx-add-song')?.classList.remove('hidden');
         } else if (type === 'song') {
             document.getElementById('ctx-remove-song')?.classList.remove('hidden');
         }
