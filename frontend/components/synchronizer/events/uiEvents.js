@@ -170,5 +170,11 @@ export function attachUIListeners() {
                 }
             }
         });
-    }
+    });
+}
+
+// Refresh layout on window resize to ensure timeline fills width
+window.addEventListener('resize', () => {
+    actions.refresh();
+});
 }
