@@ -38,13 +38,13 @@ export function setupCreateFolder(isMobile) {
     }
 }
 
-export function startInlineRename(folderId, isMobile) {
-    const suffix = isMobile ? 'mobile' : ''; // Renderer uses suffix if needed, but ID usually contains it if passed.
-    // However, renderer IDs are specific: folder-name-${id}${suffix}
-    // We try both or check DOM
-    let span = document.getElementById(`folder-name-${folderId}${suffix ? '-' + suffix : ''}`);
-    if (!span && !suffix) span = document.getElementById(`folder-name-${folderId}`);
+export function startInlineRename(folderId) {
+    // Try to find the element with or without suffix (Desktop vs Mobile)
+    // We check both possibilities because the context menu might triggered from ANY mode state
+    let span = document.getElementById(`folder-name-${folderId}`);
+    if (!span) span = document.getElementById(`folder-name-${folderId}-mobile`);
 
+    // If still not found, we can't rename (maybe hidden sidebar?)
     if (!span) return;
 
     const currentName = span.textContent;
@@ -69,12 +69,16 @@ export function startInlineRename(folderId, isMobile) {
 
     input.addEventListener('blur', save);
     input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') input.blur();
-        else if (e.key === 'Escape') {
+        if (e.key === 'Enter') {
+            input.blur();
+        } else if (e.key === 'Escape') {
             input.removeEventListener('blur', save);
             input.replaceWith(span);
         }
     });
 
+    // Important: Stop propagation so we don't trigger folder open/close
     input.addEventListener('click', (e) => e.stopPropagation());
+    // Also stop context menu on input
+    input.addEventListener('contextmenu', (e) => e.stopPropagation());
 }

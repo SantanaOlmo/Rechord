@@ -113,7 +113,7 @@ function setupContextActions(isMobile) {
         btnRename.onclick = () => {
             if (sidebarState.selectedFolderIds.size !== 1) return;
             const target = sidebarState.ctxFolderId || [...sidebarState.selectedFolderIds][0];
-            startInlineRename(target, isMobile);
+            startInlineRename(target); // No need for isMobile, it's auto-detected
         };
     }
 
