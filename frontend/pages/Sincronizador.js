@@ -336,12 +336,23 @@ export function render(songId) {
                                         <h3 class="text-[10px] font-bold text-green-400 tracking-wider mb-2">EDICIÓN DE CLIPS</h3>
                                         
                                         <div class="flex items-center justify-between group">
-                                            <span class="text-xs text-gray-400 group-hover:text-green-300 transition-colors">Mover Clip</span>
+                                            <span class="text-xs text-gray-400 group-hover:text-green-300 transition-colors">Mover</span>
                                             <div class="flex items-center gap-1">
                                                 <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">Z</span>
                                                 <span class="text-gray-500 text-[10px]">+</span>
                                                 <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">←</span>
                                                 <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">→</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between group">
+                                            <span class="text-xs text-gray-400 group-hover:text-green-300 transition-colors">Mover Rápido (x2)</span>
+                                            <div class="flex items-center gap-1">
+                                                <span class="w-8 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">Shift</span>
+                                                <span class="text-gray-500 text-[10px]">+</span>
+                                                <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">Z</span>
+                                                <span class="text-gray-500 text-[10px]">+</span>
+                                                <span class="w-5 h-5 rounded bg-gray-700/50 flex items-center justify-center text-[10px] text-gray-300 border border-gray-600">Arrows</span>
                                             </div>
                                         </div>
 
