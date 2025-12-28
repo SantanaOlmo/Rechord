@@ -18,7 +18,7 @@ export function render(songId) {
                 
                 ${SyncSidebar()}
 
-                <!-- Resizer Handle -->
+                <!-- Resizer Handle (Horizontal Movement) -->
                 <div id="sidebar-resizer" class="w-[5px] cursor-col-resize hover:bg-blue-500/50 transition-colors z-50 shrink-0 hidden md:block"></div>
 
                 <!-- Right: Verse Display -->
@@ -101,23 +101,26 @@ export function render(songId) {
                 </div>
             </div>
 
+            <!-- Resizer Handle (Vertical Movement) -->
+            <div id="vertical-resizer" class="h-[5px] w-full cursor-row-resize hover:bg-blue-500/50 transition-colors z-50 shrink-0"></div>
+
             <!-- 3. Bottom Timeline -->
-            <div class="shrink-0 relative bg-[var(--bg-primary)] flex flex-col h-auto z-50 shadow-inner m-[5px] rounded-xl overflow-hidden border border-[var(--border-primary)]" id="timeline-container">
+            <div class="shrink-0 relative bg-[var(--bg-primary)] flex flex-col z-50 shadow-inner m-[5px] rounded-xl overflow-hidden border border-[var(--border-primary)] h-[350px]" id="timeline-container">
                 
                 <!-- Time Ruler (Sticky) -->
                 <div class="h-8 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] w-full flex shrink-0 z-20">
-                     <div class="w-60 border-r border-gray-800 bg-gray-900 shrink-0"></div> <!-- Spacer for headers (Adjusted width) -->
+                     <div class="w-60 border-r border-gray-800 bg-gray-900 shrink-0"></div> <!-- Spacer for headers (Adjusted width via JS/CSS if needed, keeping static spacer for now) -->
                      <div class="flex-1 overflow-hidden relative" id="ruler-container">
                         <div id="ruler-content" class="h-full relative select-none pointer-events-auto cursor-pointer"></div>
 
                      </div>
                 </div>
                 
-                <!-- Tracks Area (Scrollable) -->
-                <div class="flex-1 flex overflow-hidden relative">
+                <!-- Tracks Area (Scrollable Wrapper) -->
+                <div class="flex-1 flex overflow-y-auto overflow-x-hidden relative scrollbar-hide">
                     
                     <!-- Track Controls (Fixed Left) -->
-                    <div id="track-headers-sidebar" class="w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-20 shadow-lg">
+                    <div id="track-headers-sidebar" class="w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-20 shadow-lg min-h-full">
                         <!-- Vertical View Switcher -->
                         <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
                             <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
@@ -135,7 +138,7 @@ export function render(songId) {
                     </div>
 
                     <!-- Scrollable Tracks Content -->
-                    <div class="flex-1 overflow-x-auto overflow-y-hidden relative scrollbar-hide bg-[var(--bg-primary)]" id="timeline-scroll-area">
+                    <div class="flex-1 overflow-x-auto overflow-y-visible relative scrollbar-hide bg-[var(--bg-primary)]" id="timeline-scroll-area">
                         <div id="timeline-content" class="h-full relative">
                              <div id="tracks-container">
                                  <!-- Tracks are injected dynamically by rendering.js -->

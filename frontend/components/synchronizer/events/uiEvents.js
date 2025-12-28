@@ -198,7 +198,6 @@ export function attachUIListeners() {
                 // Constraints (min 200px, max 50% of screen)
                 if (newWidth > 200 && newWidth < window.innerWidth * 0.6) {
                     sidebar.style.width = `${newWidth}px`;
-                    if (trackHeaders) trackHeaders.style.width = `${newWidth}px`;
                     // Dispatch resize event so timeline can update if needed (though timeline is flex, checks container)
                     actions.refresh();
                 }
@@ -210,7 +209,45 @@ export function attachUIListeners() {
                 isResizing = false;
                 document.body.style.cursor = '';
                 document.body.classList.remove('select-none');
-                actions.refresh(); // Final refresh
+                actions.refresh();
+            }
+        });
+    }
+
+    // --- VERTICAL RESIZING LOGIC ---
+    const vResizer = document.getElementById('vertical-resizer');
+    const timelineContainer = document.getElementById('timeline-container');
+
+    if (vResizer && timelineContainer) {
+        let isVResizing = false;
+
+        vResizer.addEventListener('mousedown', (e) => {
+            isVResizing = true;
+            document.body.style.cursor = 'row-resize';
+            document.body.classList.add('select-none');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isVResizing) return;
+
+            requestAnimationFrame(() => {
+                // Calculate height from bottom
+                const newHeight = window.innerHeight - e.clientY - 10; // 10px buffer
+
+                // Constraints
+                if (newHeight > 100 && newHeight < window.innerHeight * 0.8) {
+                    timelineContainer.style.height = `${newHeight}px`;
+                    actions.refresh();
+                }
+            });
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isVResizing) {
+                isVResizing = false;
+                document.body.style.cursor = '';
+                document.body.classList.remove('select-none');
+                actions.refresh();
             }
         });
     }
@@ -220,4 +257,3 @@ export function attachUIListeners() {
         actions.refresh();
     });
 }
-```
