@@ -7,7 +7,7 @@ import { carpetaService } from '../../../services/carpetaService.js';
 import { search } from '../../../services/cancionService.js';
 import { authService } from '../../../services/authService.js';
 import { Store, EVENTS } from '../../../core/StateStore.js';
-import { CONTENT_BASE_URL } from '../../../config.js';
+import { CONTENT_BASE_URL } from '../../config.js';
 
 // Re-export specific handlers for inline HTML event attributes
 // These need to be attached to window because HTML strings generate 'onclick="window.xxx"'
