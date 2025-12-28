@@ -144,9 +144,7 @@ function toggleAddSong(e, folderId, suffix = '') {
 
 async function removeSongFromFolder(e, folderId, songId) {
     if (!authService.isAuthenticated()) return window.location.hash = '#/auth/login';
-    if (!confirm('¿Quitar?')) return;
-    // Wait, reusing confirm for Remove Song? User didn't specify strictness here, only Delete Folder. 
-    // But keeping consistent is good.
+    // Removed confirmation as requested
     await carpetaService.removeSongFromFolder(folderId, songId);
     const songs = await carpetaService.getFolderSongs(folderId);
     document.getElementById(`song-list-${folderId}`).innerHTML = SidebarRenderer.renderSongs(folderId, songs);
