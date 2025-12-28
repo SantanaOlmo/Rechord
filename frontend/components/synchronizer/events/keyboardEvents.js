@@ -165,7 +165,9 @@ export function attachKeyboardListeners() {
 
             // MODIFIER LOGIC FOR CLIPS (X, C, Z)
             if (state.selectedIndices.size > 0) {
-                const step = e.shiftKey ? 0.2 : 0.1;
+                // Check shift key from event OR manual state (if reliable)
+                const isShift = e.shiftKey || state.keys?.Shift;
+                const step = isShift ? 0.2 : 0.1;
                 const delta = (e.code === 'ArrowRight') ? step : -step;
                 const selected = Array.from(state.selectedIndices);
 
