@@ -135,9 +135,14 @@ function setupContextActions(isMobile) {
 
                 // Optimistic
                 sidebarState.setFolders(sidebarState.folders.filter(f => !idsToDelete.includes(f.id_carpeta)));
-                const list = document.getElementById(isMobile ? 'folders-list-mobile' : 'folders-list');
-                const suffix = isMobile ? 'mobile' : '';
-                if (list) list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+
+                ['folders-list', 'folders-list-mobile'].forEach(id => {
+                    const list = document.getElementById(id);
+                    if (list) {
+                        const suffix = id.includes('mobile') ? 'mobile' : '';
+                        list.innerHTML = SidebarRenderer.renderFolders(sidebarState.folders, suffix);
+                    }
+                });
 
                 try {
                     await Promise.all(idsToDelete.map(id => carpetaService.deleteFolder(id)));

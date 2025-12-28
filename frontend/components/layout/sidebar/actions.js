@@ -8,13 +8,18 @@ export async function loadFolders(isMobile) {
         const folders = await carpetaService.getFolders();
         sidebarState.setFolders(folders);
 
-        const listId = isMobile ? 'folders-list-mobile' : 'folders-list';
-        const list = document.getElementById(listId);
-        const suffix = isMobile ? 'mobile' : '';
+        // Render BOTH lists if present, to ensure sync (desktop/mobile switch or both loaded)
+        // If we strictly check isMobile, we might check the wrong one if state is ambiguous
+        // The safest is to try rendering both if elements exist.
 
-        if (list) {
-            list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
-        }
+        ['folders-list', 'folders-list-mobile'].forEach(id => {
+            const list = document.getElementById(id);
+            if (list) {
+                const suffix = id.includes('mobile') ? 'mobile' : '';
+                list.innerHTML = SidebarRenderer.renderFolders(folders, suffix);
+            }
+        });
+
     } catch (e) { console.error(e); }
 }
 
