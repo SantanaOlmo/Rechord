@@ -109,37 +109,37 @@ export function render(songId) {
                 
                 <!-- Time Ruler (Sticky) -->
                 <div class="h-8 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] w-full flex shrink-0 z-20">
-                     <div class="w-60 border-r border-gray-800 bg-gray-900 shrink-0"></div> <!-- Spacer for headers (Adjusted width via JS/CSS if needed, keeping static spacer for now) -->
+                     <div id="ruler-sidebar-spacer" class="w-[350px] border-r border-[var(--border-primary)] bg-[var(--bg-secondary)] shrink-0"></div>
                      <div class="flex-1 overflow-hidden relative" id="ruler-container">
                         <div id="ruler-content" class="h-full relative select-none pointer-events-auto cursor-pointer"></div>
 
                      </div>
                 </div>
                 
-                <!-- Tracks Area (Scrollable Wrapper) -->
-                <div class="flex-1 flex overflow-y-auto overflow-x-hidden relative scrollbar-hide">
-                    
-                    <!-- Track Controls (Fixed Left) -->
-                    <div id="track-headers-sidebar" class="w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-20 shadow-lg min-h-full">
-                        <!-- Vertical View Switcher -->
-                        <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
-                            <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </button>
-                            <button class="view-mode-btn hover:text-white transition-colors text-gray-600 p-1.5 rounded-lg hover:bg-gray-800" data-view="sections" title="Secciones de Canción">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                            </button>
+                <!-- Tracks Area (Unified Scroller) -->
+                <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
+                    <div class="flex min-w-full min-h-full relative">
+                        
+                        <!-- Track Controls (Sticky Left) -->
+                        <div id="track-headers-sidebar" class="sticky left-0 w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-30 shadow-lg min-h-full">
+                            <!-- Vertical View Switcher -->
+                            <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
+                                <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                                <button class="view-mode-btn hover:text-white transition-colors text-gray-600 p-1.5 rounded-lg hover:bg-gray-800" data-view="sections" title="Secciones de Canción">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                </button>
+                            </div>
+
+                            <!-- Track Headers Container -->
+                            <div class="flex-1 flex flex-col relative" id="headers-container">
+                                 <!-- Injected by rendering.js -->
+                            </div>
                         </div>
 
-                        <!-- Track Headers Container -->
-                        <div class="flex-1 flex flex-col relative" id="headers-container">
-                             <!-- Injected by rendering.js -->
-                        </div>
-                    </div>
-
-                    <!-- Scrollable Tracks Content -->
-                    <div class="flex-1 overflow-x-auto overflow-y-visible relative scrollbar-hide bg-[var(--bg-primary)]" id="timeline-scroll-area">
-                        <div id="timeline-content" class="h-full relative">
+                        <!-- Timeline Content -->
+                        <div id="timeline-content" class="flex-1 relative">
                              <div id="tracks-container">
                                  <!-- Tracks are injected dynamically by rendering.js -->
                              </div>
