@@ -108,7 +108,7 @@ export function render(songId) {
             <div class="shrink-0 relative bg-[var(--bg-primary)] flex flex-col z-50 shadow-inner m-[5px] rounded-xl overflow-hidden border border-[var(--border-primary)] h-[350px]" id="timeline-container">
                 
                 <!-- Time Ruler (Sticky) -->
-                <div class="h-8 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] w-full flex shrink-0 z-20">
+                <div class="h-8 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] w-full flex shrink-0 z-50">
                      <div id="ruler-sidebar-spacer" class="w-[350px] border-r border-[var(--border-primary)] bg-[var(--bg-secondary)] shrink-0"></div>
                      <div class="flex-1 overflow-hidden relative" id="ruler-container">
                         <div id="ruler-content" class="h-full relative select-none pointer-events-auto cursor-pointer"></div>
@@ -129,9 +129,9 @@ export function render(songId) {
                     </div>
 
                     <!-- Tracks Scroll Area -->
-                    <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
+                    <div class="flex-1 overflow-auto relative scrollbar-hide h-full" id="timeline-scroll-area">
                         <!-- Flex Wrapper for robust sticky layout -->
-                        <div class="flex min-w-full min-h-full relative">
+                        <div class="flex min-w-full min-h-full h-full relative">
                             
                             <!-- Track Controls (Sticky Left) -->
                             <div id="track-headers-sidebar" class="sticky left-0 w-[310px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg">
