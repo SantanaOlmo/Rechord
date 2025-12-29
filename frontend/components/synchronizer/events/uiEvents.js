@@ -65,15 +65,12 @@ export function attachUIListeners() {
         // 1. Immediate attempt (optimistic)
         scrollArea.scrollLeft = Math.max(0, newScroll);
 
-        // 2. Post-layout frame (standard)
+        // 2. Post-layout frame (double RAF to wait for repaint/reflow)
         requestAnimationFrame(() => {
-            scrollArea.scrollLeft = Math.max(0, newScroll);
+            requestAnimationFrame(() => {
+                scrollArea.scrollLeft = Math.max(0, newScroll);
+            });
         });
-
-        // 3. Post-task (fallback for heavy renders)
-        setTimeout(() => {
-            scrollArea.scrollLeft = Math.max(0, newScroll);
-        }, 0);
     }
 
     // Zoom with Wheel (Ctrl + Wheel)
