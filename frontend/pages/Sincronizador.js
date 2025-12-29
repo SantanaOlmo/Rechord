@@ -139,12 +139,12 @@ export function render(songId) {
                         </div>
 
                         <!-- Timeline Content -->
-                        <div id="timeline-content" class="flex-1 relative">
+                        <div id="timeline-content" class="flex-1 relative min-h-full bg-[var(--bg-primary)]">
                              <div id="tracks-container">
                                  <!-- Tracks are injected dynamically by rendering.js -->
                              </div>
                              <!-- Playhead -->
-                             <div id="playhead" class="absolute top-0 bottom-0 w-2 -ml-1 z-50 cursor-grab group" style="left: 0px">
+                             <div id="playhead" class="absolute top-0 bottom-0 w-2 -ml-1 z-20 cursor-grab group" style="left: 0px">
                                 <div class="w-3 h-3 bg-red-500 transform rotate-45 -ml-0.5 -mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.8)] border border-white/20"></div>
                                 <div class="w-px h-full bg-red-500/80 mx-auto shadow-[0_0_8px_rgba(239,68,68,0.4)]"></div>
 
