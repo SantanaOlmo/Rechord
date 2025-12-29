@@ -213,9 +213,9 @@ export function attachUIListeners() {
 
     // --- VERTICAL RESIZING LOGIC ---
     const vResizer = document.getElementById('vertical-resizer');
-    const timelineContainer = document.getElementById('timeline-container');
+    const timelineContainerResize = document.getElementById('timeline-container');
 
-    if (vResizer && timelineContainer) {
+    if (vResizer && timelineContainerResize) {
         let isVResizing = false;
 
         vResizer.addEventListener('mousedown', (e) => {
@@ -233,7 +233,7 @@ export function attachUIListeners() {
 
                 // Constraints
                 if (newHeight > 100 && newHeight < window.innerHeight * 0.8) {
-                    timelineContainer.style.height = `${newHeight}px`;
+                    timelineContainerResize.style.height = `${newHeight}px`;
                     actions.refresh();
                 }
             });
