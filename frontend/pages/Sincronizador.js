@@ -116,40 +116,43 @@ export function render(songId) {
                      </div>
                 </div>
                 
-                <!-- Tracks Area (Unified Scroller) -->
-                <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
-                    <!-- Flex Wrapper for robust sticky layout -->
-                    <div class="flex min-w-full relative">
-                        
-                        <!-- Track Controls (Sticky Left) -->
-                        <div id="track-headers-sidebar" class="sticky left-0 w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg" style="height: fit-content; min-height: 100%;">
-                            <!-- Vertical View Switcher -->
-                            <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
-                                <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </button>
-                                <button class="view-mode-btn hover:text-white transition-colors text-gray-600 p-1.5 rounded-lg hover:bg-gray-800" data-view="sections" title="Secciones de Canción">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                                </button>
+                <!-- Main Timeline Area -->
+                <div class="flex-1 flex min-h-0 relative">
+                    <!-- Vertical Icon Bar (Fixed Left) -->
+                    <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-[var(--border-primary)] bg-gray-950 shrink-0 z-40">
+                         <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                         </button>
+                         <button class="view-mode-btn hover:text-white transition-colors text-gray-600 p-1.5 rounded-lg hover:bg-gray-800" data-view="sections" title="Secciones de Canción">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                         </button>
+                    </div>
+
+                    <!-- Tracks Scroll Area -->
+                    <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
+                        <!-- Flex Wrapper for robust sticky layout -->
+                        <div class="flex min-w-full relative">
+                            
+                            <!-- Track Controls (Sticky Left) -->
+                            <div id="track-headers-sidebar" class="sticky left-0 w-[310px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg" style="height: fit-content; min-height: 100%;">
+                                <!-- Track Headers Container -->
+                                <div class="flex-1 flex flex-col relative" id="headers-container">
+                                     <!-- Injected by rendering.js -->
+                                </div>
                             </div>
 
-                            <!-- Track Headers Container -->
-                            <div class="flex-1 flex flex-col relative" id="headers-container">
-                                 <!-- Injected by rendering.js -->
+                            <!-- Timeline Content (Dynamic Width) -->
+                            <div id="timeline-content" class="flex-1 relative bg-[var(--bg-primary)] min-w-0">
+                                 <div id="tracks-container">
+                                     <!-- Tracks are injected dynamically by rendering.js -->
+                                 </div>
+                                 <!-- Playhead -->
+                                 <div id="playhead" class="absolute top-0 bottom-0 w-2 -ml-1 z-20 cursor-grab group" style="left: 0px">
+                                    <div class="w-3 h-3 bg-red-500 transform rotate-45 -ml-0.5 -mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.8)] border border-white/20"></div>
+                                    <div class="w-px h-full bg-red-500/80 mx-auto shadow-[0_0_8px_rgba(239,68,68,0.4)]"></div>
+
+                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Timeline Content (Dynamic Width) -->
-                        <div id="timeline-content" class="flex-1 relative bg-[var(--bg-primary)] min-w-0">
-                             <div id="tracks-container">
-                                 <!-- Tracks are injected dynamically by rendering.js -->
-                             </div>
-                             <!-- Playhead -->
-                             <div id="playhead" class="absolute top-0 bottom-0 w-2 -ml-1 z-20 cursor-grab group" style="left: 0px">
-                                <div class="w-3 h-3 bg-red-500 transform rotate-45 -ml-0.5 -mt-1.5 shadow-[0_0_8px_rgba(239,68,68,0.8)] border border-white/20"></div>
-                                <div class="w-px h-full bg-red-500/80 mx-auto shadow-[0_0_8px_rgba(239,68,68,0.4)]"></div>
-
-                             </div>
                         </div>
                     </div>
                 </div>
