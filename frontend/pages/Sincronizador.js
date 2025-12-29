@@ -131,10 +131,10 @@ export function render(songId) {
                     <!-- Tracks Scroll Area -->
                     <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
                         <!-- Flex Wrapper for robust sticky layout -->
-                        <div class="flex min-w-full relative">
+                        <div class="flex min-w-full min-h-full relative">
                             
                             <!-- Track Controls (Sticky Left) -->
-                            <div id="track-headers-sidebar" class="sticky left-0 w-[310px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg" style="height: fit-content; min-height: 100%;">
+                            <div id="track-headers-sidebar" class="sticky left-0 w-[310px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg">
                                 <!-- Track Headers Container -->
                                 <div class="flex-1 flex flex-col relative" id="headers-container">
                                      <!-- Injected by rendering.js -->
