@@ -211,43 +211,7 @@ export function attachUIListeners() {
         });
     }
 
-    // --- VERTICAL RESIZING LOGIC ---
-    const vResizer = document.getElementById('vertical-resizer');
-    const timelineContainerResize = document.getElementById('timeline-container');
 
-    if (vResizer && timelineContainerResize) {
-        let isVResizing = false;
-
-        vResizer.addEventListener('mousedown', (e) => {
-            isVResizing = true;
-            document.body.style.cursor = 'row-resize';
-            document.body.classList.add('select-none');
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isVResizing) return;
-
-            requestAnimationFrame(() => {
-                // Calculate height from bottom
-                const newHeight = window.innerHeight - e.clientY - 10; // 10px buffer
-
-                // Constraints
-                if (newHeight > 100 && newHeight < window.innerHeight * 0.8) {
-                    timelineContainerResize.style.height = `${newHeight}px`;
-                    actions.refresh();
-                }
-            });
-        });
-
-        window.addEventListener('mouseup', () => {
-            if (isVResizing) {
-                isVResizing = false;
-                document.body.style.cursor = '';
-                document.body.classList.remove('select-none');
-                actions.refresh();
-            }
-        });
-    }
 
     // Refresh layout on window resize to ensure timeline fills width
     window.addEventListener('resize', () => {

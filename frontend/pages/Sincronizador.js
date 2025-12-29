@@ -101,9 +101,6 @@ export function render(songId) {
                 </div>
             </div>
 
-            <!-- Resizer Handle (Vertical Movement) -->
-            <div id="vertical-resizer" class="h-[5px] w-full cursor-row-resize hover:bg-blue-500/50 transition-colors z-50 shrink-0"></div>
-
             <!-- 3. Bottom Timeline -->
             <div class="shrink-0 relative bg-[var(--bg-primary)] flex flex-col z-50 shadow-inner m-[5px] rounded-xl overflow-hidden border border-[var(--border-primary)] h-[350px]" id="timeline-container">
                 
