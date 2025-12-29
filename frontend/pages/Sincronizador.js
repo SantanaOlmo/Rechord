@@ -118,11 +118,11 @@ export function render(songId) {
                 
                 <!-- Tracks Area (Unified Scroller) -->
                 <div class="flex-1 overflow-auto relative scrollbar-hide" id="timeline-scroll-area">
-                    <!-- Grid Wrapper for perfect 2D layout -->
-                    <div class="grid grid-cols-[350px_auto] min-w-full min-h-full relative">
+                    <!-- Flex Wrapper for robust sticky layout -->
+                    <div class="flex min-w-full relative">
                         
                         <!-- Track Controls (Sticky Left) -->
-                        <div id="track-headers-sidebar" class="col-start-1 row-start-1 sticky left-0 w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex shrink-0 z-30 shadow-lg h-full">
+                        <div id="track-headers-sidebar" class="sticky left-0 w-[350px] bg-[var(--bg-secondary)] border-r border-[var(--border-primary)] flex-none z-40 shadow-lg" style="height: fit-content; min-height: 100%;">
                             <!-- Vertical View Switcher -->
                             <div class="w-10 flex flex-col items-center py-2 gap-3 border-r border-gray-800 bg-gray-950/50 pt-3">
                                 <button class="view-mode-btn hover:text-white transition-colors text-cyan-400 p-1.5 rounded-lg hover:bg-gray-800" data-view="beat" title="Beat Markers">
@@ -140,7 +140,7 @@ export function render(songId) {
                         </div>
 
                         <!-- Timeline Content (Dynamic Width) -->
-                        <div id="timeline-content" class="col-start-2 row-start-1 relative min-h-full bg-[var(--bg-primary)] min-w-0">
+                        <div id="timeline-content" class="flex-1 relative bg-[var(--bg-primary)] min-w-0">
                              <div id="tracks-container">
                                  <!-- Tracks are injected dynamically by rendering.js -->
                              </div>
