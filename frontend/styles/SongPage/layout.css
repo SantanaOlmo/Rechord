@@ -16,6 +16,13 @@
     flex: 1;
     display: flex;
     overflow: hidden;
+    flex-direction: column;
+}
+
+@media (min-width: 768px) {
+    .song-page-grid {
+        flex-direction: row;
+    }
 }
 
 /* Wrapper for Main Content (Relative, No Scroll) */
@@ -44,19 +51,32 @@
 }
 
 .lyrics-sidebar {
-    width: 20rem;
+    width: 100%;
     /* w-80 */
     background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     display: flex;
     flex-direction: column;
     cursor: pointer;
     transition: background-color 0.3s;
+    height: 40vh;
+    /* Fixed height on mobile */
+    min-height: 200px;
 }
 
 @media (min-width: 768px) {
+    .lyrics-sidebar {
+        width: 20rem;
+        height: auto;
+        min-height: auto;
+        border-top: none;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+@media (min-width: 1024px) {
     .lyrics-sidebar {
         width: 24rem;
         /* w-96 */
