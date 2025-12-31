@@ -17,14 +17,12 @@ export function PlayerPage(id) {
             <!-- Background Carousel Layer -->
             <div id="player-bg-carousel" class="absolute inset-0 z-0 pointer-events-none">
                 <!-- Images injected here -->
-                <div class="absolute inset-0 bg-[var(--bg-primary)] transition-opacity duration-1000" id="bg-default"></div>
             </div>
             <!-- Overlay to ensure text readability -->
-            <div class="absolute inset-0 z-0 bg-[var(--bg-primary)]/60 pointer-events-none"></div>
+            <div class="absolute inset-0 z-0 bg-black/60 pointer-events-none"></div>
 
             <div class="relative z-10 w-full flex flex-col h-full"> <!-- Content Wrapper -->
-                ${PlayerHeader()}
-
+                
                 <!-- Main Content Area -->
                 <main class="flex-1 flex flex-col relative overflow-hidden min-h-0">
                     <!-- Content Panels (Lyrics, Chords) -->
@@ -53,34 +51,58 @@ async function initBackgroundCarousel(songId) {
         const backgrounds = await res.json();
 
         if (Array.isArray(backgrounds) && backgrounds.length > 0) {
-            let currentIndex = 0;
-            const intervalTime = 15000; // 15s
-
             container.innerHTML = '';
+
+            if (window.bgCarouselInterval) clearInterval(window.bgCarouselInterval);
 
             backgrounds.forEach((bg, index) => {
                 const img = document.createElement('img');
                 img.src = `${CONTENT_BASE_URL}/${bg.ruta_fondo}`;
-                img.className = `absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
-                img.dataset.index = index;
+                img.className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out";
+                img.style.opacity = '0';
+
+                if (index === 0) {
+                    img.style.opacity = '1';
+                }
+
+                img.onerror = () => {
+                    const wasVisible = img.style.opacity === '1';
+                    img.remove();
+                    if (wasVisible) {
+                        const next = container.querySelector('img');
+                        if (next) {
+                            next.style.opacity = '1';
+                        }
+                    }
+                };
                 container.appendChild(img);
             });
 
-            if (backgrounds.length > 1) {
-                setInterval(() => {
-                    const images = container.querySelectorAll('img');
-                    images[currentIndex].classList.remove('opacity-100');
-                    images[currentIndex].classList.add('opacity-0');
+            window.bgCarouselInterval = setInterval(() => {
+                const images = container.querySelectorAll('img');
+                if (images.length <= 1) return;
 
-                    currentIndex = (currentIndex + 1) % images.length;
+                let visibleIndex = -1;
+                for (let i = 0; i < images.length; i++) {
+                    if (images[i].style.opacity === '1') {
+                        visibleIndex = i;
+                        break;
+                    }
+                }
 
-                    images[currentIndex].classList.remove('opacity-0');
-                    images[currentIndex].classList.add('opacity-100');
-                }, intervalTime);
-            }
+                if (visibleIndex !== -1) {
+                    images[visibleIndex].style.opacity = '0';
+                } else {
+                    visibleIndex = -1; // Force reset logic if needed, but standard loop handles next
+                }
+
+                // If nothing was visible, nextIndex is 0
+                const nextIndex = (visibleIndex + 1) % images.length;
+                if (images[nextIndex]) images[nextIndex].style.opacity = '1';
+
+            }, 10000);
         }
     } catch (e) {
         console.error("Error loading backgrounds", e);
     }
 }
-

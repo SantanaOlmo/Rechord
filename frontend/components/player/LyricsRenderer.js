@@ -36,13 +36,10 @@ export function renderLyrics(song) {
 
     if (!song.estrofas || song.estrofas.length === 0) {
         // Mode A: Song Page Sidebar
-        if (sidebar) sidebar.style.backgroundColor = '#2563eb'; // bg-blue-600
+        // Background color overrides removed to show song background/theme
 
         // Mode B: Full Player Page
-        if (playerContainer) {
-            playerContainer.style.backgroundColor = '#2563eb';
-            if (playerCarousel) playerCarousel.style.display = 'none'; // Hide images
-        }
+        // Player background overrides removed to keep carousel visible
 
         // Adjust Header for Blue Background
         if (header) {

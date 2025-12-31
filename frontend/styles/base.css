@@ -47,3 +47,9 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
 }
+
+/* Utility: Gradient Mask for Scrolling Text */
+.mask-image-gradient {
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}

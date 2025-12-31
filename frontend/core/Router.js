@@ -82,6 +82,14 @@ const router = () => {
     const header = document.querySelector('body > header');
     if (header) {
         header.style.display = isSincronizador ? 'none' : 'flex';
+
+        // Transparent Mode for Player and Song pages
+        const isTransparentMode = path.startsWith('/player') || path.startsWith('/song/');
+        if (isTransparentMode) {
+            header.classList.add('transparent-mode');
+        } else {
+            header.classList.remove('transparent-mode');
+        }
     }
 
     appRoot.className = '';

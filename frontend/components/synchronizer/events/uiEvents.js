@@ -10,17 +10,23 @@ export function attachUIListeners() {
     const btnPlay = document.getElementById('btn-play-pause');
     if (btnPlay) btnPlay.onclick = togglePlay;
 
-    // Metronome Toggle
-    const btnMetronome = document.getElementById('toggle-metronome');
-    if (btnMetronome) {
-        btnMetronome.onclick = () => {
-            const isActive = MetronomeLogic.toggle();
-            btnMetronome.classList.toggle('text-cyan-400', isActive);
-            btnMetronome.classList.toggle('bg-white/10', isActive);
-            btnMetronome.classList.toggle('text-gray-400', !isActive);
-        };
-    }
+    // Metronome Toggle Logic
+    const toggleMetronomeAction = (btn) => {
+        const isActive = MetronomeLogic.toggle();
+        // Update ALL metronome buttons
+        const allBtns = document.querySelectorAll('#toggle-metronome, #toggle-metronome-mobile');
+        allBtns.forEach(b => {
+            b.classList.toggle('text-cyan-400', isActive);
+            b.classList.toggle('bg-white/10', isActive);
+            b.classList.toggle('text-gray-400', !isActive);
+        });
+    };
 
+    const btnMetronome = document.getElementById('toggle-metronome');
+    if (btnMetronome) btnMetronome.onclick = () => toggleMetronomeAction(btnMetronome);
+
+    const btnMetronomeMobile = document.getElementById('toggle-metronome-mobile');
+    if (btnMetronomeMobile) btnMetronomeMobile.onclick = () => toggleMetronomeAction(btnMetronomeMobile);
 
 
     // Helper: Apply Zoom centering on viewport or mouse
@@ -85,13 +91,20 @@ export function attachUIListeners() {
         });
     }
 
-    const btnSave = document.getElementById('btn-save-sync');
-    if (btnSave) btnSave.onclick = async () => {
+    const saveAction = async (btnClicked) => {
         try {
-            const btn = document.getElementById('btn-save-sync');
-            const originalText = btn.textContent;
-            btn.textContent = 'Guardando...';
-            btn.disabled = true;
+            // Update UI on both buttons if they exist
+            const allSaveBtns = document.querySelectorAll('#btn-save-sync, #btn-save-sync-mobile');
+            allSaveBtns.forEach(btn => {
+                const span = btn.querySelector('span'); // Might be missing on mobile
+                if (span) btn.dataset.originalText = span.textContent;
+
+                // For mobile button which has no text, maybe change color
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.disabled = true;
+            });
+
+            if (btnClicked.textContent) btnClicked.textContent = '...';
 
             // Prepare Settings Payload
             const settingsPayload = {
@@ -99,11 +112,8 @@ export function attachUIListeners() {
                 bpm: state.settings.tempo,
                 metrica_numerador: state.settings.timeSignature.num,
                 metrica_denominador: state.settings.timeSignature.den,
-                metrica_numerador: state.settings.timeSignature.num,
-                metrica_denominador: state.settings.timeSignature.den,
                 beat_marker: JSON.stringify(state.settings.beatMarker), // Save as JSON string
                 subdivision: state.settings.subdivision,
-                velocity: state.settings.velocity,
                 velocity: state.settings.velocity,
                 acordes: JSON.stringify(state.chords || []), // Save Chords
                 song_sections: JSON.stringify(state.settings.songSections || []), // Save Sections
@@ -115,10 +125,60 @@ export function attachUIListeners() {
                 cancionService.updateCancion(settingsPayload)
             ]);
 
-            btn.textContent = 'Guardado!';
-            setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+            allSaveBtns.forEach(btn => {
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.disabled = false;
+                btn.classList.add('text-green-400'); // Valid visual feedback for icon-only btns
+                if (btn.dataset.originalText) {
+                    const span = btn.querySelector('span');
+                    if (span) span.textContent = 'OK';
+                }
+                setTimeout(() => {
+                    btn.classList.remove('text-green-400');
+                    if (btn.dataset.originalText) {
+                        const span = btn.querySelector('span');
+                        if (span) span.textContent = btn.dataset.originalText;
+                    }
+                }, 2000);
+            });
+
         } catch (e) { alert('Error al guardar: ' + e.message); }
     };
+
+    const btnSave = document.getElementById('btn-save-sync');
+    if (btnSave) btnSave.onclick = () => saveAction(btnSave);
+
+    const btnSaveMobile = document.getElementById('btn-save-sync-mobile');
+    if (btnSaveMobile) btnSaveMobile.onclick = () => saveAction(btnSaveMobile);
+
+    // --- TOGGLE DISPLAY AREA (Mobile) ---
+    const btnToggleDisplay = document.getElementById('toggle-display-btn');
+    const displayArea = document.getElementById('active-verse-display');
+    const toggleIcon = document.getElementById('icon-toggle-display');
+
+    if (btnToggleDisplay && displayArea) {
+        btnToggleDisplay.onclick = () => {
+            const isHidden = displayArea.classList.contains('max-[820px]:hidden');
+
+            if (isHidden) {
+                // Show it
+                displayArea.classList.remove('max-[820px]:hidden');
+                displayArea.classList.add('flex'); // Ensure it flexes
+
+                // Icon state: Collapse
+                toggleIcon.classList.add('rotate-180');
+                btnToggleDisplay.classList.add('bg-white/10', 'text-white');
+            } else {
+                // Hide it
+                displayArea.classList.add('max-[820px]:hidden');
+                displayArea.classList.remove('flex');
+
+                // Icon state: Expand
+                toggleIcon.classList.remove('rotate-180');
+                btnToggleDisplay.classList.remove('bg-white/10', 'text-white');
+            }
+        };
+    }
 
     // --- NEW: Lyrics Display Interaction ---
     const activeDisplay = document.getElementById('active-verse-display');

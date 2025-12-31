@@ -165,3 +165,41 @@ export async function search(term) {
         return [];
     }
 }
+
+
+/**
+ * Actualiza los acordes de una canción
+ * @param {number} idCancion 
+ * @param {Array|Object} chordsData Array de acordes o objeto JSON
+ */
+export async function updateChords(idCancion, chordsData) {
+    try {
+        const token = authService.getToken();
+        if (!token) throw new Error('No autenticado');
+
+        const chordsJson = typeof chordsData === 'string' ? chordsData : JSON.stringify(chordsData);
+
+        const response = await fetch(`${API_ROUTES.SONGS}?action=update_chords`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id_cancion: idCancion,
+                acordes: chordsJson
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al actualizar acordes');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error al actualizar acordes:', error);
+        throw error;
+    }
+}

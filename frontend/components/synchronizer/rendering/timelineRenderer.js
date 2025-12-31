@@ -105,7 +105,11 @@ export function renderTimeline() {
             }
             tracksContainer.appendChild(trackDiv);
             trackDiv.classList.add('overflow-hidden');
-            trackDiv.style.height = t.collapsed ? '32px' : '96px';
+            if (key === 'audio') {
+                trackDiv.style.height = '48px';
+            } else {
+                trackDiv.style.height = t.collapsed ? '32px' : '96px';
+            }
         });
 
         renderBeatMarker();

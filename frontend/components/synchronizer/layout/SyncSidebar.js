@@ -3,7 +3,7 @@ import { SyncShortcuts } from './SyncShortcuts.js';
 
 export const SyncSidebar = () => `
     <!-- Left Sidebar: Preferences / Navigation -->
-    <div id="editor-sidebar" class="w-full md:w-[350px] md:flex-none bg-[var(--bg-secondary)] flex flex-col z-30 rounded-xl overflow-hidden border border-[var(--border-primary)] shadow-inner">
+    <div id="editor-sidebar" class="w-full min-[821px]:w-[350px] min-[821px]:flex-none bg-[var(--bg-secondary)] flex flex-col z-30 rounded-xl overflow-hidden border border-[var(--border-primary)] shadow-inner max-[820px]:order-1 max-[820px]:w-full max-[820px]:flex-1 max-[820px]:min-h-0">
         <div class="flex flex-1 overflow-hidden">
             <!-- Navigation Rail -->
             <div class="w-16 bg-[var(--bg-tertiary)] flex flex-col items-center py-4 border-r border-[var(--border-primary)] gap-4 shrink-0 z-20 justify-evenly">
@@ -89,40 +89,68 @@ export const SyncSidebar = () => `
                 </div>
 
                 <!-- PANEL: CHORDS -->
-                <div id="panel-chords" class="editor-panel hidden h-full relative flex-col items-center justify-center p-4">
+                <div id="panel-chords" class="editor-panel hidden h-full relative flex-col overflow-hidden bg-[var(--bg-secondary)]">
                     
-                    <!-- Editor Card (Single Instance in Sidebar) -->
-                    <div class="chord-card">
+                    <!-- TOP CONTENT: Search + Editor -->
+                    <div class="flex-1 flex flex-col items-center p-4 w-full h-full overflow-hidden pb-16">
                         
-                        <!-- Editable Chord Name -->
-                        <h3 id="chord-name" class="chord-title" title="Doble click para editar">Cm/ Do menor</h3>
-                        
-                        <div class="editor-container">
-                            
-                            <!-- Fret Selector (Left) -->
-                            <div id="fret-selector-container" class="fret-selector">
-                                <div id="fret-selector-list" class="fret-selector-list">
-                                    <!-- Injected by JS -->
-                                </div>
+                        <!-- 1. Search Bar (Mobile Only) -->
+                        <div class="w-full shrink-0 relative group mb-6 min-[821px]:hidden">
+                            <input type="text" id="chord-search-input" placeholder="Buscar acorde..." class="w-full bg-gray-900/80 border border-gray-700 text-gray-300 text-xs rounded-full pl-9 pr-4 py-2.5 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-gray-500 transition-all shadow-sm group-hover:bg-gray-900 shadow-inner">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-
-                            <!-- Guitar Grid (Center) -->
-                            <div class="guitar-grid-container">
-                                <div id="guitar-grid" class="guitar-grid-inner">
-                                    <!-- Injected by JS: Strings, Frets, Dots -->
-                                </div>
-                            </div>
-
-                            <!-- Right Tools (Removed) -->
                         </div>
 
-                    </div>
-                    <!-- End Editor Card -->
+                        <!-- 2. Editor Card (Centered Layout) -->
+                        <div class="chord-card shrink-0 shadow-lg relative z-0 mb-6">
+                            
+                            <!-- Editable Chord Name -->
+                            <h3 id="chord-name" class="chord-title text-center text-xl font-bold text-white mb-2" title="Doble click para editar">Cm/ Do menor</h3>
+                            
+                            <div class="editor-container flex gap-4 justify-center">
+                                <!-- Fret Selector -->
+                                <div id="fret-selector-container" class="fret-selector">
+                                    <div id="fret-selector-list" class="fret-selector-list"></div>
+                                </div>
+                                <!-- Guitar Grid -->
+                                <div class="guitar-grid-container">
+                                    <div id="guitar-grid" class="guitar-grid-inner"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
 
-                    <!-- Save Chord Button - Floating Bottom Right -->
-                    <button id="btn-save-chord" class="absolute bottom-2 right-4 p-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-lg transition-all transform hover:scale-110 z-10" title="Guardar Acorde">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                    </button>
+                        <!-- Save Button (Below Card, Centered) -->
+                        <button id="btn-save-chord" class="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95 group mb-4">
+                            <svg class="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            <span class="text-xs font-bold uppercase tracking-wider">Guardar Acorde</span>
+                        </button>
+
+                    </div>
+
+                    <!-- 3. DRAWER: Saved Chords (Overlay) - MOBILE ONLY -->
+                    <div id="chord-list-drawer" class="absolute bottom-0 left-0 right-0 h-[40px] bg-gray-900 border-t border-[var(--border-primary)] rounded-t-2xl z-20 flex flex-col shadow-[0_-10px_50px_rgba(0,0,0,0.9)] transition-none max-h-[90%] min-h-[40px] min-[821px]:hidden">
+                        
+                        <!-- Drag Handle -->
+                        <div id="chord-drawer-handle" class="h-8 w-full flex items-center justify-center cursor-row-resize shrink-0 hover:bg-white/5 active:bg-white/10 transition-colors bg-gray-900 border-b border-gray-800 rounded-t-2xl touch-none group">
+                             <div class="w-12 h-1.5 bg-gray-700 rounded-full group-hover:bg-gray-500 transition-colors"></div>
+                        </div>
+
+                        <!-- Header -->
+                         <div class="px-4 py-2 border-b border-gray-800 flex justify-between items-center shrink-0 bg-gray-900 shadow-md z-10">
+                             <div class="flex flex-col">
+                                 <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Acordes de</span>
+                                 <span id="drawer-song-title" class="text-xs font-bold text-gray-300 truncate max-w-[200px]">la canción</span>
+                             </div>
+                             <span id="chord-count-val" class="px-2 py-0.5 bg-gray-800 rounded-full text-[10px] text-indigo-400 font-mono border border-gray-700">0</span>
+                         </div>
+                         
+                         <!-- List -->
+                         <div id="sidebar-chord-list" class="flex-1 overflow-y-auto p-2 bg-[#0f1115] ml-0 grid grid-cols-3 gap-2 pb-10 content-start">
+                             <!-- List items injected by ChordManager -->
+                         </div>
+                    </div>
 
                 </div>
 

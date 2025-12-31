@@ -1,6 +1,6 @@
 
 export const SyncHeader = () => `
-    <header class="h-14 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] flex items-center justify-between px-4 shrink-0 z-40 relative shadow-sm">
+    <header class="h-14 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] flex items-center justify-between px-4 shrink-0 z-40 relative shadow-sm max-[820px]:hidden">
         <!-- Left: Back Button -->
         <button onclick="window.history.back()" class="text-gray-400 hover:text-white flex items-center transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
